@@ -5,7 +5,7 @@ settings:
   excludeLinksFromLockfile: false
 
 overrides:
-  vite: ^6.4.2
+  vite: 6.4.2
 
 importers:
 
@@ -24,7 +24,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/sdk
       vite:
-        specifier: ^6.4.2
+        specifier: 6.4.2
         version: 6.4.2(@types/node@25.9.1)(jiti@2.7.0)(lightningcss@1.32.0)
 
   packages/extension:
@@ -44,7 +44,7 @@ importers:
         version: link:../protocol
       '@tailwindcss/vite':
         specifier: ^4.3.0
-        version: 4.3.0(vite@8.0.14(@types/node@25.9.1)(esbuild@0.27.7)(jiti@2.7.0))
+        version: 4.3.0(vite@6.4.2(@types/node@25.9.1)(jiti@2.7.0)(lightningcss@1.32.0))
       '@types/chrome':
         specifier: ^0.1.12
         version: 0.1.42
@@ -56,13 +56,16 @@ importers:
         version: 19.2.3(@types/react@19.2.15)
       '@wxt-dev/module-react':
         specifier: ^1.2.2
-        version: 1.2.2(vite@8.0.14(@types/node@25.9.1)(esbuild@0.27.7)(jiti@2.7.0))(wxt@0.20.26(@types/node@25.9.1)(jiti@2.7.0)(lightningcss@1.32.0)(rolldown@1.0.2)(rollup@4.60.4))
+        version: 1.2.2(vite@6.4.2(@types/node@25.9.1)(jiti@2.7.0)(lightningcss@1.32.0))(wxt@0.20.26(@types/node@25.9.1)(jiti@2.7.0)(lightningcss@1.32.0)(rolldown@1.0.2)(rollup@4.60.4))
       tailwindcss:
         specifier: ^4.3.0
         version: 4.3.0
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
+      vite:
+        specifier: 6.4.2
+        version: 6.4.2(@types/node@25.9.1)(jiti@2.7.0)(lightningcss@1.32.0)
       wxt:
         specifier: ^0.20.6
         version: 0.20.26(@types/node@25.9.1)(jiti@2.7.0)(lightningcss@1.32.0)(rolldown@1.0.2)(rollup@4.60.4)
@@ -884,7 +887,7 @@ packages:
   '@tailwindcss/vite@4.3.0':
     resolution: {integrity: sha512-t6J3OrB5Fc0ExuhohouH0fWUGMYL6PTLhW+E7zIk/pdbnJARZDCwjBznFnkh5ynRnIRSI4YjtTH0t6USjJISrw==}
     peerDependencies:
-      vite: ^6.4.2
+      vite: 6.4.2
 
   '@tybys/wasm-util@0.10.2':
     resolution: {integrity: sha512-RoBvJ2X0wuKlWFIjrwffGw1IqZHKQqzIchKaadZZfnNpsAYp2mM0h36JtPCjNDAHGgYez/15uMBpfGwchhiMgg==}
@@ -930,7 +933,7 @@ packages:
     peerDependencies:
       '@rolldown/plugin-babel': ^0.1.7 || ^0.2.0
       babel-plugin-react-compiler: ^1.0.0
-      vite: ^6.4.2
+      vite: 6.4.2
     peerDependenciesMeta:
       '@rolldown/plugin-babel':
         optional: true
@@ -952,7 +955,7 @@ packages:
   '@wxt-dev/module-react@1.2.2':
     resolution: {integrity: sha512-+lRLi1r9dAXpLySWSIWHLJ1h/nFzR20iQnx3RNrKyA6oJg4+ClOluVXozHjfPg9Okfy/umtffiOopGayASrg6w==}
     peerDependencies:
-      vite: ^6.4.2
+      vite: 6.4.2
       wxt: '>=0.19.16'
 
   '@wxt-dev/storage@1.2.8':
@@ -2284,49 +2287,6 @@ packages:
       yaml:
         optional: true
 
-  vite@8.0.14:
-    resolution: {integrity: sha512-s4BJJ+5y1pYL6Otw51FHhVJQhPnuRinKig64g/1+EUNaJsd3gCKdD31IPFvswUgW9/60QT9oFHbZHbQK5imcxw==}
-    engines: {node: ^20.19.0 || >=22.12.0}
-    hasBin: true
-    peerDependencies:
-      '@types/node': ^20.19.0 || >=22.12.0
-      '@vitejs/devtools': ^0.1.18
-      esbuild: ^0.27.0 || ^0.28.0
-      jiti: '>=1.21.0'
-      less: ^4.0.0
-      sass: ^1.70.0
-      sass-embedded: ^1.70.0
-      stylus: '>=0.54.8'
-      sugarss: ^5.0.0
-      terser: ^5.16.0
-      tsx: ^4.8.1
-      yaml: ^2.4.2
-    peerDependenciesMeta:
-      '@types/node':
-        optional: true
-      '@vitejs/devtools':
-        optional: true
-      esbuild:
-        optional: true
-      jiti:
-        optional: true
-      less:
-        optional: true
-      sass:
-        optional: true
-      sass-embedded:
-        optional: true
-      stylus:
-        optional: true
-      sugarss:
-        optional: true
-      terser:
-        optional: true
-      tsx:
-        optional: true
-      yaml:
-        optional: true
-
   watchpack@2.4.4:
     resolution: {integrity: sha512-c5EGNOiyxxV5qmTtAB7rbiXxi1ooX1pQKMLX/MIabJjRA0SJBQOjKF+KSVfHkr9U1cADPon0mRiVe/riyaiDUA==}
     engines: {node: '>=10.13.0'}
@@ -2704,7 +2664,8 @@ snapshots:
       '@tybys/wasm-util': 0.10.2
     optional: true
 
-  '@oxc-project/types@0.132.0': {}
+  '@oxc-project/types@0.132.0':
+    optional: true
 
   '@pnpm/config.env-replace@1.1.0': {}
 
@@ -2905,12 +2866,12 @@ snapshots:
       '@tailwindcss/oxide-win32-arm64-msvc': 4.3.0
       '@tailwindcss/oxide-win32-x64-msvc': 4.3.0
 
-  '@tailwindcss/vite@4.3.0(vite@8.0.14(@types/node@25.9.1)(esbuild@0.27.7)(jiti@2.7.0))':
+  '@tailwindcss/vite@4.3.0(vite@6.4.2(@types/node@25.9.1)(jiti@2.7.0)(lightningcss@1.32.0))':
     dependencies:
       '@tailwindcss/node': 4.3.0
       '@tailwindcss/oxide': 4.3.0
       tailwindcss: 4.3.0
-      vite: 8.0.14(@types/node@25.9.1)(esbuild@0.27.7)(jiti@2.7.0)
+      vite: 6.4.2(@types/node@25.9.1)(jiti@2.7.0)(lightningcss@1.32.0)
 
   '@tybys/wasm-util@0.10.2':
     dependencies:
@@ -2950,10 +2911,10 @@ snapshots:
 
   '@types/webextension-polyfill@0.10.7': {}
 
-  '@vitejs/plugin-react@6.0.2(vite@8.0.14(@types/node@25.9.1)(esbuild@0.27.7)(jiti@2.7.0))':
+  '@vitejs/plugin-react@6.0.2(vite@6.4.2(@types/node@25.9.1)(jiti@2.7.0)(lightningcss@1.32.0))':
     dependencies:
       '@rolldown/pluginutils': 1.0.1
-      vite: 8.0.14(@types/node@25.9.1)(esbuild@0.27.7)(jiti@2.7.0)
+      vite: 6.4.2(@types/node@25.9.1)(jiti@2.7.0)(lightningcss@1.32.0)
 
   '@webext-core/fake-browser@1.5.1':
     dependencies:
@@ -2971,10 +2932,10 @@ snapshots:
       '@types/filesystem': 0.0.36
       '@types/har-format': 1.2.16
 
-  '@wxt-dev/module-react@1.2.2(vite@8.0.14(@types/node@25.9.1)(esbuild@0.27.7)(jiti@2.7.0))(wxt@0.20.26(@types/node@25.9.1)(jiti@2.7.0)(lightningcss@1.32.0)(rolldown@1.0.2)(rollup@4.60.4))':
+  '@wxt-dev/module-react@1.2.2(vite@6.4.2(@types/node@25.9.1)(jiti@2.7.0)(lightningcss@1.32.0))(wxt@0.20.26(@types/node@25.9.1)(jiti@2.7.0)(lightningcss@1.32.0)(rolldown@1.0.2)(rollup@4.60.4))':
     dependencies:
-      '@vitejs/plugin-react': 6.0.2(vite@8.0.14(@types/node@25.9.1)(esbuild@0.27.7)(jiti@2.7.0))
-      vite: 8.0.14(@types/node@25.9.1)(esbuild@0.27.7)(jiti@2.7.0)
+      '@vitejs/plugin-react': 6.0.2(vite@6.4.2(@types/node@25.9.1)(jiti@2.7.0)(lightningcss@1.32.0))
+      vite: 6.4.2(@types/node@25.9.1)(jiti@2.7.0)(lightningcss@1.32.0)
       wxt: 0.20.26(@types/node@25.9.1)(jiti@2.7.0)(lightningcss@1.32.0)(rolldown@1.0.2)(rollup@4.60.4)
     transitivePeerDependencies:
       - '@rolldown/plugin-babel'
@@ -3962,6 +3923,7 @@ snapshots:
       '@rolldown/binding-wasm32-wasi': 1.0.2
       '@rolldown/binding-win32-arm64-msvc': 1.0.2
       '@rolldown/binding-win32-x64-msvc': 1.0.2
+    optional: true
 
   rollup@4.60.4:
     dependencies:
@@ -4275,19 +4237,6 @@ snapshots:
       fsevents: 2.3.3
       jiti: 2.7.0
       lightningcss: 1.32.0
-
-  vite@8.0.14(@types/node@25.9.1)(esbuild@0.27.7)(jiti@2.7.0):
-    dependencies:
-      lightningcss: 1.32.0
-      picomatch: 4.0.4
-      postcss: 8.5.15
-      rolldown: 1.0.2
-      tinyglobby: 0.2.17
-    optionalDependencies:
-      '@types/node': 25.9.1
-      esbuild: 0.27.7
-      fsevents: 2.3.3
-      jiti: 2.7.0
 
   watchpack@2.4.4:
     dependencies:
