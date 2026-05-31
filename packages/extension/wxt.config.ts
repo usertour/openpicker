@@ -1,14 +1,15 @@
 import tailwindcss from "@tailwindcss/vite"
-import type { PluginOption } from "vite"
 import { defineConfig } from "wxt"
 
 // See https://wxt.dev/api/config.html
 export default defineConfig({
   modules: ["@wxt-dev/module-react"],
   vite: () => ({
-    // @tailwindcss/vite types its plugins against a different bundled vite than
-    // WXT's; the shapes are compatible at runtime, so align them with a cast.
-    plugins: tailwindcss() as PluginOption[],
+    // WXT and @tailwindcss/vite resolve different bundled vite versions, so the
+    // Plugin types differ at the type level (they are compatible at runtime).
+    // Cast to sidestep the mismatch without pinning vite or importing its types.
+    // biome-ignore lint/suspicious/noExplicitAny: cross-version vite Plugin type mismatch
+    plugins: tailwindcss() as any,
     build: {
       minify: "esbuild",
     },
