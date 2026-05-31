@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>openpicker playground</title>
+    <style>
+      body { font-family: system-ui, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 16px; }
+      button { font-size: 16px; padding: 8px 16px; cursor: pointer; }
+      pre { background: #f4f4f5; padding: 12px; border-radius: 8px; overflow: auto; }
+      .target { margin-top: 24px; padding: 16px; border: 1px dashed #aaa; border-radius: 8px; }
+    </style>
+  </head>
+  <body>
+    <h1>openpicker playground</h1>
+    <p>Load the extension (unpacked), then use the buttons below.</p>
+
+    <p>
+      <button id="ping">Ping extension</button>
+      <button id="pick">Pick element</button>
+    </p>
+    <pre id="out">ready</pre>
+
+    <div class="target">
+      <h2 id="sample-heading">Sample target area</h2>
+      <button class="cta" data-testid="cta">Get started</button>
+    </div>
+
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

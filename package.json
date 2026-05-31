@@ -1,0 +1,22 @@
+{
+  "name": "openpicker-monorepo",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@9.15.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "pnpm -r build",
+    "dev:ext": "pnpm --filter @openpicker/extension dev",
+    "dev:sdk": "pnpm --filter openpicker dev",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "biome check .",
+    "format": "biome format --write ."
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.2.5",
+    "typescript": "^5.9.3"
+  }
+}

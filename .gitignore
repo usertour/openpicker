@@ -1,0 +1,9 @@
+node_modules
+dist
+.output
+.wxt
+*.tsbuildinfo
+*.log
+.DS_Store
+stats.html
+.claude

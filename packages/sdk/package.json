@@ -1,0 +1,29 @@
+{
+  "name": "openpicker",
+  "version": "0.0.0",
+  "description": "Open-source CSS element picker — SDK for invoking the openpicker browser extension.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": ["dist"],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@openpicker/protocol": "workspace:*",
+    "tsup": "^8.5.0",
+    "typescript": "^5.9.3"
+  }
+}

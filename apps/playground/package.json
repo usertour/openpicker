@@ -1,0 +1,14 @@
+{
+  "name": "@openpicker/playground",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "echo \"@openpicker/playground: dev-only app, no build step\""
+  },
+  "devDependencies": {
+    "openpicker": "workspace:*",
+    "vite": "^6.0.0"
+  }
+}
