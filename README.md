@@ -42,23 +42,41 @@ pnpm --filter @openpicker/extension build
 ```
 
 Then in Chrome: `chrome://extensions` → enable Developer mode → **Load unpacked** →
-select `packages/extension/.output/chrome-mv3`.
+select `packages/extension/.output/chrome-mv3`. Click the toolbar icon on any page to start a
+pick without writing any code.
 
-### Try it
+### Use the SDK
 
-```bash
-pnpm --filter openpicker build      # build the SDK once
-pnpm --filter @openpicker/playground dev
+```ts
+import { createOpenpicker } from "openpicker"
+
+const op = createOpenpicker({ appName: "My App" })
+if (await op.isAvailable()) {
+  const { selector, matchCount, element } = await op.pick({ mode: "unique" })
+}
 ```
 
-Open the playground URL, click **Ping extension** — with the extension loaded it returns the
-extension version, supported protocol versions, and capabilities.
+### Try it / test it
+
+```bash
+pnpm --filter openpicker build              # build the SDK once
+pnpm --filter @openpicker/playground dev    # interactive Ping/Pick page
+
+pnpm --filter @openpicker/extension build   # then run the end-to-end test:
+pnpm e2e                                     # drives a full pick in headless Chrome
+```
 
 ## Status
 
-Skeleton: protocol, SDK, and extension build and type-check; the `ping` method round-trips
-end-to-end. `pick` and the picker UI (bottom bar, highlight overlay, sidebar inspector) are the
-next milestone — see [DESIGN.md](./DESIGN.md).
+Working v1: the full pick flow runs end to end and is covered by `pnpm e2e` (ping → pick →
+per-origin consent → hover → click → sidebar inspector → OK → `PickResult`). Implemented:
+`ping`, `pick`, `cancel`, `highlight`, `clearHighlight`; highlight overlay with page dimming,
+pinnable bottom bar, sidebar with editable selector, DOM-tree navigator, live match count,
+attribute criteria, and a selector-settings popover (unique/list, exclude); per-origin consent
+prompt plus an options page to review and revoke it.
+
+Deferred to later: cross-origin iframe resolution, first-class Firefox/Edge builds, a docs site.
+See [DESIGN.md](./DESIGN.md) and [PROTOCOL.md](./PROTOCOL.md).
 
 ## License
 
