@@ -12,6 +12,9 @@ export default defineConfig({
     plugins: tailwindcss(),
     build: {
       minify: "esbuild",
+      // Content scripts can't resolve the module-preload base, which makes Vite
+      // emit an `import("chrome-extension://invalid/")` that throws at runtime.
+      modulePreload: false,
     },
   }),
   manifest: {

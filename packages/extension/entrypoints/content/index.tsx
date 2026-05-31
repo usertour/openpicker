@@ -26,6 +26,7 @@ export default defineContentScript({
   matches: ["<all_urls>"],
   cssInjectionMode: "ui",
   async main(ctx) {
+    console.log("[openpicker] content script loaded on", window.origin)
     const manifest = browser.runtime.getManifest()
     const capabilities = ["ping", "pick", "cancel", "highlight", "clearHighlight", "listMode", "exclude"]
 

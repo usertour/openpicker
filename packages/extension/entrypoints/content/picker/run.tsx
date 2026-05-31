@@ -47,11 +47,13 @@ export async function runPicker(
     }
     cancelActive = () => finish({ type: "cancelled" })
 
+    console.log("[openpicker] runPicker: creating shadow UI")
     createShadowRootUi(ctx, {
       name: "openpicker-ui",
       position: "overlay",
       anchor: "body",
       onMount(container, _shadow, shadowHost) {
+        console.log("[openpicker] runPicker: onMount")
         root = ReactDOM.createRoot(container)
         root.render(<Picker params={params} host={shadowHost} onResolve={finish} />)
         return root
@@ -59,9 +61,15 @@ export async function runPicker(
       onRemove(mounted) {
         mounted?.unmount()
       },
-    }).then((created) => {
-      ui = created
-      created.mount()
     })
+      .then((created) => {
+        console.log("[openpicker] runPicker: mounting")
+        ui = created
+        created.mount()
+      })
+      .catch((err) => {
+        console.log("[openpicker] runPicker: FAILED", String(err))
+        finish({ type: "cancelled" })
+      })
   })
 }

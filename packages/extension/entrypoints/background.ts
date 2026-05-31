@@ -42,8 +42,12 @@ export default defineBackground(() => {
       return true
     }
     if (msg?.kind === "screenshot") {
-      browser.tabs
-        .captureVisibleTab(undefined, { format: "png" })
+      const windowId = sender.tab?.windowId
+      const capture =
+        windowId === undefined
+          ? browser.tabs.captureVisibleTab({ format: "png" })
+          : browser.tabs.captureVisibleTab(windowId, { format: "png" })
+      capture
         .then((dataUrl) => sendResponse({ dataUrl }))
         .catch(() => sendResponse({ dataUrl: null }))
       return true
