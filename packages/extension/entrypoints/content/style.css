@@ -1,1 +1,8 @@
 @import "tailwindcss";
+
+/* Force a crosshair cursor and suppress text selection while picking. */
+body.openpicker-active,
+body.openpicker-active * {
+  cursor: crosshair !important;
+  user-select: none !important;
+}

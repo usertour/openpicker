@@ -4,12 +4,12 @@ import { defineConfig } from "wxt"
 // See https://wxt.dev/api/config.html
 export default defineConfig({
   modules: ["@wxt-dev/module-react"],
-  vite: () => ({
-    // WXT and @tailwindcss/vite resolve different bundled vite versions, so the
-    // Plugin types differ at the type level (they are compatible at runtime).
-    // Cast to sidestep the mismatch without pinning vite or importing its types.
-    // biome-ignore lint/suspicious/noExplicitAny: cross-version vite Plugin type mismatch
-    plugins: tailwindcss() as any,
+  // WXT and @tailwindcss/vite resolve different bundled vite versions, so their
+  // config types conflict. The values are correct at runtime; annotate the return
+  // as any to bypass the cross-version type mismatch.
+  // biome-ignore lint/suspicious/noExplicitAny: cross-version vite config type mismatch
+  vite: (): any => ({
+    plugins: tailwindcss(),
     build: {
       minify: "esbuild",
     },
