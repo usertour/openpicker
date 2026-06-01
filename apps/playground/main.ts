@@ -1,6 +1,8 @@
-import { createOpenpicker, OpenpickerError } from "openpicker"
+import { createOpenpicker, OpenpickerError, type ScreenshotMode } from "openpicker"
 
 const out = document.getElementById("out") as HTMLPreElement
+const shot = document.getElementById("shot") as HTMLImageElement
+const statusEl = document.getElementById("status") as HTMLSpanElement
 const op = createOpenpicker({ appName: "openpicker playground" })
 
 function show(label: string, value: unknown): void {
@@ -15,20 +17,53 @@ function showError(label: string, error: unknown): void {
   }
 }
 
+function showShot(screenshot: string | undefined): void {
+  if (screenshot) {
+    shot.src = screenshot
+    shot.style.display = "block"
+  } else {
+    shot.style.display = "none"
+  }
+}
+
+function screenshotMode(): ScreenshotMode {
+  return (document.getElementById("shotMode") as HTMLSelectElement).value as ScreenshotMode
+}
+
 document.getElementById("ping")?.addEventListener("click", async () => {
-  out.textContent = "pinging…"
+  statusEl.textContent = "extension status: pinging…"
   try {
-    show("ping ok", await op.ping())
+    const r = await op.ping()
+    statusEl.textContent = `extension status: installed (v${r.extensionVersion}, caps: ${r.capabilities.join(", ")})`
+    show("ping ok", r)
   } catch (error) {
+    statusEl.textContent = "extension status: NOT installed / no response"
     showError("ping", error)
   }
 })
 
 document.getElementById("pick")?.addEventListener("click", async () => {
-  out.textContent = "picking…"
+  out.textContent = "picking on this page…"
+  showShot(undefined)
   try {
-    show("pick ok", await op.pick({ mode: "unique" }))
+    const r = await op.pick({ mode: "unique", screenshot: screenshotMode() })
+    show("pick ok", r)
+    showShot(r.screenshot)
   } catch (error) {
     showError("pick", error)
+  }
+})
+
+document.getElementById("pickUrl")?.addEventListener("click", async () => {
+  const url = (document.getElementById("url") as HTMLInputElement).value.trim()
+  if (!url) return show("pick on url", { error: "enter a URL first" })
+  out.textContent = `opening ${url} and picking there…`
+  showShot(undefined)
+  try {
+    const r = await op.pick({ url, mode: "unique", screenshot: screenshotMode() })
+    show("cross-tab pick ok", r)
+    showShot(r.screenshot)
+  } catch (error) {
+    showError("cross-tab pick", error)
   }
 })

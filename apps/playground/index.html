@@ -3,27 +3,57 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>openpicker playground</title>
+    <title>openpicker playground (SDK)</title>
     <style>
-      body { font-family: system-ui, sans-serif; max-width: 720px; margin: 40px auto; padding: 0 16px; }
-      button { font-size: 16px; padding: 8px 16px; cursor: pointer; }
-      pre { background: #f4f4f5; padding: 12px; border-radius: 8px; overflow: auto; }
-      .target { margin-top: 24px; padding: 16px; border: 1px dashed #aaa; border-radius: 8px; }
+      body { font-family: system-ui, sans-serif; max-width: 760px; margin: 32px auto; padding: 0 16px; color: #1e293b; }
+      h1 { font-size: 20px; }
+      .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 10px 0; }
+      button { font-size: 14px; padding: 7px 14px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; cursor: pointer; }
+      button.primary { background: #1e293b; color: #fff; border-color: #1e293b; }
+      input, select { font-size: 14px; padding: 7px 10px; border-radius: 8px; border: 1px solid #cbd5e1; }
+      input[type="text"] { flex: 1; min-width: 260px; }
+      pre { background: #f1f5f9; padding: 12px; border-radius: 8px; overflow: auto; font-size: 12px; max-height: 320px; }
+      .muted { color: #64748b; font-size: 13px; }
+      .target { margin-top: 20px; padding: 16px; border: 1px dashed #94a3b8; border-radius: 8px; }
+      #shot { margin-top: 12px; max-width: 100%; border: 1px solid #e2e8f0; border-radius: 6px; display: none; }
+      code { background: #e2e8f0; padding: 1px 5px; border-radius: 4px; }
     </style>
   </head>
   <body>
     <h1>openpicker playground</h1>
-    <p>Load the extension (unpacked), then use the buttons below.</p>
-
-    <p>
-      <button id="ping">Ping extension</button>
-      <button id="pick">Pick element</button>
+    <p class="muted">
+      Exercises the extension through the <code>openpicker</code> npm SDK — the same
+      way a real integrator would. Load the unpacked extension first. (For testing the
+      raw protocol without the SDK, see <code>apps/test</code>.)
     </p>
+
+    <div class="row">
+      <button id="ping">Ping</button>
+      <span id="status" class="muted">extension status: unknown</span>
+    </div>
+
+    <div class="row">
+      <label>Screenshot:</label>
+      <select id="shotMode">
+        <option value="none">none</option>
+        <option value="element" selected>element</option>
+        <option value="viewport">viewport</option>
+      </select>
+      <button id="pick" class="primary">Pick on this page</button>
+    </div>
+
+    <div class="row">
+      <input id="url" type="text" placeholder="https://example.com" value="https://example.com" />
+      <button id="pickUrl" class="primary">Pick on URL (cross-tab)</button>
+    </div>
+
     <pre id="out">ready</pre>
+    <img id="shot" alt="screenshot of the picked element" />
 
     <div class="target">
       <h2 id="sample-heading">Sample target area</h2>
-      <button class="cta" data-testid="cta">Get started</button>
+      <button class="cta" data-testid="cta" type="button">Get started</button>
+      <p>Some text and a <a id="sample-link" href="#">sample link</a> to pick.</p>
     </div>
 
     <script type="module" src="./main.ts"></script>
