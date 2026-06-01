@@ -12,8 +12,9 @@ import {
   tagLabel,
 } from "./dom"
 import { HighlightBox } from "./HighlightBox"
-import { getConsent, requestScreenshot, setConsent } from "./messaging"
+import { getConsent, setConsent } from "./messaging"
 import { RulerGuides } from "./RulerGuides"
+import { captureScreenshot, normalizeScreenshotMode } from "./screenshot"
 import { generateSelector, matchCount as countMatches } from "./selector"
 import type { SelectorSettings } from "./SettingsPopover"
 import { Sidebar } from "./Sidebar"
@@ -28,11 +29,16 @@ interface PickerProps {
   params: PickParams
   /** Our shadow host element, excluded from targeting. */
   host: Element
+  /**
+   * Skip the consent prompt and go straight to hovering. Used in the cross-tab
+   * target tab, where consent was already resolved in the source tab.
+   */
+  skipConsent?: boolean
   onResolve: (outcome: PickOutcome) => void
 }
 
-export function Picker({ params, host, onResolve }: PickerProps) {
-  const [phase, setPhase] = useState<Phase>("consent")
+export function Picker({ params, host, skipConsent, onResolve }: PickerProps) {
+  const [phase, setPhase] = useState<Phase>(skipConsent ? "hover" : "consent")
   const [hovered, setHovered] = useState<Element | null>(null)
   const [locked, setLocked] = useState<Element | null>(null)
   const [pinTop, setPinTop] = useState(false)
@@ -49,8 +55,10 @@ export function Picker({ params, host, onResolve }: PickerProps) {
   const hoverRect = useTrackedRect(phase === "hover" ? hovered : null)
   const lockedRect = useTrackedRect(phase === "locked" ? locked : null)
 
-  // Decide whether to show the consent prompt on mount.
+  // Decide whether to show the consent prompt on mount (unless already resolved
+  // upstream, e.g. in the cross-tab source tab).
   useEffect(() => {
+    if (skipConsent) return
     let cancelled = false
     getConsent().then((status) => {
       if (cancelled) return
@@ -61,7 +69,7 @@ export function Picker({ params, host, onResolve }: PickerProps) {
     return () => {
       cancelled = true
     }
-  }, [onResolve])
+  }, [onResolve, skipConsent])
 
   const cancel = useCallback(() => onResolve({ type: "cancelled" }), [onResolve])
 
@@ -160,10 +168,7 @@ export function Picker({ params, host, onResolve }: PickerProps) {
     for (const entry of all) {
       if (checked.has(entry.name)) criteria[entry.name] = entry.value
     }
-    let screenshot: string | undefined
-    if (params.screenshot) {
-      screenshot = (await requestScreenshot()) ?? undefined
-    }
+    const screenshot = await captureScreenshot(normalizeScreenshotMode(params.screenshot), locked)
     const result: PickResult = {
       selector,
       matchCount: countMatches(selector),

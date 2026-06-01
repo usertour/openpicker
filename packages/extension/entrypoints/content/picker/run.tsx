@@ -20,8 +20,14 @@ export function cancelActivePicker(): void {
 /**
  * Mount the picker into an isolated Shadow DOM and resolve when the user confirms
  * (PickResult) or cancels/denies. Only one picker runs at a time.
+ *
+ * `skipConsent` is used in the cross-tab target tab, where consent was already
+ * resolved against the source origin before the tab was opened.
  */
-export async function runPicker(params: PickParams): Promise<PickOutcome> {
+export async function runPicker(
+  params: PickParams,
+  options: { skipConsent?: boolean } = {},
+): Promise<PickOutcome> {
   if (active) return { type: "cancelled" }
   active = true
 
@@ -40,6 +46,13 @@ export async function runPicker(params: PickParams): Promise<PickOutcome> {
       resolve(outcome)
     }
     cancelActive = () => finish({ type: "cancelled" })
-    root.render(<Picker params={params} host={mount.host} onResolve={finish} />)
+    root.render(
+      <Picker
+        params={params}
+        host={mount.host}
+        skipConsent={options.skipConsent}
+        onResolve={finish}
+      />,
+    )
   })
 }

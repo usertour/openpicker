@@ -8,6 +8,8 @@ import {
   type RequestEnvelope,
   type ResponseEnvelope,
 } from "@openpicker/protocol"
+import { ensureConsent } from "./picker/consentGate"
+import { runCrossTabPick } from "./picker/crossTab"
 import { clearHighlight, runHighlight } from "./picker/highlight"
 import { cancelActivePicker, runPicker } from "./picker/run"
 import "./style.css"
@@ -36,6 +38,8 @@ export default defineContentScript({
       "clearHighlight",
       "listMode",
       "exclude",
+      "screenshot",
+      "openUrl",
     ]
 
     function send(payload: ResponseEnvelope): void {
@@ -49,7 +53,14 @@ export default defineContentScript({
     }
 
     async function handlePick(req: RequestEnvelope<"pick">): Promise<void> {
-      const outcome = await runPicker(req.params)
+      // Cross-tab: resolve consent for THIS (source) origin, then open the URL,
+      // pick there, and route the result back (DESIGN.md §5c).
+      const outcome = req.params.url
+        ? (await ensureConsent(req.params.appName))
+          ? await runCrossTabPick(req.params)
+          : ({ type: "denied" } as const)
+        : await runPicker(req.params)
+
       if (outcome.type === "result") {
         replyOk(req.id, outcome.result)
       } else if (outcome.type === "denied") {
@@ -101,15 +112,22 @@ export default defineContentScript({
       void handle(data as RequestEnvelope)
     })
 
-    // Toolbar icon → start a pick, so the picker can be exercised without the SDK.
-    browser.runtime.onMessage.addListener((message: unknown) => {
-      if (
-        typeof message === "object" &&
-        message !== null &&
-        (message as { kind?: string }).kind === "startPick"
-      ) {
+    browser.runtime.onMessage.addListener((message: unknown, _sender, sendResponse) => {
+      const msg = message as { kind?: string; params?: RequestEnvelope<"pick">["params"] }
+
+      // Toolbar icon → start a pick, so the picker works without the SDK.
+      if (msg?.kind === "startPick") {
         void runPicker({})
+        return false
       }
+
+      // Cross-tab target tab: background asks us to run the picker here (consent
+      // already resolved in the source tab). The response carries the outcome.
+      if (msg?.kind === "crossTab:run") {
+        runPicker(msg.params ?? {}, { skipConsent: true }).then((outcome) => sendResponse({ outcome }))
+        return true // async response
+      }
+      return false
     })
   },
 })

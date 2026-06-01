@@ -1,6 +1,15 @@
 /** How the generated selector should match. See PROTOCOL.md §6.2 and DESIGN.md §5.1f. */
 export type SelectorMode = "unique" | "list"
 
+/**
+ * What the returned screenshot covers. See DESIGN.md §5b.
+ * - "none": no screenshot.
+ * - "element": cropped to the selected element.
+ * - "viewport": the full visible viewport.
+ * ("fullpage" is reserved for the future.)
+ */
+export type ScreenshotMode = "none" | "element" | "viewport"
+
 export interface PingParams {
   /** Display-only application name, surfaced in the consent prompt. Never trusted. */
   appName?: string
@@ -22,8 +31,17 @@ export interface PickParams {
   exclude?: string
   /** Request resolution of elements inside iframes (may be reported unsupported in v1). */
   iframe?: boolean
-  /** Whether to include a cropped screenshot in the result. */
-  screenshot?: boolean
+  /**
+   * Screenshot to include in the result. A {@link ScreenshotMode}, or a boolean for
+   * compatibility (`true` → "element", `false` → "none"). Defaults to "none".
+   */
+  screenshot?: ScreenshotMode | boolean
+  /**
+   * When present, the extension opens this URL in a new tab, the user picks there,
+   * and the result is routed back to the calling tab (cross-tab picking, v2).
+   * Absent → pick on the current page. Requires the "openUrl" capability.
+   */
+  url?: string
   /** Display-only application name, surfaced in the consent prompt. Never trusted. */
   appName?: string
 }

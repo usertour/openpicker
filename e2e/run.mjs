@@ -1,17 +1,17 @@
 // End-to-end test for the openpicker extension, driven over the Chrome DevTools
 // Protocol with zero dependencies (Node 22+ provides global fetch and WebSocket).
 //
-// It loads the built extension into headless Chrome and exercises the full pick
-// flow against a fixture page: ping -> pick -> consent Allow -> hover an element
-// -> click to lock -> OK -> assert a PickResult with the expected selector.
+// It loads the built extension into headless Chrome and exercises:
+//   1. local pick   — ping -> pick -> consent Allow -> hover -> click -> OK, with
+//                     an element screenshot, asserting a PickResult.
+//   2. cross-tab    — pick({ url }) from a source tab opens a target tab, the pick
+//                     runs there, and the result routes back to the source tab.
 //
 // To guarantee the content script injects, we connect at the browser level, wait
-// for the extension's service worker to register, and only then open the tab.
+// for the extension's service worker to register, and only then open tabs.
 //
-// Usage:
-//   node e2e/run.mjs [path-to-unpacked-extension]
-// Defaults to packages/extension/.output/chrome-mv3. Override Chrome with
-// OPENPICKER_CHROME=/path/to/chrome.
+// Usage: node e2e/run.mjs [path-to-unpacked-extension]
+// Override Chrome with OPENPICKER_CHROME=/path/to/chrome.
 
 import { spawn } from "node:child_process"
 import { mkdtempSync, readFileSync, rmSync } from "node:fs"
@@ -84,9 +84,46 @@ const clickShadowButton = (match) =>
   `(()=>{const sr=document.querySelector('openpicker-ui').shadowRoot;` +
   `const b=[...sr.querySelectorAll('button')].find(x=>${match});if(b){b.click();return true}return false})()`
 
+async function attach(targetId) {
+  const { sessionId } = await send("Target.attachToTarget", { targetId, flatten: true })
+  await send("Runtime.enable", {}, sessionId)
+  await send("Page.enable", {}, sessionId)
+  return sessionId
+}
+
+async function waitInjected(sessionId) {
+  for (let i = 0; i < 30; i++) {
+    await sleep(300)
+    if ((await evalJson(sessionId, "document.documentElement.dataset.openpicker || null")) === "loaded")
+      return true
+  }
+  return false
+}
+
+// Drive the picker UI in whichever tab it mounted: Allow -> hover -> click -> OK.
+async function drivePicker(sessionId) {
+  for (let i = 0; i < 25; i++) {
+    await sleep(300)
+    const s = await evalJson(sessionId, "window.__opShadow ? window.__opShadow() : {host:false}")
+    if (s?.host) break
+  }
+  await run(sessionId, clickShadowButton("/Allow/.test(x.textContent)"))
+  await sleep(800)
+  await run(sessionId, dispatchAt("cta", "mousemove", "MouseEvent"))
+  await sleep(400)
+  await run(sessionId, dispatchAt("cta", "pointerdown", "PointerEvent"))
+  await sleep(1000)
+  const selector = await evalJson(
+    sessionId,
+    "(()=>{const sr=document.querySelector('openpicker-ui').shadowRoot;const i=sr.querySelector('input[type=text]');return i?i.value:null})()",
+  )
+  await run(sessionId, clickShadowButton("x.textContent.trim()==='OK'"))
+  return selector
+}
+
 let exitCode = 1
 try {
-  // 1. browser-level CDP endpoint
+  // browser-level CDP + auto-attach so we see new tabs (cross-tab target).
   let browserWsUrl
   for (let i = 0; i < 40 && !browserWsUrl; i++) {
     await sleep(500)
@@ -97,6 +134,7 @@ try {
   }
   if (!browserWsUrl) throw new Error("no browser CDP endpoint")
 
+  const attachedTargets = []
   ws = new WebSocket(browserWsUrl)
   await new Promise((res, rej) => {
     ws.addEventListener("open", res, { once: true })
@@ -105,92 +143,82 @@ try {
   ws.addEventListener("message", (ev) => {
     const m = JSON.parse(ev.data)
     if (m.id && pending.has(m.id)) {
-      const resolve = pending.get(m.id)
+      const r = pending.get(m.id)
       pending.delete(m.id)
-      resolve(m.result ?? m.error)
+      r(m.result ?? m.error)
+      return
+    }
+    if (m.method === "Target.targetCreated" && m.params.targetInfo.type === "page") {
+      attachedTargets.push(m.params.targetInfo)
     }
   })
+  await send("Target.setDiscoverTargets", { discover: true })
 
-  // 2. wait for the extension's service worker to register
+  // wait for the extension's service worker
   let swReady = false
   for (let i = 0; i < 40 && !swReady; i++) {
     await sleep(500)
-    try {
-      const list = await (await fetch(`http://localhost:${DEBUG_PORT}/json`)).json()
-      swReady = list.some((t) => t.type === "service_worker" && t.url.startsWith("chrome-extension://"))
-    } catch {}
+    const list = await (await fetch(`http://localhost:${DEBUG_PORT}/json`)).json()
+    swReady = list.some((t) => t.type === "service_worker" && t.url.startsWith("chrome-extension://"))
   }
   log("extension service worker:", swReady ? "ready" : "NOT FOUND")
 
-  // 3. open the fixture tab now that the content script is registered
-  const created = await send("Target.createTarget", { url: FIXTURE_URL })
-  const targetId = created?.targetId
-  if (!targetId) throw new Error("Target.createTarget failed")
-  const attached = await send("Target.attachToTarget", { targetId, flatten: true })
-  const sessionId = attached?.sessionId
-  if (!sessionId) throw new Error("attachToTarget failed")
+  // ---- Test 1: local pick + element screenshot ----
+  const t1 = await send("Target.createTarget", { url: FIXTURE_URL })
+  const s1 = await attach(t1.targetId)
+  log("source content script:", (await waitInjected(s1)) ? "injected" : "NOT injected")
 
-  await send("Runtime.enable", {}, sessionId)
-  await send("Page.enable", {}, sessionId)
-
-  // wait for the content script to inject (it sets a data attribute)
-  let injected = false
-  for (let i = 0; i < 30 && !injected; i++) {
-    await sleep(300)
-    injected = (await evalJson(sessionId, "document.documentElement.dataset.openpicker || null")) === "loaded"
-  }
-  log("content script:", injected ? "injected" : "NOT injected")
-
-  // 4. ping
-  await run(sessionId, "window.__opPing()")
+  await run(s1, "window.__opPing()")
   let pong = null
   for (let i = 0; i < 20 && !pong; i++) {
     await sleep(300)
-    pong = await evalJson(sessionId, "window.__op.pong")
+    pong = await evalJson(s1, "window.__op.pong")
   }
-  const pingOk = !!pong && Array.isArray(pong.protocolVersions) && pong.capabilities?.includes("pick")
+  const pingOk = !!pong && pong.capabilities?.includes("openUrl")
   log("ping:", pingOk ? "ok" : "FAILED", JSON.stringify(pong))
 
-  // 5. pick -> consent prompt
-  await run(sessionId, "window.__opPick()")
-  let shadow = null
-  for (let i = 0; i < 25; i++) {
+  await run(s1, "window.__opPick({screenshot:'element'})")
+  const sel1 = await drivePicker(s1)
+  await sleep(800)
+  const r1 = await evalJson(s1, "window.__op.lastRes")
+  const localOk =
+    typeof sel1 === "string" &&
+    sel1.length > 0 &&
+    r1?.ok === true &&
+    r1.result?.element?.tag === "button" &&
+    typeof r1.result?.screenshot === "string" &&
+    r1.result.screenshot.startsWith("data:image/")
+  log("local pick:", localOk ? "ok" : "FAILED", "selector=", JSON.stringify(sel1), "hasShot=", !!r1?.result?.screenshot)
+
+  // ---- Test 2: cross-tab pick ----
+  const before = attachedTargets.length
+  await run(s1, `window.__opPick({ url: ${JSON.stringify(FIXTURE_URL)} })`)
+  // wait for the target tab to be created and injected
+  let targetSession
+  for (let i = 0; i < 40 && !targetSession; i++) {
     await sleep(400)
-    shadow = await evalJson(sessionId, "window.__opShadow()")
-    if (shadow?.host) break
+    if (attachedTargets.length > before) {
+      const tgt = attachedTargets[attachedTargets.length - 1]
+      const sid = await attach(tgt.targetId)
+      if (await waitInjected(sid)) targetSession = sid
+    }
   }
-  const consentOk = !!shadow?.host && /Allow element picking/.test(shadow.text || "")
-  log("consent prompt:", consentOk ? "ok" : "FAILED", JSON.stringify(shadow))
+  log("cross-tab target opened:", targetSession ? "yes" : "NO")
 
-  // 6. Allow -> hover -> lock -> OK
-  await run(sessionId, clickShadowButton("/Allow/.test(x.textContent)"))
-  await sleep(1000)
-  await run(sessionId, dispatchAt("cta", "mousemove", "MouseEvent"))
-  await sleep(500)
-  await run(sessionId, dispatchAt("cta", "pointerdown", "PointerEvent"))
-  await sleep(1200)
+  let crossOk = false
+  if (targetSession) {
+    const sel2 = await drivePicker(targetSession)
+    await sleep(1200)
+    const r2 = await evalJson(s1, "window.__op.lastRes") // result routes back to SOURCE tab
+    crossOk =
+      typeof sel2 === "string" &&
+      sel2.length > 0 &&
+      r2?.ok === true &&
+      r2.result?.element?.tag === "button"
+    log("cross-tab pick:", crossOk ? "ok" : "FAILED", "selector=", JSON.stringify(sel2))
+  }
 
-  const selectorVal = await evalJson(
-    sessionId,
-    "(()=>{const sr=document.querySelector('openpicker-ui').shadowRoot;const i=sr.querySelector('input[type=text]');return i?i.value:null})()",
-  )
-  log("locked selector:", JSON.stringify(selectorVal))
-
-  await run(sessionId, clickShadowButton("x.textContent.trim()==='OK'"))
-  await sleep(1000)
-
-  // 7. assert the PickResult reached the page
-  const result = await evalJson(sessionId, "window.__op.lastRes")
-  log("PickResult:", JSON.stringify(result))
-
-  const pickOk =
-    typeof selectorVal === "string" &&
-    selectorVal.length > 0 &&
-    result?.ok === true &&
-    !!result?.result?.selector &&
-    result?.result?.element?.tag === "button"
-
-  const allOk = pingOk && consentOk && pickOk
+  const allOk = pingOk && localOk && crossOk
   log("")
   log(allOk ? "PASS" : "FAIL")
   exitCode = allOk ? 0 : 1

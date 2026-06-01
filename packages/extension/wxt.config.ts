@@ -17,7 +17,7 @@ export default defineConfig({
   manifest: {
     name: "openpicker",
     description: "Open-source CSS element picker.",
-    permissions: ["storage", "activeTab", "scripting"],
+    permissions: ["storage", "activeTab", "scripting", "tabs"],
     action: {},
   },
 })

@@ -26,7 +26,7 @@
           window.origin,
         )
       window.__opPing = () => post("ping", "op:e2e:ping")
-      window.__opPick = () => post("pick", "op:e2e:pick")
+      window.__opPick = (params) => post("pick", "op:e2e:pick", params)
       window.__opShadow = () => {
         const host = document.querySelector("openpicker-ui")
         if (!host || !host.shadowRoot) return { host: false }
