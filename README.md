@@ -76,10 +76,13 @@ attribute match-criteria, and a selector-settings popover (unique/list, exclude)
 page to review and revoke per-origin consent.
 
 Verification: `pnpm -r typecheck`, the extension build, and the SDK build all pass (exit 0). The
-end-to-end harness (`pnpm e2e`) is written but does not yet pass in this dev environment — a
-second extension in the local Chrome profile prevents the unpacked extension from injecting, so
-the flow is currently best verified by loading the extension manually (see above). Treat the
-in-browser flow as not yet automatically verified.
+full in-browser flow has been verified manually by loading the unpacked extension and running a
+pick end to end (consent prompt → Allow → hover highlight → click → sidebar inspector → result).
+
+An automated end-to-end harness (`pnpm e2e`, in `e2e/`) is included, but does not pass in every
+headless setup: in some environments Chrome does not inject the content script into the test tab
+(no isolated world is created — not a picker bug). Prefer manual verification (above) where the
+harness can't inject.
 
 Deferred to later: cross-origin iframe resolution, first-class Firefox/Edge builds, a docs site.
 See [DESIGN.md](./DESIGN.md) and [PROTOCOL.md](./PROTOCOL.md).
