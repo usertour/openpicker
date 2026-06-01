@@ -13,7 +13,9 @@
     "dev:sdk": "pnpm --filter openpicker dev",
     "typecheck": "pnpm -r typecheck",
     "lint": "biome check .",
-    "format": "biome format --write ."
+    "format": "biome format --write .",
+    "e2e": "node e2e/run.mjs",
+    "test:page": "node apps/test/serve.mjs"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.5",

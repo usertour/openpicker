@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>openpicker static test</title>
+    <style>
+      body { font-family: system-ui, sans-serif; max-width: 760px; margin: 32px auto; padding: 0 16px; color: #1e293b; }
+      h1 { font-size: 20px; }
+      .row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 10px 0; }
+      button { font-size: 14px; padding: 7px 14px; border-radius: 8px; border: 1px solid #cbd5e1; background: #fff; cursor: pointer; }
+      button.primary { background: #1e293b; color: #fff; border-color: #1e293b; }
+      input, select { font-size: 14px; padding: 7px 10px; border-radius: 8px; border: 1px solid #cbd5e1; }
+      input[type="text"] { flex: 1; min-width: 260px; }
+      pre { background: #f1f5f9; padding: 12px; border-radius: 8px; overflow: auto; font-size: 12px; max-height: 320px; }
+      .muted { color: #64748b; font-size: 13px; }
+      .target { margin-top: 20px; padding: 16px; border: 1px dashed #94a3b8; border-radius: 8px; }
+      #shot { margin-top: 12px; max-width: 100%; border: 1px solid #e2e8f0; border-radius: 6px; display: none; }
+      code { background: #e2e8f0; padding: 1px 5px; border-radius: 4px; }
+    </style>
+  </head>
+  <body>
+    <h1>openpicker static test</h1>
+    <p class="muted">
+      No build step — this page speaks the openpicker protocol directly via
+      <code>window.postMessage</code>. Serve it over <strong>http</strong> (not file://) and load the
+      unpacked extension first.
+    </p>
+
+    <div class="row">
+      <button id="ping">Ping</button>
+      <span id="status" class="muted">extension status: unknown</span>
+    </div>
+
+    <div class="row">
+      <label>Screenshot:</label>
+      <select id="shotMode">
+        <option value="none">none</option>
+        <option value="element" selected>element</option>
+        <option value="viewport">viewport</option>
+      </select>
+      <button id="pick" class="primary">Pick on this page</button>
+    </div>
+
+    <div class="row">
+      <input id="url" type="text" placeholder="https://example.com" value="https://example.com" />
+      <button id="pickUrl" class="primary">Pick on URL (cross-tab)</button>
+    </div>
+
+    <pre id="out">ready</pre>
+    <img id="shot" alt="screenshot of the picked element" />
+
+    <div class="target">
+      <h2 id="sample-heading">Sample target area</h2>
+      <button class="cta" data-testid="cta" type="button">Get started</button>
+      <p>Some text and a <a id="sample-link" href="#">sample link</a> to pick.</p>
+    </div>
+
+    <script>
+      const CHANNEL = "openpicker"
+      const PROTOCOL_VERSION = 1
+      const out = document.getElementById("out")
+      const shot = document.getElementById("shot")
+      const statusEl = document.getElementById("status")
+
+      let seq = 0
+      const instanceId = Math.random().toString(36).slice(2, 8)
+      const pending = new Map()
+
+      window.addEventListener("message", (e) => {
+        if (e.source !== window || e.origin !== window.origin) return
+        const d = e.data
+        if (!d || d.channel !== CHANNEL || d.kind !== "res") return
+        const entry = pending.get(d.id)
+        if (!entry) return
+        pending.delete(d.id)
+        clearTimeout(entry.timer)
+        d.ok ? entry.resolve(d.result) : entry.reject(d.error)
+      })
+
+      function call(method, params, timeoutMs) {
+        const id = `op:${instanceId}:${++seq}`
+        return new Promise((resolve, reject) => {
+          const timer = timeoutMs
+            ? setTimeout(() => {
+                pending.delete(id)
+                reject({ code: "timeout", message: `${method} timed out` })
+              }, timeoutMs)
+            : null
+          pending.set(id, { resolve, reject, timer })
+          window.postMessage(
+            { channel: CHANNEL, v: PROTOCOL_VERSION, kind: "req", id, method, params: params || {} },
+            window.origin,
+          )
+        })
+      }
+
+      function show(label, value) {
+        out.textContent = `${label}\n${JSON.stringify(value, null, 2)}`
+      }
+      function showShot(result) {
+        if (result && typeof result.screenshot === "string") {
+          shot.src = result.screenshot
+          shot.style.display = "block"
+        } else {
+          shot.style.display = "none"
+        }
+      }
+
+      document.getElementById("ping").addEventListener("click", async () => {
+        statusEl.textContent = "extension status: pinging…"
+        try {
+          const r = await call("ping", {}, 1500)
+          statusEl.textContent = `extension status: installed (v${r.extensionVersion}, caps: ${r.capabilities.join(", ")})`
+          show("ping ok", r)
+        } catch (err) {
+          statusEl.textContent = "extension status: NOT installed / no response"
+          show("ping error", err)
+        }
+      })
+
+      document.getElementById("pick").addEventListener("click", async () => {
+        const screenshot = document.getElementById("shotMode").value
+        out.textContent = "picking on this page…"
+        shot.style.display = "none"
+        try {
+          const r = await call("pick", { mode: "unique", screenshot })
+          show("pick ok", r)
+          showShot(r)
+        } catch (err) {
+          show("pick error", err)
+        }
+      })
+
+      document.getElementById("pickUrl").addEventListener("click", async () => {
+        const url = document.getElementById("url").value.trim()
+        const screenshot = document.getElementById("shotMode").value
+        if (!url) return show("pick on url", { error: "enter a URL first" })
+        out.textContent = `opening ${url} and picking there…`
+        shot.style.display = "none"
+        try {
+          const r = await call("pick", { url, mode: "unique", screenshot })
+          show("cross-tab pick ok", r)
+          showShot(r)
+        } catch (err) {
+          show("cross-tab pick error", err)
+        }
+      })
+    </script>
+  </body>
+</html>
