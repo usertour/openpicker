@@ -1,7 +1,7 @@
-# openpicker static test page
+# openpicker test page
 
-A build-free page for manually testing the extension. It speaks the openpicker
-protocol directly over `window.postMessage` — no SDK, no bundler.
+A page for manually testing the extension. It speaks the openpicker protocol
+directly over `window.postMessage` — no SDK, just the raw protocol. Served by Vite.
 
 ## Use
 
@@ -9,11 +9,11 @@ protocol directly over `window.postMessage` — no SDK, no bundler.
 pnpm --filter @openpicker/extension build          # build the extension
 # Chrome → chrome://extensions → Developer mode → Load unpacked →
 #   packages/extension/.output/chrome-mv3
-pnpm test:page                                      # serve on http://localhost:5599
+pnpm test:page                                      # vite dev server (http://localhost:5173)
 ```
 
-Open `http://localhost:5599/` (must be **http**, not `file://`, or the content
-script's same-origin check rejects the messages).
+Open the URL Vite prints (must be **http**, not `file://`, or the content script's
+same-origin check rejects the messages).
 
 - **Ping** — confirm the extension is installed and see its capabilities.
 - **Pick on this page** — local pick; choose a screenshot mode (`none` / `element`

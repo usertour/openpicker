@@ -15,7 +15,7 @@
     "lint": "biome check .",
     "format": "biome format --write .",
     "e2e": "node e2e/run.mjs",
-    "test:page": "node apps/test/serve.mjs"
+    "test:page": "pnpm --filter @openpicker/test dev"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.5",
@@ -24,7 +24,7 @@
   "pnpm": {
     "overrides": {
       "@types/react": "19.2.15",
-      "@types/react-dom": "19.2.15"
+      "@types/react-dom": "19.2.3"
     }
   }
 }
