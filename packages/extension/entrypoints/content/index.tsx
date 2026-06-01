@@ -19,16 +19,22 @@ type AnyResult = MethodMap[MethodName]["result"]
  * Content-script connector: the public end of the protocol (PROTOCOL.md §2).
  *
  * The picker UI (React + Tailwind + finder) lives in ./picker/* and is bundled
- * into this content script. (WXT content scripts are emitted as a single file, so
- * the picker is imported statically rather than code-split.)
+ * into this content script (WXT emits content scripts as a single file).
  */
 export default defineContentScript({
   matches: ["<all_urls>"],
   cssInjectionMode: "ui",
-  async main(ctx) {
-    console.log("[openpicker] content script loaded on", window.origin)
+  main() {
     const manifest = browser.runtime.getManifest()
-    const capabilities = ["ping", "pick", "cancel", "highlight", "clearHighlight", "listMode", "exclude"]
+    const capabilities = [
+      "ping",
+      "pick",
+      "cancel",
+      "highlight",
+      "clearHighlight",
+      "listMode",
+      "exclude",
+    ]
 
     function send(payload: ResponseEnvelope): void {
       window.postMessage(payload, window.origin)
@@ -41,11 +47,14 @@ export default defineContentScript({
     }
 
     async function handlePick(req: RequestEnvelope<"pick">): Promise<void> {
-      const outcome = await runPicker(ctx, req.params)
-      if (outcome.type === "result") replyOk(req.id, outcome.result)
-      else if (outcome.type === "denied")
+      const outcome = await runPicker(req.params)
+      if (outcome.type === "result") {
+        replyOk(req.id, outcome.result)
+      } else if (outcome.type === "denied") {
         replyErr(req.id, { code: "consent_denied", message: "openpicker: the user denied this origin" })
-      else replyErr(req.id, { code: "cancelled", message: "openpicker: the user cancelled the picker" })
+      } else {
+        replyErr(req.id, { code: "cancelled", message: "openpicker: the user cancelled the picker" })
+      }
     }
 
     async function handle(req: RequestEnvelope): Promise<void> {
@@ -97,7 +106,7 @@ export default defineContentScript({
         message !== null &&
         (message as { kind?: string }).kind === "startPick"
       ) {
-        void runPicker(ctx, {})
+        void runPicker({})
       }
     })
   },

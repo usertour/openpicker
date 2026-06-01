@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>openpicker e2e fixture</title>
+  </head>
+  <body>
+    <h1 id="title">openpicker e2e target</h1>
+    <button id="cta" class="cta" data-testid="cta" type="button">Get started</button>
+
+    <script>
+      // Minimal page-side bridge that mimics what the SDK does: post protocol
+      // requests on window and record responses for the test to assert on.
+      const CHANNEL = "openpicker"
+      window.__op = { pong: null, lastRes: null }
+      window.addEventListener("message", (e) => {
+        if (e.source !== window || e.origin !== window.origin) return
+        const d = e.data
+        if (!d || d.channel !== CHANNEL || d.kind !== "res") return
+        window.__op.lastRes = d
+        if (d.result && Array.isArray(d.result.protocolVersions)) window.__op.pong = d.result
+      })
+      const post = (method, id, params) =>
+        window.postMessage(
+          { channel: CHANNEL, v: 1, kind: "req", id, method, params: params || {} },
+          window.origin,
+        )
+      window.__opPing = () => post("ping", "op:e2e:ping")
+      window.__opPick = () => post("pick", "op:e2e:pick")
+      window.__opShadow = () => {
+        const host = document.querySelector("openpicker-ui")
+        if (!host || !host.shadowRoot) return { host: false }
+        return { host: true, text: host.shadowRoot.textContent.slice(0, 200) }
+      }
+    </script>
+  </body>
+</html>
