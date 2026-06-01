@@ -68,12 +68,18 @@ pnpm e2e                                     # drives a full pick in headless Ch
 
 ## Status
 
-Working v1: the full pick flow runs end to end and is covered by `pnpm e2e` (ping → pick →
-per-origin consent → hover → click → sidebar inspector → OK → `PickResult`). Implemented:
-`ping`, `pick`, `cancel`, `highlight`, `clearHighlight`; highlight overlay with page dimming,
-pinnable bottom bar, sidebar with editable selector, DOM-tree navigator, live match count,
-attribute criteria, and a selector-settings popover (unique/list, exclude); per-origin consent
-prompt plus an options page to review and revoke it.
+Feature-complete v1, pending a clean end-to-end run. Implemented: `ping`, `pick`, `cancel`,
+`highlight`, `clearHighlight`; the full pick flow (per-origin consent prompt → hover → click →
+sidebar inspector → OK → `PickResult`), with a highlight overlay and page dimming, a pinnable
+bottom bar, a sidebar with an editable selector, a DOM-tree navigator, a live match count,
+attribute match-criteria, and a selector-settings popover (unique/list, exclude); plus an options
+page to review and revoke per-origin consent.
+
+Verification: `pnpm -r typecheck`, the extension build, and the SDK build all pass (exit 0). The
+end-to-end harness (`pnpm e2e`) is written but does not yet pass in this dev environment — a
+second extension in the local Chrome profile prevents the unpacked extension from injecting, so
+the flow is currently best verified by loading the extension manually (see above). Treat the
+in-browser flow as not yet automatically verified.
 
 Deferred to later: cross-origin iframe resolution, first-class Firefox/Edge builds, a docs site.
 See [DESIGN.md](./DESIGN.md) and [PROTOCOL.md](./PROTOCOL.md).

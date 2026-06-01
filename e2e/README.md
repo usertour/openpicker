@@ -20,3 +20,8 @@ OPENPICKER_CHROME=/path/to/chrome node e2e/run.mjs
 ```
 
 Prints `PASS` and exits 0 on success.
+
+Note: loading an unpacked extension requires a Chrome profile with no other extension
+interfering. If another extension is present (e.g. a DevTools/MCP companion in the default
+profile), the unpacked extension may not inject and the run will report `FAIL`; use a clean,
+dedicated `--user-data-dir` profile.
