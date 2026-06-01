@@ -17,7 +17,9 @@ let cachedCss: string | null = null
 async function loadCss(): Promise<string> {
   if (cachedCss !== null) return cachedCss
   try {
-    const res = await fetch(browser.runtime.getURL(`/${CSS_PATH}`))
+    // CSS_PATH is a generated content-script asset, not in WXT's typed PublicPath.
+    const url = (browser.runtime.getURL as (p: string) => string)(`/${CSS_PATH}`)
+    const res = await fetch(url)
     cachedCss = await res.text()
   } catch {
     cachedCss = ""

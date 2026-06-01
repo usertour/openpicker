@@ -25,6 +25,8 @@ export default defineContentScript({
   matches: ["<all_urls>"],
   cssInjectionMode: "ui",
   main() {
+    // Marker the E2E waits on to know the content script has injected.
+    document.documentElement.dataset.openpicker = "loaded"
     const manifest = browser.runtime.getManifest()
     const capabilities = [
       "ping",

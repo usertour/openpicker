@@ -61,9 +61,21 @@ const call = (ws, method, params) =>
     ws.addEventListener("message", onMsg)
     ws.send(JSON.stringify({ id, method, params }))
   })
-const evalExpr = async (ws, expression) =>
-  (await call(ws, "Runtime.evaluate", { expression, returnByValue: true, awaitPromise: true }))
-    ?.result?.value
+
+// Evaluate an expression in the page and return its JSON value. We stringify in
+// the page and parse here — returning objects by value across CDP proved flaky.
+const evalJson = async (ws, expression) => {
+  const wrapped = `JSON.stringify((()=>{try{return (${expression})}catch(e){return {__err:String(e)}}})())`
+  const r = await call(ws, "Runtime.evaluate", {
+    expression: wrapped,
+    returnByValue: true,
+    awaitPromise: true,
+  })
+  const raw = r?.result?.value
+  return raw == null ? null : JSON.parse(raw)
+}
+const run = (ws, expression) =>
+  call(ws, "Runtime.evaluate", { expression, returnByValue: true, awaitPromise: true })
 
 const dispatchAt = (elId, type, ctor) =>
   `(()=>{const el=document.getElementById('${elId}');const r=el.getBoundingClientRect();` +
@@ -99,48 +111,53 @@ try {
   // reload once it's ready so the content script injects.
   await sleep(1500)
   await call(cdp, "Page.reload", {})
-  await sleep(2500)
+  // Wait until the content script has injected (it sets a data attribute).
+  for (let i = 0; i < 30; i++) {
+    await sleep(300)
+    const marker = await evalJson(cdp, "document.documentElement.dataset.openpicker || null")
+    if (marker === "loaded") break
+  }
 
   // 1. ping
-  await evalExpr(cdp, "window.__opPing()")
+  await run(cdp, "window.__opPing()")
   let pong = null
   for (let i = 0; i < 20 && !pong; i++) {
-    pong = await evalExpr(cdp, "window.__op.pong")
     await sleep(300)
+    pong = await evalJson(cdp, "window.__op.pong")
   }
-  const pingOk = !!pong && pong.capabilities?.includes("pick")
+  const pingOk = !!pong && Array.isArray(pong.protocolVersions) && pong.capabilities?.includes("pick")
   log("ping:", pingOk ? "ok" : "FAILED", JSON.stringify(pong))
 
   // 2. pick -> consent prompt
-  await evalExpr(cdp, "window.__opPick()")
+  await run(cdp, "window.__opPick()")
   let shadow = null
   for (let i = 0; i < 25; i++) {
     await sleep(400)
-    shadow = await evalExpr(cdp, "window.__opShadow()")
+    shadow = await evalJson(cdp, "window.__opShadow()")
     if (shadow?.host) break
   }
   const consentOk = !!shadow?.host && /Allow element picking/.test(shadow.text || "")
   log("consent prompt:", consentOk ? "ok" : "FAILED", JSON.stringify(shadow))
 
   // 3. Allow -> hover -> lock -> OK
-  await evalExpr(cdp, clickShadowButton("/Allow/.test(x.textContent)"))
+  await run(cdp, clickShadowButton("/Allow/.test(x.textContent)"))
   await sleep(1000)
-  await evalExpr(cdp, dispatchAt("cta", "mousemove", "MouseEvent"))
+  await run(cdp, dispatchAt("cta", "mousemove", "MouseEvent"))
   await sleep(500)
-  await evalExpr(cdp, dispatchAt("cta", "pointerdown", "PointerEvent"))
-  await sleep(1000)
+  await run(cdp, dispatchAt("cta", "pointerdown", "PointerEvent"))
+  await sleep(1200)
 
-  const selectorVal = await evalExpr(
+  const selectorVal = await evalJson(
     cdp,
     "(()=>{const sr=document.querySelector('openpicker-ui').shadowRoot;const i=sr.querySelector('input[type=text]');return i?i.value:null})()",
   )
   log("locked selector:", JSON.stringify(selectorVal))
 
-  await evalExpr(cdp, clickShadowButton("x.textContent.trim()==='OK'"))
+  await run(cdp, clickShadowButton("x.textContent.trim()==='OK'"))
   await sleep(1000)
 
   // 4. assert the PickResult reached the page
-  const result = JSON.parse((await evalExpr(cdp, "JSON.stringify(window.__op.lastRes||null)")) || "null")
+  const result = await evalJson(cdp, "window.__op.lastRes")
   log("PickResult:", JSON.stringify(result))
 
   const pickOk =
@@ -162,6 +179,9 @@ try {
   } catch {}
   chrome.kill("SIGKILL")
   server.close()
-  rmSync(userDir, { recursive: true, force: true })
+  await sleep(300)
+  try {
+    rmSync(userDir, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 })
+  } catch {}
 }
 process.exit(exitCode)
