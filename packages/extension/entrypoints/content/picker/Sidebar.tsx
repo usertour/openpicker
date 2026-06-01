@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { AttributeList } from "./AttributeList"
 import type { AttrEntry } from "./dom"
-import { SettingsPopover, type SelectorSettings } from "./SettingsPopover"
+import { type SelectorSettings, SettingsPopover } from "./SettingsPopover"
 import { TreeNavigator } from "./TreeNavigator"
 
 interface SidebarProps {

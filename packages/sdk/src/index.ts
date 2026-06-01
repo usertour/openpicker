@@ -207,11 +207,11 @@ export function createOpenpicker(options?: OpenpickerOptions): Openpicker {
 
 export type {
   HighlightResult,
+  PickedElement,
   PickParams,
   PickResult,
   PingResult,
   ProtocolError,
   ScreenshotMode,
   SelectorMode,
-  PickedElement,
 } from "@openpicker/protocol"
