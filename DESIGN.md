@@ -19,6 +19,22 @@ Turn "visually select an element on a page and generate a stable selector" into 
 **Explicit non-goals:** no coupling to any specific SaaS; no "inject a vendor's SDK into the
 page" lock-in behavior. All code and protocol naming are written from scratch.
 
+### 1.1 Design principle: openness by parameter
+
+openpicker is a platform, not one product's tool. Capabilities are exposed as **parameters and
+extensible enums**, not hardcoded behavior, so integrators decide what fits their use case:
+
+- **Behavior is opt-in via parameters / string enums**, never baked in. Examples already in v1:
+  selector `mode` (`unique` | `list`), `exclude` regex, screenshot range (§ below). New behavior
+  is added as a new option, not a new fork in the code.
+- **The protocol is forward-extensible.** Enums are strings (room for new values), and the message
+  envelope ignores unknown fields, so new options/capabilities don't break older SDKs/extensions.
+- **Safe defaults, always overridable.** Each option defaults to the safe/cheap choice (e.g.
+  `screenshot: "none"`, `mode: "unique"`), but every default can be overridden by the caller.
+- **Leave extension points; don't pre-build unproven needs.** Reserve enum values / capability
+  flags for likely futures, but implement only what's validated (e.g. `screenshot` reserves but
+  does not yet implement `"fullpage"`).
+
 ---
 
 ## 2. Architecture
@@ -288,6 +304,92 @@ via one box-shadow — no separate mask layer:
 
 ---
 
+## 5b. Screenshot range (v1.x)
+
+The result can include a screenshot, whose range is the caller's choice (design principle §1.1):
+
+```ts
+type ScreenshotMode = "none" | "element" | "viewport"   // boolean also accepted: true→"element", false→"none"
+op.pick({ screenshot: "element" })
+```
+
+| Mode | Behavior |
+|---|---|
+| `"none"` (default) | No screenshot — zero cost. |
+| `"element"` | Crop to the selected element. |
+| `"viewport"` | The full visible viewport, uncropped. |
+
+Implementation: browsers have no "screenshot one element" API. `chrome.tabs.captureVisibleTab`
+captures the **visible viewport**; for `"element"` we then crop it on a `<canvas>` to the target's
+`getBoundingClientRect()` × `devicePixelRatio`.
+
+- Before capturing `"element"`, `scrollIntoView` the target so it's within the viewport (otherwise
+  it can't be captured).
+- No padding — crop tight to the element.
+- If the element is larger than the viewport, only the visible part is captured (a browser limit;
+  document it).
+- Reserved (not implemented): `"fullpage"` (scroll-and-stitch). The string enum leaves room for it.
+
+---
+
+## 5c. Cross-tab picking (v2): open a URL, pick there, return to the caller
+
+The core v2 capability: a SaaS dashboard lets the user enter a URL, opens it, the user picks an
+element (and may edit the selector), clicks OK, the target tab closes, focus returns to the
+dashboard, and the dashboard receives the selector (+ optional element screenshot).
+
+### API (same method, one extra param — caller is unaware of the cross-tab mechanics)
+```ts
+const { selector, screenshot } = await op.pick({
+  url: "https://example.com",   // present → cross-tab; absent → pick on the current page (v1)
+  screenshot: "element",
+})
+```
+- The SDK call and the returned `PickResult` are identical to local picking; the cross-tab dance
+  is internal. `ping` adds capability `"openUrl"` for feature detection.
+
+### Flow
+```
+dashboard tab (source)                         target tab (the url)
+  op.pick({url})
+   → source content script → background
+        background:
+          1. tabs.create({ url })               target loads; content script ready
+          2. map targetTab → {sourceTab, reqId} → "am I a pick target?" (handshake, not a timer)
+          3. reply "yes, pick(params)"          → picker runs: consent → hover → click →
+                                                   sidebar (editable selector) → OK
+                                                 → result (+ cropped screenshot)
+          4. close target tab
+          5. focus source window
+          6. route result back by reqId
+   ← source content script ← background
+  op.pick() resolves with the PickResult
+```
+
+### Key decisions (all decided with the user)
+- **Trigger:** `url` param on `pick` (not a separate method).
+- **On OK:** auto-close the target tab and refocus the source window.
+- **Consent:** bound to the **source origin** (the dashboard), prompted once (PROTOCOL §7); the URL
+  is user-entered and the picker is visible in the foreground tab the whole time.
+- **Open as:** a new **tab** (placed next to / after the source tab), not a new window.
+
+### Engineering points
+- **Readiness handshake, not a delay:** the target content script announces itself to background
+  on load; background checks the map and tells it to start. No `sleep`.
+- **User closes the target tab manually:** background listens to `tabs.onRemoved`; if no OK was
+  received, the source `pick` promise rejects with `cancelled`.
+- **Login-walled targets:** fine — it's a real tab; the user can log in there before picking.
+- **Permissions:** manifest needs `"tabs"` (create/focus/close, read windowId); element screenshots
+  reuse `captureVisibleTab` on the (foreground) target tab.
+
+### Security (the part that needs care)
+Cross-tab amplifies power: a source origin can open an arbitrary URL and read its DOM — close to
+"arbitrary cross-origin read." Mitigations: per-source-origin consent (§6 / PROTOCOL §7); the URL
+is user-entered; the picker is visible in a foreground tab; and (recommended) a banner in the
+target tab — e.g. "openpicker is selecting an element for dashboard.example.com" — for transparency.
+
+---
+
 ## 6. Security Model (key open topic)
 
 > This is where an "open API" differs from a hardcoded origin allowlist, and it is the core
@@ -316,6 +418,9 @@ Open decisions:
 | 11 | Selector settings popover (Mode Unique/List, Exclude, Iframe) | ✅ Decided (§5.1f) |
 | 8 | Support Firefox/Edge from day one (WXT makes this cheap) | ⏳ |
 | 9 | Docs site choice | ⏳ |
+| 12 | Screenshot range (none/element/viewport) | ✅ Decided (§5b) |
+| 13 | Cross-tab picking via `pick({ url })` | ✅ Designed (§5c) — v2, not yet implemented |
+| 14 | "Open by parameter" design principle | ✅ Decided (§1.1) |
 
 ---
 

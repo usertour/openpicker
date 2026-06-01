@@ -115,7 +115,7 @@ Response `result`:
 {
   "extensionVersion": "1.4.0",
   "protocolVersions": [1],
-  "capabilities": ["pick", "highlight", "listMode", "exclude"]
+  "capabilities": ["pick", "highlight", "listMode", "exclude", "screenshot", "openUrl"]
 }
 ```
 - `protocolVersions` — protocol majors the extension supports.
@@ -131,14 +131,20 @@ Request `params` (all optional):
   "mode": "unique",
   "exclude": "css-|sc-|jsx-",
   "iframe": false,
-  "screenshot": false,
+  "screenshot": "element",
+  "url": "https://example.com",
   "appName": "Acme Onboarding"
 }
 ```
 - `mode`: `"unique"` (default) or `"list"` — single element vs a group of similar elements.
 - `exclude`: extra regex of id/class names to exclude (layered on the built-in blacklist).
 - `iframe`: request subframe resolution (v1 may report unsupported; see roadmap).
-- `screenshot`: whether to include a cropped screenshot in the result.
+- `screenshot`: `"none"` (default) | `"element"` (crop to the selected element) | `"viewport"`
+  (full visible viewport). Booleans are accepted for compatibility: `true`→`"element"`,
+  `false`→`"none"`. Reserved (not implemented): `"fullpage"`.
+- `url`: when present, the extension opens this URL in a **new tab**, the user picks there, and
+  the result is routed back to the calling tab; the tab closes and focus returns on OK. Absent →
+  pick on the current page. Requires the `"openUrl"` capability (v2). See DESIGN.md §5c.
 - `appName`: shown in the consent prompt (informational, not trusted).
 
 Response `result` (on OK):
@@ -158,9 +164,10 @@ Response `result` (on OK):
 }
 ```
 - `criteria` — the attributes the user checked as extra match conditions (§ sidebar).
-- `screenshot` present only if requested.
+- `screenshot` present only if requested (a `data:` URL; cropped to the element for `"element"`).
 
-Failure: `consent_denied`, or `cancelled` if the user closes/cancels the picker.
+Failure: `consent_denied`, or `cancelled` if the user closes/cancels the picker (including closing
+the cross-tab target tab before clicking OK).
 
 ### 6.3 `cancel`
 SDK → extension. Cancels an in-flight `pick`. The pending `pick` rejects with `cancelled`.
@@ -259,6 +266,7 @@ manage in settings — a mental model users already know.
 Named here so the envelope and method space leave room (not implemented in v1):
 
 - `screenshot` as a standalone method (beyond the `pick` option)
+- `screenshot: "fullpage"` (scroll-and-stitch capture beyond the viewport)
 - Cross-frame / subframe resolution for iframes (`iframe: true`)
 - Shadow DOM piercing selectors
 - `evt` streaming (`hoverChange`) for SDK-driven custom UI
@@ -272,7 +280,7 @@ Named here so the envelope and method space leave room (not implemented in v1):
 SDK  → ext : {channel:"openpicker", v:1, kind:"req", id:"op:7Hk2:1", method:"ping", params:{}}
 ext  → SDK : {channel:"openpicker", v:1, kind:"res", id:"op:7Hk2:1", ok:true,
               result:{extensionVersion:"1.4.0", protocolVersions:[1],
-                      capabilities:["pick","highlight","listMode","exclude"]}}
+                      capabilities:["pick","highlight","listMode","exclude","screenshot","openUrl"]}}
 
 SDK  → ext : {channel:"openpicker", v:1, kind:"req", id:"op:7Hk2:2", method:"pick",
               params:{mode:"unique", appName:"Acme Onboarding"}}
