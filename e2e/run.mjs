@@ -5,6 +5,9 @@
 // flow against a fixture page: ping -> pick -> consent Allow -> hover an element
 // -> click to lock -> OK -> assert a PickResult with the expected selector.
 //
+// To guarantee the content script injects, we connect at the browser level, wait
+// for the extension's service worker to register, and only then open the tab.
+//
 // Usage:
 //   node e2e/run.mjs [path-to-unpacked-extension]
 // Defaults to packages/extension/.output/chrome-mv3. Override Chrome with
@@ -21,8 +24,9 @@ const HERE = dirname(fileURLToPath(import.meta.url))
 const EXT = resolve(process.argv[2] ?? join(HERE, "..", "packages/extension/.output/chrome-mv3"))
 const CHROME =
   process.env.OPENPICKER_CHROME ?? "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome"
-const PORT = 7410
-const DEBUG_PORT = 9330
+const PORT = 7461
+const DEBUG_PORT = 9361
+const FIXTURE_URL = `http://localhost:${PORT}/`
 const fixture = readFileSync(join(HERE, "fixture.html"), "utf8")
 
 const log = (...a) => console.log(...a)
@@ -43,39 +47,34 @@ const chrome = spawn(CHROME, [
   "--no-default-browser-check",
   `--disable-extensions-except=${EXT}`,
   `--load-extension=${EXT}`,
-  `http://localhost:${PORT}/`,
+  "about:blank",
 ])
 chrome.stderr.on("data", () => {})
 
+// --- minimal flat-session CDP client over the browser-level WebSocket ----------
 let nextId = 0
-const call = (ws, method, params) =>
-  new Promise((resolve) => {
-    const id = ++nextId
-    const onMsg = (ev) => {
-      const m = JSON.parse(ev.data)
-      if (m.id === id) {
-        ws.removeEventListener("message", onMsg)
-        resolve(m.result)
-      }
-    }
-    ws.addEventListener("message", onMsg)
-    ws.send(JSON.stringify({ id, method, params }))
-  })
+const pending = new Map()
+let ws
 
-// Evaluate an expression in the page and return its JSON value. We stringify in
-// the page and parse here — returning objects by value across CDP proved flaky.
-const evalJson = async (ws, expression) => {
-  const wrapped = `JSON.stringify((()=>{try{return (${expression})}catch(e){return {__err:String(e)}}})())`
-  const r = await call(ws, "Runtime.evaluate", {
-    expression: wrapped,
-    returnByValue: true,
-    awaitPromise: true,
+function send(method, params = {}, sessionId) {
+  return new Promise((resolve) => {
+    const id = ++nextId
+    pending.set(id, resolve)
+    ws.send(JSON.stringify({ id, method, params, sessionId }))
   })
+}
+async function evalJson(sessionId, expression) {
+  const wrapped = `JSON.stringify((()=>{try{return (${expression})}catch(e){return {__err:String(e)}}})())`
+  const r = await send(
+    "Runtime.evaluate",
+    { expression: wrapped, returnByValue: true, awaitPromise: true },
+    sessionId,
+  )
   const raw = r?.result?.value
   return raw == null ? null : JSON.parse(raw)
 }
-const run = (ws, expression) =>
-  call(ws, "Runtime.evaluate", { expression, returnByValue: true, awaitPromise: true })
+const run = (sessionId, expression) =>
+  send("Runtime.evaluate", { expression, returnByValue: true, awaitPromise: true }, sessionId)
 
 const dispatchAt = (elId, type, ctor) =>
   `(()=>{const el=document.getElementById('${elId}');const r=el.getBoundingClientRect();` +
@@ -86,78 +85,102 @@ const clickShadowButton = (match) =>
   `const b=[...sr.querySelectorAll('button')].find(x=>${match});if(b){b.click();return true}return false})()`
 
 let exitCode = 1
-let cdp
 try {
-  let pageWs
-  for (let i = 0; i < 40 && !pageWs; i++) {
+  // 1. browser-level CDP endpoint
+  let browserWsUrl
+  for (let i = 0; i < 40 && !browserWsUrl; i++) {
+    await sleep(500)
+    try {
+      browserWsUrl = (await (await fetch(`http://localhost:${DEBUG_PORT}/json/version`)).json())
+        .webSocketDebuggerUrl
+    } catch {}
+  }
+  if (!browserWsUrl) throw new Error("no browser CDP endpoint")
+
+  ws = new WebSocket(browserWsUrl)
+  await new Promise((res, rej) => {
+    ws.addEventListener("open", res, { once: true })
+    ws.addEventListener("error", rej, { once: true })
+  })
+  ws.addEventListener("message", (ev) => {
+    const m = JSON.parse(ev.data)
+    if (m.id && pending.has(m.id)) {
+      const resolve = pending.get(m.id)
+      pending.delete(m.id)
+      resolve(m.result ?? m.error)
+    }
+  })
+
+  // 2. wait for the extension's service worker to register
+  let swReady = false
+  for (let i = 0; i < 40 && !swReady; i++) {
     await sleep(500)
     try {
       const list = await (await fetch(`http://localhost:${DEBUG_PORT}/json`)).json()
-      pageWs = list.find((t) => t.type === "page" && t.url.includes(`localhost:${PORT}`))
-        ?.webSocketDebuggerUrl
+      swReady = list.some((t) => t.type === "service_worker" && t.url.startsWith("chrome-extension://"))
     } catch {}
   }
-  if (!pageWs) throw new Error("no page target")
+  log("extension service worker:", swReady ? "ready" : "NOT FOUND")
 
-  cdp = new WebSocket(pageWs)
-  await new Promise((res, rej) => {
-    cdp.addEventListener("open", res, { once: true })
-    cdp.addEventListener("error", rej, { once: true })
-  })
-  await call(cdp, "Runtime.enable", {})
-  await call(cdp, "Page.enable", {})
+  // 3. open the fixture tab now that the content script is registered
+  const created = await send("Target.createTarget", { url: FIXTURE_URL })
+  const targetId = created?.targetId
+  if (!targetId) throw new Error("Target.createTarget failed")
+  const attached = await send("Target.attachToTarget", { targetId, flatten: true })
+  const sessionId = attached?.sessionId
+  if (!sessionId) throw new Error("attachToTarget failed")
 
-  // The startup tab can load before the extension registers its content script;
-  // reload once it's ready so the content script injects.
-  await sleep(1500)
-  await call(cdp, "Page.reload", {})
-  // Wait until the content script has injected (it sets a data attribute).
-  for (let i = 0; i < 30; i++) {
+  await send("Runtime.enable", {}, sessionId)
+  await send("Page.enable", {}, sessionId)
+
+  // wait for the content script to inject (it sets a data attribute)
+  let injected = false
+  for (let i = 0; i < 30 && !injected; i++) {
     await sleep(300)
-    const marker = await evalJson(cdp, "document.documentElement.dataset.openpicker || null")
-    if (marker === "loaded") break
+    injected = (await evalJson(sessionId, "document.documentElement.dataset.openpicker || null")) === "loaded"
   }
+  log("content script:", injected ? "injected" : "NOT injected")
 
-  // 1. ping
-  await run(cdp, "window.__opPing()")
+  // 4. ping
+  await run(sessionId, "window.__opPing()")
   let pong = null
   for (let i = 0; i < 20 && !pong; i++) {
     await sleep(300)
-    pong = await evalJson(cdp, "window.__op.pong")
+    pong = await evalJson(sessionId, "window.__op.pong")
   }
   const pingOk = !!pong && Array.isArray(pong.protocolVersions) && pong.capabilities?.includes("pick")
   log("ping:", pingOk ? "ok" : "FAILED", JSON.stringify(pong))
 
-  // 2. pick -> consent prompt
-  await run(cdp, "window.__opPick()")
+  // 5. pick -> consent prompt
+  await run(sessionId, "window.__opPick()")
   let shadow = null
   for (let i = 0; i < 25; i++) {
     await sleep(400)
-    shadow = await evalJson(cdp, "window.__opShadow()")
+    shadow = await evalJson(sessionId, "window.__opShadow()")
     if (shadow?.host) break
   }
   const consentOk = !!shadow?.host && /Allow element picking/.test(shadow.text || "")
   log("consent prompt:", consentOk ? "ok" : "FAILED", JSON.stringify(shadow))
 
-  // 3. Allow -> hover -> lock -> OK
-  await run(cdp, clickShadowButton("/Allow/.test(x.textContent)"))
+  // 6. Allow -> hover -> lock -> OK
+  await run(sessionId, clickShadowButton("/Allow/.test(x.textContent)"))
   await sleep(1000)
-  await run(cdp, dispatchAt("cta", "mousemove", "MouseEvent"))
+  await run(sessionId, dispatchAt("cta", "mousemove", "MouseEvent"))
   await sleep(500)
-  await run(cdp, dispatchAt("cta", "pointerdown", "PointerEvent"))
+  await run(sessionId, dispatchAt("cta", "pointerdown", "PointerEvent"))
   await sleep(1200)
 
   const selectorVal = await evalJson(
-    cdp,
+    sessionId,
     "(()=>{const sr=document.querySelector('openpicker-ui').shadowRoot;const i=sr.querySelector('input[type=text]');return i?i.value:null})()",
   )
   log("locked selector:", JSON.stringify(selectorVal))
 
-  await run(cdp, clickShadowButton("x.textContent.trim()==='OK'"))
+  await run(sessionId, clickShadowButton("x.textContent.trim()==='OK'"))
   await sleep(1000)
 
-  // 4. assert the PickResult reached the page
-  const result = await evalJson(cdp, "window.__op.lastRes")
+  // 7. assert the PickResult reached the page
+  const result = await evalJson(sessionId, "window.__op.lastRes")
   log("PickResult:", JSON.stringify(result))
 
   const pickOk =
@@ -175,7 +198,7 @@ try {
   log("ERROR:", e.message)
 } finally {
   try {
-    cdp?.close()
+    ws?.close()
   } catch {}
   chrome.kill("SIGKILL")
   server.close()
