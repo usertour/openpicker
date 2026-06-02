@@ -325,6 +325,10 @@ captures the **visible viewport**; for `"element"` we then crop it on a `<canvas
 
 - Before capturing `"element"`, `scrollIntoView` the target so it's within the viewport (otherwise
   it can't be captured).
+- **Hide the picker UI during capture.** `captureVisibleTab` snapshots rendered pixels, so the
+  sidebar, highlight box, and page dimming would otherwise land in the shot. We set the picker's
+  shadow host to `display:none`, wait a frame, capture, then restore it (it is `position:absolute`,
+  so hiding it does not reflow the page or shift the element's rect). Applies to both modes.
 - No padding — crop tight to the element.
 - If the element is larger than the viewport, only the visible part is captured (a browser limit;
   document it).

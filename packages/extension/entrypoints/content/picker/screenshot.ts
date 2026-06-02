@@ -7,7 +7,28 @@ import { requestScreenshot } from "./messaging"
  * Browsers have no "screenshot one element" API: the background captures the
  * visible viewport (captureVisibleTab), and for "element" we crop that image to
  * the target's bounding rect on a canvas.
+ *
+ * captureVisibleTab snapshots the rendered pixels, so our own UI (sidebar,
+ * highlight box, page dimming) would appear in the shot. We hide the picker's
+ * shadow host for the duration of the capture, then restore it — mirroring the
+ * proven pattern of un-rendering the selection UI before capturing.
  */
+
+function raf2(): Promise<void> {
+  return new Promise((resolve) => {
+    requestAnimationFrame(() => requestAnimationFrame(() => resolve()))
+  })
+}
+
+/** Hide the picker's shadow host so it is not captured; returns a restore fn. */
+function hidePickerUi(host: Element | null | undefined): () => void {
+  if (!(host instanceof HTMLElement)) return () => {}
+  const prev = host.style.display
+  host.style.display = "none"
+  return () => {
+    host.style.display = prev
+  }
+}
 
 /** Normalize the param (which also accepts booleans) to a ScreenshotMode. */
 export function normalizeScreenshotMode(value: ScreenshotMode | boolean | undefined): ScreenshotMode {
@@ -49,28 +70,34 @@ function cropToElement(fullDataUrl: string, el: Element): Promise<string> {
 
 /**
  * Capture per the mode. For "element", scroll it into view first so it's within
- * the captured viewport, then crop. Returns undefined on "none" or on failure.
+ * the captured viewport, then crop. The picker UI (`host`) is hidden during the
+ * capture so it is not in the shot. Returns undefined on "none" or on failure.
  */
 export async function captureScreenshot(
   mode: ScreenshotMode,
   el: Element | null,
+  host?: Element | null,
 ): Promise<string | undefined> {
   if (mode === "none") return undefined
 
   if (mode === "element" && el) {
     el.scrollIntoView({ block: "center", inline: "center" })
-    // Let layout/scroll settle before capturing.
-    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)))
   }
 
-  const full = await requestScreenshot()
-  if (!full) return undefined
-  if (mode === "viewport" || !el) return full
-
+  const restoreUi = hidePickerUi(host)
   try {
-    return await cropToElement(full, el)
-  } catch {
-    // Fall back to the full viewport image if cropping fails.
-    return full
+    // Let the scroll and the hidden UI settle (paint) before capturing.
+    await raf2()
+    const full = await requestScreenshot()
+    if (!full) return undefined
+    if (mode === "viewport" || !el) return full
+    try {
+      return await cropToElement(full, el)
+    } catch {
+      // Fall back to the full viewport image if cropping fails.
+      return full
+    }
+  } finally {
+    restoreUi()
   }
 }

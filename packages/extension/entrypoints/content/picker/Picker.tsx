@@ -214,7 +214,7 @@ export function Picker({ params, host, skipConsent, canNavigate, onResolve }: Pi
     for (const entry of all) {
       if (checked.has(entry.name)) criteria[entry.name] = entry.value
     }
-    const screenshot = await captureScreenshot(normalizeScreenshotMode(params.screenshot), locked)
+    const screenshot = await captureScreenshot(normalizeScreenshotMode(params.screenshot), locked, host)
     const result: PickResult = {
       selector,
       matchCount: countMatches(selector),
@@ -223,7 +223,7 @@ export function Picker({ params, host, skipConsent, canNavigate, onResolve }: Pi
       screenshot,
     }
     onResolve({ type: "result", result })
-  }, [locked, checked, selector, params.screenshot, onResolve])
+  }, [locked, checked, selector, params.screenshot, onResolve, host])
 
   if (phase === "consent") {
     return (
