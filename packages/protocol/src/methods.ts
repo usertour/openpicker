@@ -87,6 +87,15 @@ export interface HighlightResult {
 export type ClearHighlightParams = Record<string, never>
 export type ClearHighlightResult = Record<string, never>
 
+export type ActivateSelfParams = Record<string, never>
+export type ActivateSelfResult = Record<string, never>
+
+export type IsTargetOpenParams = Record<string, never>
+export interface IsTargetOpenResult {
+  /** Whether a cross-tab target tab opened by this source is still open. */
+  open: boolean
+}
+
 /** Maps each method name to its request params and response result. */
 export interface MethodMap {
   ping: { params: PingParams; result: PingResult }
@@ -94,6 +103,10 @@ export interface MethodMap {
   cancel: { params: CancelParams; result: CancelResult }
   highlight: { params: HighlightParams; result: HighlightResult }
   clearHighlight: { params: ClearHighlightParams; result: ClearHighlightResult }
+  /** Bring the calling tab to the foreground (it can only focus itself). */
+  activateSelf: { params: ActivateSelfParams; result: ActivateSelfResult }
+  /** Report whether the cross-tab target opened by this source is still open. */
+  isTargetOpen: { params: IsTargetOpenParams; result: IsTargetOpenResult }
 }
 
 export type MethodName = keyof MethodMap

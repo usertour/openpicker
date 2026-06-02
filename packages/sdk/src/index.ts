@@ -184,6 +184,17 @@ export class Openpicker {
     await this.request("clearHighlight", {}, this.options.defaultTimeout ?? 3000)
   }
 
+  /** Bring the calling tab to the foreground (a tab can only focus itself). */
+  async activateSelf(): Promise<void> {
+    await this.request("activateSelf", {}, this.options.defaultTimeout ?? 3000)
+  }
+
+  /** Whether the cross-tab target tab opened by this tab is still open. */
+  async isTargetOpen(): Promise<boolean> {
+    const { open } = await this.request("isTargetOpen", {}, this.options.defaultTimeout ?? 3000)
+    return open
+  }
+
   /** Stop listening and reject any in-flight requests. */
   destroy(): void {
     if (this.listening) {

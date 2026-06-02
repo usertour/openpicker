@@ -337,6 +337,43 @@ export default defineBackground(() => {
       return true
     }
 
+    // Bring the calling tab to the foreground. A tab can only focus itself
+    // (sender.tab), which is the safe boundary — no arbitrary tab can be raised.
+    if (msg?.kind === "activateSelf") {
+      ;(async () => {
+        try {
+          if (senderTabId !== undefined) await browser.tabs.update(senderTabId, { active: true })
+          if (sender.tab?.windowId !== undefined) {
+            await browser.windows.update(sender.tab.windowId, { focused: true })
+          }
+        } catch {
+          // Tab/window gone.
+        }
+        sendResponse({ ok: true })
+      })()
+      return true
+    }
+
+    // Report whether the cross-tab target opened by this (source) tab is still open.
+    if (msg?.kind === "isTargetOpen") {
+      ;(async () => {
+        let open = false
+        if (senderTabId !== undefined) {
+          const targetId = await getMappedTargetId(senderTabId)
+          if (targetId !== undefined) {
+            try {
+              await browser.tabs.get(targetId)
+              open = true
+            } catch {
+              await unmapByTarget(targetId) // stale; clean it
+            }
+          }
+        }
+        sendResponse({ open })
+      })()
+      return true
+    }
+
     if (msg?.kind === "consent:get") {
       getConsent(origin).then((status) => sendResponse({ status }))
       return true // async response

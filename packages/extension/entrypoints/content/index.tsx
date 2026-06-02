@@ -41,6 +41,8 @@ export default defineContentScript({
       "exclude",
       "screenshot",
       "openUrl",
+      "activateSelf",
+      "isTargetOpen",
     ]
 
     function send(payload: ResponseEnvelope): void {
@@ -96,6 +98,17 @@ export default defineContentScript({
           clearHighlight()
           replyOk(req.id, {})
           return
+        case "activateSelf":
+          await browser.runtime.sendMessage({ kind: "activateSelf" }).catch(() => {})
+          replyOk(req.id, {})
+          return
+        case "isTargetOpen": {
+          const res = (await browser.runtime
+            .sendMessage({ kind: "isTargetOpen" })
+            .catch(() => undefined)) as { open?: boolean } | undefined
+          replyOk(req.id, { open: !!res?.open })
+          return
+        }
         default:
           replyErr(req.id, {
             code: "unsupported",

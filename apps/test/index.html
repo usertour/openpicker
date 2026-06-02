@@ -47,6 +47,11 @@
       <button id="pickUrl" class="primary">Pick on URL (cross-tab)</button>
     </div>
 
+    <div class="row">
+      <button id="isTargetOpen">Is target open?</button>
+      <button id="activateSelf">Activate self (3s delay)</button>
+    </div>
+
     <pre id="out">ready</pre>
     <img id="shot" alt="screenshot of the picked element" />
 
@@ -144,6 +149,25 @@
           showShot(r)
         } catch (err) {
           show("cross-tab pick error", err)
+        }
+      })
+
+      document.getElementById("isTargetOpen").addEventListener("click", async () => {
+        try {
+          show("isTargetOpen", await call("isTargetOpen", {}, 3000))
+        } catch (err) {
+          show("isTargetOpen error", err)
+        }
+      })
+
+      document.getElementById("activateSelf").addEventListener("click", async () => {
+        // Delay so you can switch to another tab and watch this one jump back.
+        out.textContent = "activating self in 3s — switch to another tab now…"
+        await new Promise((r) => setTimeout(r, 3000))
+        try {
+          show("activateSelf", (await call("activateSelf", {}, 3000)) ?? "ok")
+        } catch (err) {
+          show("activateSelf error", err)
         }
       })
     </script>

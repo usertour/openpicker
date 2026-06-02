@@ -115,7 +115,7 @@ Response `result`:
 {
   "extensionVersion": "1.4.0",
   "protocolVersions": [1],
-  "capabilities": ["pick", "highlight", "listMode", "exclude", "screenshot", "openUrl"]
+  "capabilities": ["pick", "highlight", "listMode", "exclude", "screenshot", "openUrl", "activateSelf", "isTargetOpen"]
 }
 ```
 - `protocolVersions` — protocol majors the extension supports.
@@ -188,7 +188,17 @@ Response `result`: `{ "matchCount": number }`
 ### 6.5 `clearHighlight`
 SDK → extension. Removes any active highlight. Response `result`: `{}`.
 
-### 6.6 Events (`evt`)
+### 6.6 `activateSelf`
+SDK → extension. Brings the **calling tab** to the foreground (a page cannot focus its own
+background tab; only the extension can). A tab can only focus itself — there is no parameter to
+target another tab, which keeps it from being used to hijack focus. Response `result`: `{}`.
+
+### 6.7 `isTargetOpen`
+SDK → extension. Reports whether the cross-tab target tab opened by this (source) tab is still
+open. Response `result`: `{ "open": boolean }`. Useful for showing "target page is open/closed"
+state. A stale mapping (tab already gone) is cleaned up and reported as `open: false`.
+
+### 6.8 Events (`evt`)
 v1 defines none as required. The SDK must ignore unknown events.
 
 Reserved for future use: `hoverChange` (live element under the cursor), `consentChange`.
@@ -287,7 +297,7 @@ Named here so the envelope and method space leave room (not implemented in v1):
 SDK  → ext : {channel:"openpicker", v:1, kind:"req", id:"op:7Hk2:1", method:"ping", params:{}}
 ext  → SDK : {channel:"openpicker", v:1, kind:"res", id:"op:7Hk2:1", ok:true,
               result:{extensionVersion:"1.4.0", protocolVersions:[1],
-                      capabilities:["pick","highlight","listMode","exclude","screenshot","openUrl"]}}
+                      capabilities:["pick","highlight","listMode","exclude","screenshot","openUrl","activateSelf","isTargetOpen"]}}
 
 SDK  → ext : {channel:"openpicker", v:1, kind:"req", id:"op:7Hk2:2", method:"pick",
               params:{mode:"unique", appName:"Acme Onboarding"}}
