@@ -57,8 +57,13 @@ export function Picker({ params, host, skipConsent, canNavigate, onResolve }: Pi
   const [locked, setLocked] = useState<Element | null>(null)
   const [side, setSide] = useState<"left" | "right">("right")
   const [settings, setSettings] = useState<SelectorSettings>({
-    exclude: params.exclude ?? "",
-    iframe: params.iframe ?? false,
+    useIds: true,
+    useClasses: true,
+    useAttrs: true,
+    // The SDK's single `exclude` seeds both per-type ignore fields.
+    ignoreId: params.exclude ?? "",
+    ignoreClass: params.exclude ?? "",
+    attrAllow: "",
   })
   const [selector, setSelector] = useState("")
   const [selectorEdited, setSelectorEdited] = useState(false)
@@ -164,14 +169,14 @@ export function Picker({ params, host, skipConsent, canNavigate, onResolve }: Pi
   // (unless the user has manually edited the selector field).
   useEffect(() => {
     if (phase !== "locked" || !locked || selectorEdited) return
-    setSelector(generateSelector(locked, { exclude: settings.exclude }))
-  }, [phase, locked, settings.exclude, selectorEdited])
+    setSelector(generateSelector(locked, settings))
+  }, [phase, locked, settings, selectorEdited])
 
   // Live preview selector under the cursor during hover.
   const preview = useMemo(() => {
     if (phase !== "hover" || !hovered) return null
-    return generateSelector(hovered, { exclude: settings.exclude })
-  }, [phase, hovered, settings.exclude])
+    return generateSelector(hovered, settings)
+  }, [phase, hovered, settings])
 
   const attributes = useMemo(() => (locked ? collectAttributes(locked) : []), [locked])
   // The selector shown in the sidebar: live preview while hovering, the (editable)

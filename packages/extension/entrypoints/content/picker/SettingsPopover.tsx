@@ -1,8 +1,18 @@
 import { RiCloseLine } from "@remixicon/react"
 
 export interface SelectorSettings {
-  exclude: string
-  iframe: boolean
+  /** Whether the selector may use the element's id. */
+  useIds: boolean
+  /** Whether the selector may use the element's classes. */
+  useClasses: boolean
+  /** Whether the selector may use the element's attributes. */
+  useAttrs: boolean
+  /** Regex of id names to ignore (when IDs are enabled). */
+  ignoreId: string
+  /** Regex of class names to ignore (when classes are enabled). */
+  ignoreClass: string
+  /** Attribute names to allow, comma/space/pipe-separated. Empty = a sensible default. */
+  attrAllow: string
 }
 
 interface SettingsPopoverProps {
@@ -11,16 +21,20 @@ interface SettingsPopoverProps {
   onClose: () => void
 }
 
+const fieldClass =
+  "w-full rounded-lg border border-slate-200 bg-white px-2.5 py-1.5 font-mono text-[11px] outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-100 disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400 disabled:placeholder:text-slate-300"
+
 /**
- * Popover from the ⚙️ gear controlling how the selector is generated. Maps onto
- * the selector engine config. See DESIGN.md §5.1f.
+ * Popover from the ⚙️ gear: which parts of the element the generated selector may
+ * use (id / class / attributes), each with its own ignore/allow filter. Maps onto
+ * @medv/finder's idName / className / attr predicates. See DESIGN.md §5.1f.
  */
 export function SettingsPopover({ settings, onChange, onClose }: SettingsPopoverProps) {
   return (
-    <div className="absolute top-11 right-0 z-10 w-64 rounded-xl border border-slate-200 bg-white p-3 shadow-xl">
-      <div className="mb-2.5 flex items-center justify-between">
+    <div className="absolute top-11 right-0 left-0 z-10 rounded-xl border border-slate-200 bg-white p-3 shadow-xl">
+      <div className="mb-3 flex items-center justify-between">
         <span className="font-semibold text-[10px] text-slate-400 uppercase tracking-wider">
-          Selector settings
+          Allow selector types
         </span>
         <button
           type="button"
@@ -32,25 +46,70 @@ export function SettingsPopover({ settings, onChange, onClose }: SettingsPopover
         </button>
       </div>
 
-      <label className="mb-1.5 block font-semibold text-[11px] text-slate-600">Exclude</label>
-      <input
-        type="text"
-        value={settings.exclude}
-        placeholder="Pattern, e.g. keyword|keyword"
-        onChange={(e) => onChange({ exclude: e.target.value })}
-        className="mb-3 w-full rounded-lg border border-slate-200 px-2.5 py-1.5 text-xs outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-100"
-      />
+      <div className="flex flex-col gap-3">
+        {/* ID */}
+        <div className="flex flex-col gap-1.5">
+          <label className="flex items-center gap-2 font-medium text-slate-700 text-xs">
+            <input
+              type="checkbox"
+              checked={settings.useIds}
+              onChange={(e) => onChange({ useIds: e.target.checked })}
+              className="h-3.5 w-3.5 accent-slate-900"
+            />
+            Enable ID
+          </label>
+          <input
+            type="text"
+            value={settings.ignoreId}
+            disabled={!settings.useIds}
+            placeholder="Ignore id pattern"
+            onChange={(e) => onChange({ ignoreId: e.target.value })}
+            className={fieldClass}
+          />
+        </div>
 
-      <label className="flex items-center gap-2 text-[11px] text-slate-600">
-        <input
-          type="checkbox"
-          checked={settings.iframe}
-          onChange={(e) => onChange({ iframe: e.target.checked })}
-          className="h-3.5 w-3.5 accent-slate-900"
-        />
-        <span className="font-medium">Subframe (iframe)</span>
-        <span className="text-slate-400">— coming soon</span>
-      </label>
+        {/* Class */}
+        <div className="flex flex-col gap-1.5">
+          <label className="flex items-center gap-2 font-medium text-slate-700 text-xs">
+            <input
+              type="checkbox"
+              checked={settings.useClasses}
+              onChange={(e) => onChange({ useClasses: e.target.checked })}
+              className="h-3.5 w-3.5 accent-slate-900"
+            />
+            Enable Class
+          </label>
+          <input
+            type="text"
+            value={settings.ignoreClass}
+            disabled={!settings.useClasses}
+            placeholder="Ignore class pattern"
+            onChange={(e) => onChange({ ignoreClass: e.target.value })}
+            className={fieldClass}
+          />
+        </div>
+
+        {/* Attribute */}
+        <div className="flex flex-col gap-1.5">
+          <label className="flex items-center gap-2 font-medium text-slate-700 text-xs">
+            <input
+              type="checkbox"
+              checked={settings.useAttrs}
+              onChange={(e) => onChange({ useAttrs: e.target.checked })}
+              className="h-3.5 w-3.5 accent-slate-900"
+            />
+            Enable Attribute
+          </label>
+          <input
+            type="text"
+            value={settings.attrAllow}
+            disabled={!settings.useAttrs}
+            placeholder="Attributes to use — empty = auto"
+            onChange={(e) => onChange({ attrAllow: e.target.value })}
+            className={fieldClass}
+          />
+        </div>
+      </div>
     </div>
   )
 }

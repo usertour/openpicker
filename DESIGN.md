@@ -225,26 +225,32 @@ map onto `@medv/finder` configuration, surfaced as UI.
 
 ```
 ┌──────────────────────────────────┐
-│ Selector settings             ✕  │
-│                                  │
-│ Exclude                          │
-│ [ Pattern, e.g. keyword|keyword ]│  regex of id/class names to exclude
-│                                  │
-│ Subframe (Iframe)                │
-│ ( OFF ) Custom Match             │  toggle: resolve elements inside iframes
+│ ALLOW SELECTOR TYPES          ✕  │
+│ ☑ Enable ID                      │
+│   [ Ignore id pattern          ] │
+│ ☑ Enable Class                   │
+│   [ Ignore class pattern       ] │
+│ ☑ Enable Attribute               │
+│   [ data-testid, name          ] │  empty = a sensible default set
 └──────────────────────────────────┘
 ```
 
 - The generated selector always targets **exactly one element** (finder's unique selector). A
   "list / group" mode was considered but cut — openpicker's purpose is targeting a single element,
   and the feature was borrowed from a reference UI without a real use case (see git history).
-- **Exclude**: a regex of id/class names to exclude from generation (e.g. `css-|sc-|jsx-`).
-  Layered on top of openpicker's **built-in default blacklist** that already filters hashed
-  Tailwind / CSS-in-JS classes; this field lets the user add their own patterns. Maps to
-  finder's `className` / `idName` predicates.
-- **Subframe (Iframe): Custom Match** (toggle, default off): handle elements inside iframes.
-  UI is present in v1, but actual cross-origin iframe resolution is **deferred to v2** (requires
-  injecting into child frames — see open decision on iframe support). Same-origin may come first.
+- **Enable ID / Class / Attribute** (default all on): whether the selector may anchor on each kind.
+  Unchecking a kind disables finder's corresponding predicate (`idName` / `className` / `attr`).
+- **Ignore id / class pattern**: per-type regex of names to skip, on top of openpicker's built-in
+  blacklist that already filters hashed Tailwind / CSS-in-JS names. (The SDK's single `exclude`
+  param seeds both fields.)
+- **Attributes to use**: comma/space/pipe-separated attribute names to allow (e.g. `data-testid,
+  name`). **Empty = a sensible default**: test hooks (`data-testid`…) plus finder's curated set
+  (`name` / `aria-label` / `role` / `href` / `data-*`). This is what fixes attributes that the old
+  test-hooks-only filter used to throw away.
+- Changes update the live selector preview and match count immediately.
+- **Subframe (iframe)** is **not** in the panel — picking inside iframes is deferred to v2 (needs
+  injecting into child frames and a two-part result `{ frame, selector }`; see §5d open items). The
+  reserved `iframe` request param remains documented but unimplemented.
 
 ### 5.1e On-page aids while a selection is active
 - **Highlight box + page dimming** (required) — the single box-shadow technique in §5.3

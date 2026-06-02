@@ -1,4 +1,4 @@
-import { finder } from "@medv/finder"
+import { attr as defaultAttr, finder } from "@medv/finder"
 
 /**
  * Selector generation, built on @medv/finder (a dependency) plus filters that
@@ -28,17 +28,46 @@ const HASHED_CLASS_PATTERNS: RegExp[] = [
 const PREFERRED_ATTR = /^data-(testid|test|test-id|cy|qa)$/i
 
 export interface SelectorConfig {
-  /** Extra regex (source string) of id/class names to exclude. */
-  exclude?: string
+  /** Whether the selector may use the element's id. */
+  useIds: boolean
+  /** Whether the selector may use the element's classes. */
+  useClasses: boolean
+  /** Whether the selector may use the element's attributes. */
+  useAttrs: boolean
+  /** Regex (source string) of id names to ignore. */
+  ignoreId?: string
+  /** Regex (source string) of class names to ignore. */
+  ignoreClass?: string
+  /**
+   * Comma/space/pipe-separated attribute names to allow as anchors. Empty → a
+   * sensible default set (test hooks + finder's defaults: name/aria-label/role/…).
+   */
+  attrAllow?: string
 }
 
-function compileExclude(exclude: string | undefined): RegExp | null {
-  if (!exclude) return null
+function compileExclude(pattern: string | undefined): RegExp | null {
+  if (!pattern) return null
   try {
-    return new RegExp(exclude)
+    return new RegExp(pattern)
   } catch {
     return null
   }
+}
+
+/** Parse the attribute allow-list; null means "use the default set". */
+function parseAttrAllow(raw: string | undefined): string[] | null {
+  const list = (raw ?? "")
+    .split(/[\s,|]+/)
+    .map((s) => s.trim().toLowerCase())
+    .filter(Boolean)
+  return list.length ? list : null
+}
+
+/** Whether finder may use this attribute, per the allow-list (or the default set). */
+function attrAllowed(name: string, value: string, allow: string[] | null): boolean {
+  if (allow) return allow.includes(name.toLowerCase())
+  // Default: prefer test hooks, plus finder's own curated set (name/aria-label/role/href/data-*).
+  return PREFERRED_ATTR.test(name) || defaultAttr(name, value)
 }
 
 function matchesAny(name: string, patterns: RegExp[]): boolean {
@@ -58,28 +87,33 @@ export function isStableClass(name: string, excludeRe: RegExp | null): boolean {
 }
 
 /** Fallback when finder can't produce a unique selector: tag + stable classes. */
-function fallbackSelector(el: Element, excludeRe: RegExp | null): string {
+function fallbackSelector(el: Element, useClasses: boolean, ignoreClassRe: RegExp | null): string {
   const tag = el.tagName.toLowerCase()
+  if (!useClasses) return tag
   const classes =
     typeof el.className === "string"
-      ? el.className.trim().split(/\s+/).filter((c) => c && isStableClass(c, excludeRe))
+      ? el.className.trim().split(/\s+/).filter((c) => c && isStableClass(c, ignoreClassRe))
       : []
   if (classes.length === 0) return tag
   return `${tag}.${classes.map((c) => CSS.escape(c)).join(".")}`
 }
 
-/** Generate a unique CSS selector for an element. */
+const never = () => false
+
+/** Generate a unique CSS selector for an element, honoring the anchor settings. */
 export function generateSelector(el: Element, config: SelectorConfig): string {
-  const excludeRe = compileExclude(config.exclude)
+  const ignoreIdRe = compileExclude(config.ignoreId)
+  const ignoreClassRe = compileExclude(config.ignoreClass)
+  const allow = parseAttrAllow(config.attrAllow)
   try {
     return finder(el, {
-      idName: (name) => isStableId(name, excludeRe),
-      className: (name) => isStableClass(name, excludeRe),
-      attr: (name) => PREFERRED_ATTR.test(name),
+      idName: config.useIds ? (name) => isStableId(name, ignoreIdRe) : never,
+      className: config.useClasses ? (name) => isStableClass(name, ignoreClassRe) : never,
+      attr: config.useAttrs ? (name, value) => attrAllowed(name, value, allow) : never,
     })
   } catch {
     // finder throws if it cannot find a unique selector; fall back to a tag path.
-    return fallbackSelector(el, excludeRe)
+    return fallbackSelector(el, config.useClasses, ignoreClassRe)
   }
 }
 
