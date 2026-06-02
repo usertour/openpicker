@@ -18,6 +18,7 @@ import { RulerGuides } from "./RulerGuides"
 import { captureScreenshot, normalizeScreenshotMode } from "./screenshot"
 import { evalSelector, generateSelector, matchCount as countMatches } from "./selector"
 import type { SelectorSettings } from "./SettingsPopover"
+import { saveSelectorSettings } from "./settingsStore"
 import { Sidebar } from "./Sidebar"
 import { TagTooltip } from "./TagTooltip"
 import { useTrackedRect } from "./useTrackedRect"
@@ -43,10 +44,19 @@ interface PickerProps {
    * the requester, so this stays off.
    */
   canNavigate?: boolean
+  /** Initial selector settings (loaded per-origin, with the SDK `exclude` applied). */
+  initialSettings: SelectorSettings
   onResolve: (outcome: PickOutcome) => void
 }
 
-export function Picker({ params, host, skipConsent, canNavigate, onResolve }: PickerProps) {
+export function Picker({
+  params,
+  host,
+  skipConsent,
+  canNavigate,
+  initialSettings,
+  onResolve,
+}: PickerProps) {
   // Resume straight into navigate mode if a navigation happened mid-pick while the
   // user was navigating (the flag rides the target tab's sessionStorage). Otherwise
   // a cross-tab target resumes in hover; a fresh same-tab pick asks consent first.
@@ -56,15 +66,7 @@ export function Picker({ params, host, skipConsent, canNavigate, onResolve }: Pi
   const [hovered, setHovered] = useState<Element | null>(null)
   const [locked, setLocked] = useState<Element | null>(null)
   const [side, setSide] = useState<"left" | "right">("right")
-  const [settings, setSettings] = useState<SelectorSettings>({
-    useIds: true,
-    useClasses: true,
-    useAttrs: true,
-    // The SDK's single `exclude` seeds both per-type ignore fields.
-    ignoreId: params.exclude ?? "",
-    ignoreClass: params.exclude ?? "",
-    attrAllow: "",
-  })
+  const [settings, setSettings] = useState<SelectorSettings>(initialSettings)
   const [selector, setSelector] = useState("")
   const [selectorEdited, setSelectorEdited] = useState(false)
 
@@ -293,7 +295,13 @@ export function Picker({ params, host, skipConsent, canNavigate, onResolve }: Pi
         side={side}
         tree={tree}
         onSelectorChange={editSelector}
-        onSettingsChange={(patch) => setSettings((s) => ({ ...s, ...patch }))}
+        onSettingsChange={(patch) =>
+          setSettings((s) => {
+            const next = { ...s, ...patch }
+            saveSelectorSettings(window.origin, next)
+            return next
+          })
+        }
         onSwapSide={() => setSide((s) => (s === "right" ? "left" : "right"))}
         onReselect={reselect}
         canNavigate={!!canNavigate}

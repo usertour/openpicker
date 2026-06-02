@@ -2,6 +2,8 @@ import type { PickParams, PickResult } from "@openpicker/protocol"
 import ReactDOM from "react-dom/client"
 import { mountShadow } from "./mount"
 import { Picker } from "./Picker"
+import { defaultSelectorSettings } from "./SettingsPopover"
+import { loadSelectorSettings } from "./settingsStore"
 
 /** Outcome of a pick: a confirmed result, a user cancel, or a consent denial. */
 export type PickOutcome =
@@ -33,6 +35,13 @@ export async function runPicker(
   if (active) return { type: "cancelled" }
   active = true
 
+  // Per-origin selector settings (a site's conventions are remembered). The SDK's
+  // `exclude` takes priority over the saved ignore patterns when the caller passes it.
+  const saved = (await loadSelectorSettings(window.origin)) ?? defaultSelectorSettings()
+  const initialSettings = params.exclude
+    ? { ...saved, ignoreId: params.exclude, ignoreClass: params.exclude }
+    : saved
+
   const mount = await mountShadow()
   const root = ReactDOM.createRoot(mount.container)
 
@@ -54,6 +63,7 @@ export async function runPicker(
         host={mount.host}
         skipConsent={options.skipConsent}
         canNavigate={options.canNavigate}
+        initialSettings={initialSettings}
         onResolve={finish}
       />,
     )

@@ -15,6 +15,18 @@ export interface SelectorSettings {
   attrAllow: string
 }
 
+/** Fresh settings: all anchor types on, nothing ignored, attributes auto. */
+export function defaultSelectorSettings(): SelectorSettings {
+  return {
+    useIds: true,
+    useClasses: true,
+    useAttrs: true,
+    ignoreId: "",
+    ignoreClass: "",
+    attrAllow: "",
+  }
+}
+
 interface SettingsPopoverProps {
   settings: SelectorSettings
   onChange: (patch: Partial<SelectorSettings>) => void
