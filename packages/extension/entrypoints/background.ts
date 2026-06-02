@@ -69,6 +69,28 @@ async function unmapByTarget(targetTabId: number): Promise<void> {
   await browser.storage.session.remove(keys)
 }
 
+/**
+ * Sweep the whole map and drop any entry whose tab no longer exists. The tabId is
+ * encoded in the key, so we can check each one with `tabs.get`. This is a belt-and-
+ * suspenders backstop to the precise `tabs.onRemoved` cleanup, run opportunistically
+ * when a new target tab is created (covers any onRemoved we might have missed).
+ */
+async function sweepStaleMappings(): Promise<void> {
+  const all = await browser.storage.session.get(null)
+  const staleKeys: string[] = []
+  for (const key of Object.keys(all)) {
+    const match = key.match(/^op:(sourceToTarget|targetToSource):(\d+)$/)
+    if (!match) continue
+    const tabId = Number(match[2])
+    try {
+      await browser.tabs.get(tabId)
+    } catch {
+      staleKeys.push(key) // tab is gone
+    }
+  }
+  if (staleKeys.length > 0) await browser.storage.session.remove(staleKeys)
+}
+
 /** Wait until a tab has finished loading (status "complete"). */
 function waitForTabComplete(tabId: number, timeoutMs = 30000): Promise<boolean> {
   return new Promise((resolve) => {
@@ -155,6 +177,9 @@ async function runCrossTabPick(
 
   // Otherwise open a new tab next to the source.
   if (targetId === undefined) {
+    // Opportunistic backstop sweep when creating a new target (mirrors the
+    // reference pattern's "clean on create"); complements tabs.onRemoved.
+    await sweepStaleMappings()
     const created = await browser.tabs.create({
       url,
       active: true,
