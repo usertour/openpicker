@@ -20,11 +20,22 @@ async function loadCss(): Promise<string> {
     // CSS_PATH is a generated content-script asset, not in WXT's typed PublicPath.
     const url = (browser.runtime.getURL as (p: string) => string)(`/${CSS_PATH}`)
     const res = await fetch(url)
-    cachedCss = await res.text()
+    cachedCss = remToPx(await res.text())
   } catch {
     cachedCss = ""
   }
   return cachedCss
+}
+
+/**
+ * Convert `rem` units to fixed `px` (1rem = 16px). `rem` always resolves against
+ * the host page's <html> font-size — even inside a shadow root — so without this
+ * our UI's text and spacing would scale with whatever root font-size the page sets.
+ * Pinning to px makes the picker render at consistent sizes on every site (browser
+ * zoom, which scales px too, still works).
+ */
+function remToPx(css: string): string {
+  return css.replace(/(-?[\d.]+)rem\b/g, (_m, n) => `${Number.parseFloat(n) * 16}px`)
 }
 
 export interface ShadowMount {
