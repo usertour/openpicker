@@ -33,7 +33,7 @@ export function SettingsPopover({ settings, onChange, onClose }: SettingsPopover
   return (
     <div className="absolute top-12 right-2 left-2 z-20 rounded-xl border border-slate-200 bg-white p-3 shadow-xl">
       <div className="mb-3 flex items-center justify-between">
-        <span className="font-semibold text-[10px] text-slate-400 uppercase tracking-wider">
+        <span className="font-semibold text-[10px] text-slate-500 uppercase tracking-wider">
           Allow selector types
         </span>
         <button

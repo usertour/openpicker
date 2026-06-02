@@ -76,7 +76,7 @@ function isFocusable(target: EventTarget | null): boolean {
 // Shared styles for a consistent, refined look.
 const iconBtn =
   "grid h-7 w-7 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
-const sectionLabel = "px-0.5 font-semibold text-[10px] text-slate-400 uppercase tracking-wider"
+const sectionLabel = "px-0.5 font-semibold text-[10px] text-slate-500 uppercase tracking-wider"
 
 export function Sidebar(props: SidebarProps) {
   const [settingsOpen, setSettingsOpen] = useState(false)
@@ -105,7 +105,7 @@ export function Sidebar(props: SidebarProps) {
       }`}
     >
       {/* Header */}
-      <div className="flex items-center justify-between border-slate-100 border-b px-3 py-2.5">
+      <div className="flex items-center justify-between border-slate-200 border-b px-3 py-2.5">
         <div className="flex items-center gap-2">
           <span className="grid h-6 w-6 place-items-center rounded-md bg-slate-900 text-white">
             <RiCrosshair2Line size={14} />
@@ -224,7 +224,7 @@ export function Sidebar(props: SidebarProps) {
           <>
             <div className="flex flex-col gap-1.5">
               <span className={sectionLabel}>Element</span>
-              <div className="rounded-xl border border-slate-200 bg-slate-50/50">
+              <div className="rounded-xl border border-slate-200 bg-slate-50">
                 <TreeNavigator {...props.tree} />
               </div>
             </div>
@@ -238,7 +238,7 @@ export function Sidebar(props: SidebarProps) {
 
       {/* Footer (locked only) */}
       {locked && (
-        <div className="flex justify-end gap-2 border-slate-100 border-t px-3 py-2.5">
+        <div className="flex justify-end gap-2 border-slate-200 border-t px-3 py-2.5">
           <button
             type="button"
             onClick={props.onCancel}
