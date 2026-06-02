@@ -62,7 +62,7 @@ export function TreeNavigator(props: TreeNavigatorProps) {
           <button
             type="button"
             onClick={props.onCenter}
-            className="max-w-[10rem] truncate rounded-md bg-slate-900 px-2.5 py-1 font-medium font-mono text-[11px] text-white shadow-sm transition-colors hover:bg-slate-700"
+            className="min-w-0 max-w-[10rem] truncate rounded-md bg-slate-900 px-2.5 py-1 font-medium font-mono text-[11px] text-white shadow-sm transition-colors hover:bg-slate-700"
           >
             {props.currentLabel}
           </button>
