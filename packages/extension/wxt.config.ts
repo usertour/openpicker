@@ -23,5 +23,6 @@ export default defineConfig({
     // screenshot capability to work on any page.
     host_permissions: ["<all_urls>"],
     // The toolbar action + its popup are wired automatically from entrypoints/popup.
+    // (The options page opens as a full tab — see the meta tag in options/index.html.)
   },
 })
