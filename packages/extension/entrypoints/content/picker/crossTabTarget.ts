@@ -15,7 +15,7 @@ const MARKER_KEY = "openpicker:crossTabPick"
 
 interface Marker {
   sourceTabId: number
-  params: PickParams
+  params: Partial<PickParams>
 }
 
 function readMarker(): Marker | null {
@@ -46,7 +46,7 @@ function clearMarker(): void {
 let running = false
 
 /** Run the picker as a cross-tab target and push the outcome to the background. */
-async function runAndReport(sourceTabId: number, params: PickParams): Promise<void> {
+async function runAndReport(sourceTabId: number, params: Partial<PickParams>): Promise<void> {
   if (running) return
   running = true
   writeMarker({ sourceTabId, params })
@@ -60,7 +60,7 @@ async function runAndReport(sourceTabId: number, params: PickParams): Promise<vo
 }
 
 /** Called when the background tells this tab (freshly) to run a cross-tab pick. */
-export function startCrossTabTarget(sourceTabId: number, params: PickParams): void {
+export function startCrossTabTarget(sourceTabId: number, params: Partial<PickParams>): void {
   void runAndReport(sourceTabId, params)
 }
 
@@ -75,7 +75,7 @@ export async function resumeCrossTabTargetOnLoad(): Promise<void> {
   if (!marker) return
   try {
     const res = (await browser.runtime.sendMessage({ kind: "crossTab:hello" })) as
-      | { run?: boolean; sourceTabId?: number; params?: PickParams }
+      | { run?: boolean; sourceTabId?: number; params?: Partial<PickParams> }
       | undefined
     if (res?.run && res.sourceTabId !== undefined) {
       void runAndReport(res.sourceTabId, res.params ?? marker.params)

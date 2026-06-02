@@ -52,7 +52,13 @@ import { createOpenpicker } from "openpicker"
 
 const op = createOpenpicker({ appName: "My App" })
 if (await op.isAvailable()) {
-  const { selector, matchCount, element } = await op.pick({ mode: "unique" })
+  // `url` is required: the extension opens it in a tab, the user picks there,
+  // and the selector is routed back here. (Picking across the tab/origin boundary
+  // is the thing a page can't do for itself — that's why the extension exists.)
+  const { selector, matchCount, element } = await op.pick({
+    url: "https://app.example.com",
+    mode: "unique",
+  })
 }
 ```
 

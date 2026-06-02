@@ -39,12 +39,11 @@
         <option value="element" selected>element</option>
         <option value="viewport">viewport</option>
       </select>
-      <button id="pick" class="primary">Pick on this page</button>
     </div>
 
     <div class="row">
       <input id="url" type="text" placeholder="https://example.com" value="https://example.com" />
-      <button id="pickUrl" class="primary">Pick on URL (cross-tab)</button>
+      <button id="pickUrl" class="primary">Pick on URL</button>
     </div>
 
     <div class="row">
@@ -124,31 +123,18 @@
         }
       })
 
-      document.getElementById("pick").addEventListener("click", async () => {
-        const screenshot = document.getElementById("shotMode").value
-        out.textContent = "picking on this page…"
-        shot.style.display = "none"
-        try {
-          const r = await call("pick", { mode: "unique", screenshot })
-          show("pick ok", r)
-          showShot(r)
-        } catch (err) {
-          show("pick error", err)
-        }
-      })
-
       document.getElementById("pickUrl").addEventListener("click", async () => {
         const url = document.getElementById("url").value.trim()
         const screenshot = document.getElementById("shotMode").value
-        if (!url) return show("pick on url", { error: "enter a URL first" })
+        if (!url) return show("pick", { error: "enter a URL first" })
         out.textContent = `opening ${url} and picking there…`
         shot.style.display = "none"
         try {
           const r = await call("pick", { url, mode: "unique", screenshot })
-          show("cross-tab pick ok", r)
+          show("pick ok", r)
           showShot(r)
         } catch (err) {
-          show("cross-tab pick error", err)
+          show("pick error", err)
         }
       })
 

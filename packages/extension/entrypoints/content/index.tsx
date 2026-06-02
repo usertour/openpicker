@@ -54,13 +54,22 @@ export default defineContentScript({
     }
 
     async function handlePick(req: RequestEnvelope<"pick">): Promise<void> {
-      // Cross-tab: resolve consent for THIS (source) origin, then open the URL,
-      // pick there, and route the result back (DESIGN.md §5c).
-      const outcome = req.params.url
-        ? (await ensureConsent(req.params.appName))
-          ? await runCrossTabPick(req.params)
-          : ({ type: "denied" } as const)
-        : await runPicker(req.params)
+      // pick is cross-tab only: the extension opens `url` in a tab and picks there,
+      // routing the result back. A page can already script its own DOM, so same-tab
+      // picking is not an SDK capability (only the toolbar offers it, for humans).
+      if (!req.params.url) {
+        replyErr(req.id, {
+          code: "invalid_params",
+          message: "openpicker: pick requires a `url` to open and pick in",
+        })
+        return
+      }
+
+      // Resolve consent for THIS (source) origin, then open the URL, pick there,
+      // and route the result back (DESIGN.md §5c).
+      const outcome = (await ensureConsent(req.params.appName))
+        ? await runCrossTabPick(req.params)
+        : ({ type: "denied" } as const)
 
       if (outcome.type === "result") {
         replyOk(req.id, outcome.result)

@@ -2,10 +2,12 @@
 // Protocol with zero dependencies (Node 22+ provides global fetch and WebSocket).
 //
 // It loads the built extension into headless Chrome and exercises:
-//   1. local pick   — ping -> pick -> consent Allow -> hover -> click -> OK, with
-//                     an element screenshot, asserting a PickResult.
-//   2. cross-tab    — pick({ url }) from a source tab opens a target tab, the pick
-//                     runs there, and the result routes back to the source tab.
+//   1. ping       — from a source tab, asserting the "openUrl" capability.
+//   2. cross-tab  — pick({ url }) from the source tab opens a target tab, the pick
+//                   runs there (consent Allow -> hover -> click -> OK, with an
+//                   element screenshot), and the result routes back to the source tab.
+//
+// pick is cross-tab only (it requires `url`), so there is no local-pick test.
 //
 // To guarantee the content script injects, we connect at the browser level, wait
 // for the extension's service worker to register, and only then open tabs.
@@ -165,7 +167,7 @@ try {
   }
   log("extension service worker:", swReady ? "ready" : "NOT FOUND")
 
-  // ---- Test 1: local pick + element screenshot ----
+  // ---- Test 1: ping (source tab) ----
   const t1 = await send("Target.createTarget", { url: FIXTURE_URL })
   const s1 = await attach(t1.targetId)
   log("source content script:", (await waitInjected(s1)) ? "injected" : "NOT injected")
@@ -179,22 +181,9 @@ try {
   const pingOk = !!pong && pong.capabilities?.includes("openUrl")
   log("ping:", pingOk ? "ok" : "FAILED", JSON.stringify(pong))
 
-  await run(s1, "window.__opPick({screenshot:'element'})")
-  const sel1 = await drivePicker(s1)
-  await sleep(800)
-  const r1 = await evalJson(s1, "window.__op.lastRes")
-  const localOk =
-    typeof sel1 === "string" &&
-    sel1.length > 0 &&
-    r1?.ok === true &&
-    r1.result?.element?.tag === "button" &&
-    typeof r1.result?.screenshot === "string" &&
-    r1.result.screenshot.startsWith("data:image/")
-  log("local pick:", localOk ? "ok" : "FAILED", "selector=", JSON.stringify(sel1), "hasShot=", !!r1?.result?.screenshot)
-
-  // ---- Test 2: cross-tab pick ----
+  // ---- Test 2: cross-tab pick + element screenshot ----
   const before = attachedTargets.length
-  await run(s1, `window.__opPick({ url: ${JSON.stringify(FIXTURE_URL)} })`)
+  await run(s1, `window.__opPick({ url: ${JSON.stringify(FIXTURE_URL)}, screenshot: "element" })`)
   // wait for the target tab to be created and injected
   let targetSession
   for (let i = 0; i < 40 && !targetSession; i++) {
@@ -216,11 +205,20 @@ try {
       typeof sel2 === "string" &&
       sel2.length > 0 &&
       r2?.ok === true &&
-      r2.result?.element?.tag === "button"
-    log("cross-tab pick:", crossOk ? "ok" : "FAILED", "selector=", JSON.stringify(sel2))
+      r2.result?.element?.tag === "button" &&
+      typeof r2.result?.screenshot === "string" &&
+      r2.result.screenshot.startsWith("data:image/")
+    log(
+      "cross-tab pick:",
+      crossOk ? "ok" : "FAILED",
+      "selector=",
+      JSON.stringify(sel2),
+      "hasShot=",
+      !!r2?.result?.screenshot,
+    )
   }
 
-  const allOk = pingOk && localOk && crossOk
+  const allOk = pingOk && crossOk
   log("")
   log(allOk ? "PASS" : "FAIL")
   exitCode = allOk ? 0 : 1

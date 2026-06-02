@@ -125,14 +125,14 @@ Response `result`:
 ### 6.2 `pick` (start element selection)
 SDK → extension. Activates the picker; resolves when the user confirms (OK) in the sidebar.
 
-Request `params` (all optional):
+Request `params` (`url` required, the rest optional):
 ```json
 {
+  "url": "https://example.com",
   "mode": "unique",
   "exclude": "css-|sc-|jsx-",
   "iframe": false,
   "screenshot": "element",
-  "url": "https://example.com",
   "key": "onboarding-step-1",
   "appName": "Acme Onboarding"
 }
@@ -143,10 +143,12 @@ Request `params` (all optional):
 - `screenshot`: `"none"` (default) | `"element"` (crop to the selected element) | `"viewport"`
   (full visible viewport). Booleans are accepted for compatibility: `true`→`"element"`,
   `false`→`"none"`. Reserved (not implemented): `"fullpage"`.
-- `url`: when present, the extension opens this URL in a **new tab**, the user picks there, and the
+- `url` (**required**): the extension opens this URL in a **new tab**, the user picks there, and the
   result is routed back to the calling tab; focus returns to the source tab on finish. The target
-  tab is **not** closed (the caller/user keeps it; a later pick may reuse it). Absent → pick on the
-  current page. Requires the `"openUrl"` capability. See DESIGN.md §5c/§5d.
+  tab is **not** closed (the caller/user keeps it; a later pick may reuse it). `pick` is cross-tab
+  only — an extension earns its keep by crossing the tab/origin boundary; a page can already script
+  its own DOM, so same-tab picking is not an SDK capability (only the toolbar offers it, for humans).
+  Omitting `url` returns `invalid_params`. Requires the `"openUrl"` capability. See DESIGN.md §5c/§5d.
 - `key`: optional, caller-supplied opaque string identifying "which task" this pick is for. Used
   only to decide whether a follow-up `url` pick reuses the existing target tab or opens a new one
   (equality compare; never interpreted). No `key` → reuse is decided by host/URL alone. See

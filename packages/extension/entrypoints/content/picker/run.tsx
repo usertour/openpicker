@@ -25,7 +25,7 @@ export function cancelActivePicker(): void {
  * resolved against the source origin before the tab was opened.
  */
 export async function runPicker(
-  params: PickParams,
+  params: Partial<PickParams> = {},
   options: { skipConsent?: boolean } = {},
 ): Promise<PickOutcome> {
   if (active) return { type: "cancelled" }

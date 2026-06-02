@@ -23,10 +23,11 @@ import { useTrackedRect } from "./useTrackedRect"
 
 import type { PickOutcome } from "./run"
 
-type Phase = "consent" | "hover" | "locked"
+type Phase = "consent" | "hover" | "locked" | "navigate"
 
 interface PickerProps {
-  params: PickParams
+  /** Picker-side options (mode/exclude/screenshot/appName); `url` is not used here. */
+  params: Partial<PickParams>
   /** Our shadow host element, excluded from targeting. */
   host: Element
   /**
@@ -34,10 +35,17 @@ interface PickerProps {
    * target tab, where consent was already resolved in the source tab.
    */
   skipConsent?: boolean
+  /**
+   * Allow suspending the pick to navigate the page (Alt+S). Only safe in the
+   * cross-tab target tab: the pick resumes after navigation and the result is
+   * routed back via the background. In a same-tab pick, navigating would destroy
+   * the requester, so this stays off.
+   */
+  canNavigate?: boolean
   onResolve: (outcome: PickOutcome) => void
 }
 
-export function Picker({ params, host, skipConsent, onResolve }: PickerProps) {
+export function Picker({ params, host, skipConsent, canNavigate, onResolve }: PickerProps) {
   const [phase, setPhase] = useState<Phase>(skipConsent ? "hover" : "consent")
   const [hovered, setHovered] = useState<Element | null>(null)
   const [locked, setLocked] = useState<Element | null>(null)

@@ -339,15 +339,19 @@ element (and may edit the selector), clicks OK; focus returns to the dashboard a
 selector (+ optional element screenshot). The target tab stays open (it is not closed) so the user
 can keep working in it and a follow-up pick can reuse it (§5e).
 
-### API (same method, one extra param — caller is unaware of the cross-tab mechanics)
+### API (caller is unaware of the cross-tab mechanics)
 ```ts
 const { selector, screenshot } = await op.pick({
-  url: "https://example.com",   // present → cross-tab; absent → pick on the current page (v1)
+  url: "https://example.com",   // required — the page to open and pick in
   screenshot: "element",
 })
 ```
-- The SDK call and the returned `PickResult` are identical to local picking; the cross-tab dance
-  is internal. `ping` adds capability `"openUrl"` for feature detection.
+- `pick` is **cross-tab only**: `url` is required, and omitting it returns `invalid_params`. The
+  rationale is the product's reason to exist — an extension earns its keep by crossing the tab/origin
+  boundary, and a page can already script its own DOM, so same-tab picking is not an SDK capability.
+  (The toolbar icon offers a same-tab pick for humans inspecting a page; that is not the SDK path.)
+- The cross-tab dance is internal; the returned `PickResult` carries the selector (+ optional
+  element screenshot). `ping` adds capability `"openUrl"` for feature detection.
 
 ### Flow
 ```

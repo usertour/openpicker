@@ -163,8 +163,12 @@ export class Openpicker {
     }
   }
 
-  /** Start element selection; resolves when the user confirms (OK) in the sidebar. */
-  pick(params: PickParams = {}): Promise<PickResult> {
+  /**
+   * Open `params.url` in a tab and start element selection there; resolves when the
+   * user confirms (OK) in the sidebar. `url` is required — the extension picks
+   * across the tab/origin boundary, which is the thing a page can't do for itself.
+   */
+  pick(params: PickParams): Promise<PickResult> {
     // No timeout: a pick is user-driven and may take arbitrarily long.
     return this.request("pick", { appName: this.options.appName, ...params }, 0)
   }

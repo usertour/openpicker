@@ -37,11 +37,13 @@ export interface PickParams {
    */
   screenshot?: ScreenshotMode | boolean
   /**
-   * When present, the extension opens this URL in a new tab, the user picks there,
-   * and the result is routed back to the calling tab (cross-tab picking, v2).
-   * Absent → pick on the current page. Requires the "openUrl" capability.
+   * The URL to pick in. The extension opens it in a tab, the user picks there, and
+   * the result is routed back to the calling tab (cross-tab picking). Required: an
+   * extension earns its keep by crossing the tab/origin boundary — a page can
+   * already script its own DOM, so same-tab picking is not an SDK capability (only
+   * the toolbar offers it, for humans). Requires the "openUrl" capability.
    */
-  url?: string
+  url: string
   /**
    * Optional opaque identifier for "which task" this pick is for. Only used to
    * decide whether a follow-up cross-tab pick reuses the existing target tab or

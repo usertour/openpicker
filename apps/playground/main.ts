@@ -42,28 +42,16 @@ document.getElementById("ping")?.addEventListener("click", async () => {
   }
 })
 
-document.getElementById("pick")?.addEventListener("click", async () => {
-  out.textContent = "picking on this page…"
-  showShot(undefined)
-  try {
-    const r = await op.pick({ mode: "unique", screenshot: screenshotMode() })
-    show("pick ok", r)
-    showShot(r.screenshot)
-  } catch (error) {
-    showError("pick", error)
-  }
-})
-
 document.getElementById("pickUrl")?.addEventListener("click", async () => {
   const url = (document.getElementById("url") as HTMLInputElement).value.trim()
-  if (!url) return show("pick on url", { error: "enter a URL first" })
+  if (!url) return show("pick", { error: "enter a URL first" })
   out.textContent = `opening ${url} and picking there…`
   showShot(undefined)
   try {
     const r = await op.pick({ url, mode: "unique", screenshot: screenshotMode() })
-    show("cross-tab pick ok", r)
+    show("pick ok", r)
     showShot(r.screenshot)
   } catch (error) {
-    showError("cross-tab pick", error)
+    showError("pick", error)
   }
 })
