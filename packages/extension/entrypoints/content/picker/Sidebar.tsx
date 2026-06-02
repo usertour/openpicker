@@ -4,6 +4,7 @@ import {
   RiCloseLine,
   RiCompass3Line,
   RiCrosshair2Line,
+  RiCursorLine,
   RiErrorWarningLine,
   RiSettings3Line,
 } from "@remixicon/react"
@@ -73,12 +74,16 @@ function isFocusable(target: EventTarget | null): boolean {
   )
 }
 
+// Shared styles for a consistent, refined look.
+const iconBtn =
+  "grid h-7 w-7 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
+const sectionLabel = "px-0.5 font-semibold text-[10px] text-slate-400 uppercase tracking-wider"
+
 export function Sidebar(props: SidebarProps) {
   const [settingsOpen, setSettingsOpen] = useState(false)
   const locked = props.phase === "locked"
   const navigating = props.phase === "navigate"
   const matchOk = props.matchCount === 1
-  const matchColor = matchOk ? "text-emerald-600" : "text-amber-600"
 
   // Keep our interactions inside the panel: a click in the picker must not reach the
   // host page's "close on outside click" or focus handlers (e.g. an open Google menu
@@ -96,53 +101,50 @@ export function Sidebar(props: SidebarProps) {
       onPointerDown={stop}
       onMouseDown={onMouseDown}
       onClick={stop}
-      className={`fixed top-0 z-[2147483646] flex h-screen w-80 flex-col bg-white shadow-2xl ${
-        props.side === "right" ? "right-0" : "left-0"
+      className={`fixed top-0 z-[2147483646] flex h-screen w-80 flex-col bg-white text-slate-800 antialiased shadow-2xl ${
+        props.side === "right" ? "right-0 border-slate-200 border-l" : "left-0 border-slate-200 border-r"
       }`}
     >
       {/* Header */}
-      <div className="flex items-center justify-between border-b border-slate-200 px-3 py-2">
-        <button
-          type="button"
-          onClick={props.onSwapSide}
-          title="Swap side"
-          className="text-slate-400 hover:text-slate-600"
-        >
-          <RiArrowLeftRightLine size={16} />
-        </button>
-        <span className="text-sm font-semibold text-slate-800">openpicker</span>
+      <div className="flex items-center justify-between border-slate-100 border-b px-3 py-2.5">
         <div className="flex items-center gap-2">
+          <span className="grid h-6 w-6 place-items-center rounded-md bg-slate-900 text-white">
+            <RiCrosshair2Line size={14} />
+          </span>
+          <span className="font-semibold text-slate-800 text-sm tracking-tight">openpicker</span>
+        </div>
+        <div className="flex items-center gap-0.5">
+          <button type="button" onClick={props.onSwapSide} title="Swap side" className={iconBtn}>
+            <RiArrowLeftRightLine size={16} />
+          </button>
           {props.canNavigate && !navigating && (
             <button
               type="button"
               onClick={props.onNavigate}
               title="Navigate to another page"
-              className="text-slate-400 hover:text-slate-600"
+              className={iconBtn}
             >
               <RiCompass3Line size={16} />
             </button>
           )}
-          <button
-            type="button"
-            onClick={props.onCancel}
-            title="Close"
-            className="text-slate-400 hover:text-slate-600"
-          >
+          <button type="button" onClick={props.onCancel} title="Close" className={iconBtn}>
             <RiCloseLine size={16} />
           </button>
         </div>
       </div>
 
       {navigating ? (
-        <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-3 p-6 text-center">
-          <RiCompass3Line size={28} className="text-slate-300" />
-          <p className="text-sm text-slate-600">
+        <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-4 p-6 text-center">
+          <span className="grid h-12 w-12 place-items-center rounded-full bg-slate-100 text-slate-400">
+            <RiCompass3Line size={24} />
+          </span>
+          <p className="max-w-[15rem] text-slate-500 text-sm leading-relaxed">
             Picking is paused. Go to the page that has your element, then resume.
           </p>
           <button
             type="button"
             onClick={props.onResume}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-slate-800 px-4 py-1.5 text-sm font-medium text-white hover:bg-slate-700"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-4 py-2 font-medium text-sm text-white shadow-sm transition-colors hover:bg-slate-700"
           >
             <RiCrosshair2Line size={16} />
             Resume picking
@@ -150,93 +152,109 @@ export function Sidebar(props: SidebarProps) {
         </div>
       ) : (
         <>
-      <div className="flex min-h-0 flex-1 flex-col gap-3 p-3">
+      <div className="flex min-h-0 flex-1 flex-col gap-4 p-3">
         {!locked && (
-          <p className="text-sm text-slate-500">
+          <div className="flex items-center gap-2 rounded-lg bg-slate-50 px-3 py-2.5 text-slate-500 text-xs">
+            <RiCursorLine size={15} className="shrink-0 text-slate-400" />
             Move your mouse and click an element to select it.
-          </p>
+          </div>
         )}
 
         {/* Selector: read-only live preview while hovering, editable once locked */}
-        <div className="relative flex items-center gap-1">
-          <input
-            type="text"
-            value={props.selector}
-            readOnly={!locked}
-            placeholder={locked ? "" : "hover an element…"}
-            onChange={(e) => props.onSelectorChange(e.target.value)}
-            className={`min-w-0 flex-1 rounded-lg border border-slate-200 px-2 py-1.5 font-mono text-xs outline-none focus:border-slate-400 ${
-              locked ? "" : "bg-slate-50 text-slate-500"
-            }`}
-          />
-          {locked && (
-            <button
-              type="button"
-              onClick={props.onReselect}
-              title="Pick another element"
-              className="shrink-0 rounded-lg border border-slate-200 px-2 py-1.5 text-slate-600 hover:bg-slate-50"
-            >
-              <RiCrosshair2Line size={16} />
-            </button>
-          )}
-          {locked && (
-            <button
-              type="button"
-              onClick={() => setSettingsOpen((v) => !v)}
-              title="Selector settings"
-              className="shrink-0 rounded-lg border border-slate-200 px-2 py-1.5 text-slate-600 hover:bg-slate-50"
-            >
-              <RiSettings3Line size={16} />
-            </button>
-          )}
-          {locked && settingsOpen && (
-            <SettingsPopover
-              settings={props.settings}
-              onChange={props.onSettingsChange}
-              onClose={() => setSettingsOpen(false)}
+        <div className="flex flex-col gap-1.5">
+          <span className={sectionLabel}>Selector</span>
+          <div className="relative flex items-center gap-1.5">
+            <input
+              type="text"
+              value={props.selector}
+              readOnly={!locked}
+              placeholder={locked ? "" : "hover an element…"}
+              onChange={(e) => props.onSelectorChange(e.target.value)}
+              className={`min-w-0 flex-1 rounded-lg border px-2.5 py-2 font-mono text-xs outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-100 ${
+                locked ? "border-slate-200 bg-white text-slate-800" : "border-slate-200 bg-slate-50 text-slate-500"
+              }`}
             />
+            {locked && (
+              <button
+                type="button"
+                onClick={props.onReselect}
+                title="Pick another element"
+                className="grid h-[34px] w-[34px] shrink-0 place-items-center rounded-lg border border-slate-200 text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700"
+              >
+                <RiCrosshair2Line size={16} />
+              </button>
+            )}
+            {locked && (
+              <button
+                type="button"
+                onClick={() => setSettingsOpen((v) => !v)}
+                title="Selector settings"
+                className={`grid h-[34px] w-[34px] shrink-0 place-items-center rounded-lg border transition-colors ${
+                  settingsOpen
+                    ? "border-slate-300 bg-slate-100 text-slate-700"
+                    : "border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-slate-700"
+                }`}
+              >
+                <RiSettings3Line size={16} />
+              </button>
+            )}
+            {locked && settingsOpen && (
+              <SettingsPopover
+                settings={props.settings}
+                onChange={props.onSettingsChange}
+                onClose={() => setSettingsOpen(false)}
+              />
+            )}
+          </div>
+
+          {/* Match count */}
+          {props.selector && (
+            <span
+              className={`mt-0.5 inline-flex w-fit items-center gap-1 rounded-full px-2 py-0.5 font-medium text-[11px] ${
+                matchOk ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"
+              }`}
+            >
+              {matchOk ? <RiCheckLine size={12} /> : <RiErrorWarningLine size={12} />}
+              {props.matchCount} match{props.matchCount === 1 ? "" : "es"}
+            </span>
           )}
         </div>
-
-        {/* Match count (shown in both phases) */}
-        {props.selector && (
-          <div
-            className={`flex items-center justify-center gap-1 text-xs font-medium ${matchColor}`}
-          >
-            {matchOk ? <RiCheckLine size={14} /> : <RiErrorWarningLine size={14} />}
-            Found {props.matchCount} element{props.matchCount === 1 ? "" : "s"}
-          </div>
-        )}
 
         {/* Inspector tools (locked only) */}
         {locked && (
           <>
-            <div className="rounded-xl border border-slate-200">
-              <TreeNavigator {...props.tree} />
+            <div className="flex flex-col gap-1.5">
+              <span className={sectionLabel}>Element</span>
+              <div className="rounded-xl border border-slate-200 bg-slate-50/50">
+                <TreeNavigator {...props.tree} />
+              </div>
             </div>
-            <AttributeList
-              attributes={props.attributes}
-              checked={props.checkedCriteria}
-              onToggle={props.onToggleCriterion}
-            />
+            <div className="flex min-h-0 flex-1 flex-col gap-1.5">
+              <span className={sectionLabel}>Attributes</span>
+              <AttributeList
+                attributes={props.attributes}
+                checked={props.checkedCriteria}
+                onToggle={props.onToggleCriterion}
+              />
+            </div>
           </>
         )}
       </div>
 
       {/* Footer (locked only) */}
       {locked && (
-        <div className="flex justify-end gap-2 border-t border-slate-200 px-3 py-2">
+        <div className="flex justify-end gap-2 border-slate-100 border-t px-3 py-2.5">
           <button
             type="button"
             onClick={props.onCancel}
-            className="rounded-lg px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-100"
+            className="rounded-lg px-3.5 py-2 font-medium text-slate-600 text-sm transition-colors hover:bg-slate-100"
           >
             Close
           </button>
           <button
             type="button"
             onClick={props.onConfirm}
-            className="rounded-lg bg-slate-800 px-4 py-1.5 text-sm font-medium text-white hover:bg-slate-700"
+            className="rounded-lg bg-slate-900 px-5 py-2 font-medium text-sm text-white shadow-sm transition-colors hover:bg-slate-700"
           >
             OK
           </button>

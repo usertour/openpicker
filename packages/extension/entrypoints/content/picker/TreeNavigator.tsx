@@ -18,10 +18,10 @@ interface TreeNavigatorProps {
 }
 
 const node =
-  "max-w-[8rem] truncate rounded px-2 py-0.5 font-mono text-xs text-slate-600 hover:bg-slate-100 disabled:cursor-default disabled:opacity-30 disabled:hover:bg-transparent"
+  "max-w-[9rem] truncate rounded-md px-2 py-1 font-mono text-[11px] text-slate-500 transition-colors hover:bg-white hover:text-slate-700 hover:shadow-sm disabled:cursor-default disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-slate-500 disabled:hover:shadow-none"
 const arrow = "text-slate-300"
 const sibBtn =
-  "rounded p-0.5 text-slate-500 hover:bg-slate-100 disabled:cursor-default disabled:opacity-30 disabled:hover:bg-transparent"
+  "grid h-6 w-6 place-items-center rounded-md text-slate-400 transition-colors hover:bg-white hover:text-slate-700 hover:shadow-sm disabled:cursor-default disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-slate-400 disabled:hover:shadow-none"
 
 /**
  * Visual DOM-tree navigator: walk to parent (up), first child (down), or previous
@@ -29,12 +29,12 @@ const sibBtn =
  */
 export function TreeNavigator(props: TreeNavigatorProps) {
   return (
-    <div className="flex flex-col items-center gap-1 py-2">
+    <div className="flex flex-col items-center gap-0.5 py-3">
       <button type="button" className={node} disabled={!props.parentLabel} onClick={props.onParent}>
         {props.parentLabel ?? "—"}
       </button>
       <RiArrowUpSLine size={14} className={arrow} />
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1.5">
         <button
           type="button"
           className={sibBtn}
@@ -44,7 +44,7 @@ export function TreeNavigator(props: TreeNavigatorProps) {
         >
           <RiArrowLeftSLine size={16} />
         </button>
-        <span className="max-w-[9rem] truncate rounded bg-slate-800 px-2 py-0.5 font-mono text-xs text-white">
+        <span className="max-w-[10rem] truncate rounded-md bg-slate-900 px-2.5 py-1 font-medium font-mono text-[11px] text-white shadow-sm">
           {props.currentLabel}
         </span>
         <button
