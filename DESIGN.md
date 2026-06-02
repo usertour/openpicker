@@ -251,10 +251,11 @@ map onto `@medv/finder` configuration, surfaced as UI.
 
 ### 5.1e On-page aids while a selection is active
 - **Highlight box + page dimming** (required) — the single box-shadow technique in §5.3
-- **HTML tag tooltip** — a floating card near the element so the user can confirm the right
-  element is targeted. While hovering it is a compact one-line opening tag that follows the cursor;
-  once locked it expands to a syntax-highlighted, multi-line card — tag name, every attribute on its
-  own line, and a content summary (e.g. `<svg class="lnXdpd" aria-label="Google" …>` / "No Content")
+- **HTML tag tooltip** — a floating card next to the element **while hovering**, so the user can
+  verify the right element before clicking: a syntax-highlighted, multi-line opening tag — tag name,
+  every attribute on its own line, and a content summary (e.g. `<svg class="lnXdpd"
+  aria-label="Google" …>` / "No Content"). Once an element is locked the card is gone — the sidebar
+  is the carrier for the selected element's details (selector, attributes, tree)
 - **Dashed ruler guides** (nice-to-have) — dashed lines extending from the element's edges to
   the viewport edges for alignment; first thing to cut if v1 gets tight
 

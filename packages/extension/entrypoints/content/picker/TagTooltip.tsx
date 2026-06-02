@@ -1,10 +1,8 @@
-import { contentSummary, openingTag, openingTagParts } from "./dom"
+import { contentSummary, openingTagParts } from "./dom"
 
 interface TagTooltipProps {
   el: Element
   rect: DOMRect
-  /** Rich multi-line tag (locked) vs a compact one-liner that follows the cursor. */
-  detailed?: boolean
 }
 
 const MAX_VALUE = 160
@@ -15,34 +13,16 @@ function truncate(value: string, max: number): string {
 }
 
 /**
- * A floating card near the target. While hovering it shows a compact opening tag;
- * once locked it expands to the full tag — name, every attribute on its own line
- * (syntax-highlighted), and a content summary — so the user can verify the exact
- * element. See DESIGN.md §5.1e.
+ * A floating card shown next to the element while hovering, so the user can verify
+ * the exact element before clicking: the full opening tag — name, every attribute
+ * on its own line (syntax-highlighted), and a content summary. Once an element is
+ * locked this is gone; the sidebar carries the details. See DESIGN.md §5.1e.
  */
-export function TagTooltip({ el, rect, detailed }: TagTooltipProps) {
-  if (!detailed) {
-    const below = rect.top < 28
-    const style: React.CSSProperties = {
-      position: "fixed",
-      left: Math.max(4, Math.min(rect.left, window.innerWidth - 320)),
-      top: below ? rect.bottom + 4 : rect.top - 24,
-      maxWidth: 320,
-      pointerEvents: "none",
-    }
-    return (
-      <div style={style}>
-        <code className="inline-block max-w-full truncate rounded bg-slate-900/95 px-2 py-1 font-mono text-[11px] text-emerald-300 shadow">
-          {openingTag(el)}
-        </code>
-      </div>
-    )
-  }
-
+export function TagTooltip({ el, rect }: TagTooltipProps) {
   const { tag, attrs } = openingTagParts(el)
   const content = contentSummary(el)
 
-  // Place the rich card below the element; flip above if it would overflow.
+  // Anchor the card to the element, below it; flip above if it would overflow.
   const cardWidth = 420
   const belowSpace = window.innerHeight - rect.bottom
   const placeBelow = belowSpace > 160 || belowSpace > rect.top

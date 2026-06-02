@@ -267,9 +267,8 @@ export function Picker({ params, host, skipConsent, canNavigate, onResolve }: Pi
         <HighlightBox rect={overlayRect} el={overlayEl} glideMs={locked ? 180 : 120} />
       )}
       {overlayEl && overlayRect && <RulerGuides rect={overlayRect} />}
-      {overlayEl && overlayRect && (
-        <TagTooltip el={overlayEl} rect={overlayRect} detailed={!!locked} />
-      )}
+      {/* Tag preview while hovering; once locked, the sidebar carries the details. */}
+      {!locked && hovered && hoverRect && <TagTooltip el={hovered} rect={hoverRect} />}
       <Sidebar
         phase={phase === "navigate" ? "navigate" : locked ? "locked" : "hover"}
         selector={shownSelector}
