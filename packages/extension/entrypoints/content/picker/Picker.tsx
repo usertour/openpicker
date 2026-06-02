@@ -51,9 +51,17 @@ export function Picker({ params, host, skipConsent, onResolve }: PickerProps) {
   const [selector, setSelector] = useState("")
   const [selectorEdited, setSelectorEdited] = useState(false)
   const [checked, setChecked] = useState<Set<string>>(new Set())
+  // Bumped each time an element is locked/re-targeted; keys the pulse ring so it
+  // remounts and replays its one-shot animation.
+  const [pulseKey, setPulseKey] = useState(0)
 
   const hoverRect = useTrackedRect(phase === "hover" ? hovered : null)
   const lockedRect = useTrackedRect(phase === "locked" ? locked : null)
+
+  // Play the "selected!" pulse whenever a new element becomes the locked target.
+  useEffect(() => {
+    if (phase === "locked" && locked) setPulseKey((k) => k + 1)
+  }, [phase, locked])
 
   // Decide whether to show the consent prompt on mount (unless already resolved
   // upstream, e.g. in the cross-tab source tab).
@@ -215,7 +223,9 @@ export function Picker({ params, host, skipConsent, onResolve }: PickerProps) {
   // locked
   return (
     <>
-      {locked && lockedRect && <HighlightBox rect={lockedRect} el={locked} animated />}
+      {locked && lockedRect && (
+        <HighlightBox key={pulseKey} rect={lockedRect} el={locked} animated pulse />
+      )}
       {locked && (
         <Sidebar
           selector={selector}

@@ -6,3 +6,23 @@ body.openpicker-active * {
   cursor: crosshair !important;
   user-select: none !important;
 }
+
+/*
+ * One-shot "you selected this" pulse: a ring that expands outward from the
+ * highlight box and fades, played once when an element is locked.
+ * transform + opacity only, so it stays at 60fps.
+ */
+@keyframes openpicker-lock-pulse {
+  from {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  to {
+    transform: scale(1.12);
+    opacity: 0;
+  }
+}
+
+.openpicker-lock-pulse {
+  animation: openpicker-lock-pulse 300ms ease-out forwards;
+}

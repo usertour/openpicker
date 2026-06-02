@@ -6,6 +6,8 @@ interface HighlightBoxProps {
   el?: Element | null
   /** Smoothly animate between elements (used once a target is locked). */
   animated?: boolean
+  /** Play a one-shot expand-and-fade ring (a "selected!" pulse) over the box. */
+  pulse?: boolean
 }
 
 /** Minimum corner radius so even square elements get a subtly softened outline. */
@@ -36,7 +38,9 @@ function cornerRadii(el: Element | null | undefined): string {
  * both jobs: a glow outline around the target and a huge box-shadow spread that
  * darkens the rest of the page. See DESIGN.md §5.3.
  */
-export function HighlightBox({ rect, el, animated }: HighlightBoxProps) {
+export function HighlightBox({ rect, el, animated, pulse }: HighlightBoxProps) {
+  const radius = useMemo(() => cornerRadii(el), [el])
+
   const style = useMemo<React.CSSProperties>(
     () => ({
       position: "fixed",
@@ -44,12 +48,33 @@ export function HighlightBox({ rect, el, animated }: HighlightBoxProps) {
       left: rect.left,
       width: rect.width,
       height: rect.height,
-      borderRadius: cornerRadii(el),
+      borderRadius: radius,
       boxShadow: "0 0 0 2px rgba(59,130,246,0.9), 0 0 0 100000px rgba(15,23,42,0.45)",
       pointerEvents: "none",
       transition: animated ? "all 120ms cubic-bezier(0.25,0.8,0.5,1)" : "none",
     }),
-    [rect, el, animated],
+    [rect, radius, animated],
   )
-  return <div style={style} />
+
+  // The pulse ring sits exactly over the box and expands/fades once via CSS.
+  const ringStyle = useMemo<React.CSSProperties>(
+    () => ({
+      position: "fixed",
+      top: rect.top,
+      left: rect.left,
+      width: rect.width,
+      height: rect.height,
+      borderRadius: radius,
+      border: "2px solid rgba(59,130,246,0.9)",
+      pointerEvents: "none",
+    }),
+    [rect, radius],
+  )
+
+  return (
+    <>
+      <div style={style} />
+      {pulse && <div className="openpicker-lock-pulse" style={ringStyle} />}
+    </>
+  )
 }
