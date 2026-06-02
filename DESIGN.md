@@ -435,6 +435,11 @@ openpicker: different host → new tab; same host but different `key` → new ta
   openpicker never interprets it — it only compares equality, exactly as the reference compares
   flow_id. This keeps the reuse logic identical while staying business-agnostic and open (§1.1).
 - No `key` → fall back to host/URL comparison alone.
+- **On reuse, the target tab is only focused — never re-navigated.** Reuse is host-gated, so the
+  tab is already on the right host; the user may have moved it elsewhere on that host during a
+  previous pick (via "navigate to another page"), and forcing the requested `url` would discard
+  where they went. So a reused pick runs on the tab's *current* page, not the requested `url`.
+  (The `url` only opens the tab the first time and decides reuse-vs-new; it matches the reference.)
 - Why caller-supplied, not internal: "is this the same task?" is a business judgment only the
   integrator knows. The reference could read flow_id because it *is* the business; openpicker is a
   tool, so the business identity must come in from the caller.

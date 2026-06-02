@@ -167,7 +167,12 @@ async function runCrossTabPick(
     if (reusable !== undefined) {
       targetId = reusable
       try {
-        await browser.tabs.update(reusable, { active: true, url })
+        // Reuse: only focus the existing target tab — do NOT navigate it. The user
+        // may have moved it elsewhere on the same host during a previous pick (via
+        // "navigate to another page"), and forcing `url` would discard where they
+        // went. Reuse is host-gated (findReusableTarget), so the tab is already on
+        // the right host. Matches the proven cross-tab pattern. See DESIGN.md §5e.
+        await browser.tabs.update(reusable, { active: true })
         await waitForTabComplete(reusable)
       } catch {
         targetId = undefined // fall through to creating a new tab
