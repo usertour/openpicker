@@ -13,7 +13,7 @@ function AttributeCard({ entry }: { entry: AttrEntry }) {
   const long = entry.value.length > TRUNCATE
   const shown = expanded || !long ? entry.value : `${entry.value.slice(0, TRUNCATE)}…`
   return (
-    <div className="rounded-lg border border-slate-200 p-2.5 transition-colors hover:border-slate-300 hover:bg-slate-50/60">
+    <div className="px-0.5 py-1">
       <span className="block truncate font-mono font-semibold text-slate-700 text-xs">
         {entry.name}
       </span>

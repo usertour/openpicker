@@ -31,7 +31,7 @@ const fieldClass =
  */
 export function SettingsPopover({ settings, onChange, onClose }: SettingsPopoverProps) {
   return (
-    <div className="absolute top-12 right-2 left-2 z-20 rounded-xl border border-slate-200 bg-white p-3 shadow-xl">
+    <div className="absolute top-12 right-3 left-3 z-20 rounded-xl border border-slate-200 bg-white p-3 shadow-xl ring-1 ring-slate-900/5">
       <div className="mb-3 flex items-center justify-between">
         <span className="font-semibold text-[10px] text-slate-500 uppercase tracking-wider">
           Allow selector types
