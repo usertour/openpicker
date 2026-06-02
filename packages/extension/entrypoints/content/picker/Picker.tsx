@@ -199,7 +199,7 @@ export function Picker({ params, host, skipConsent, onResolve }: PickerProps) {
   if (phase === "hover") {
     return (
       <>
-        {hovered && hoverRect && <HighlightBox rect={hoverRect} />}
+        {hovered && hoverRect && <HighlightBox rect={hoverRect} el={hovered} />}
         {hovered && hoverRect && <RulerGuides rect={hoverRect} />}
         {hovered && hoverRect && <TagTooltip el={hovered} rect={hoverRect} />}
         <BottomBar
@@ -215,7 +215,7 @@ export function Picker({ params, host, skipConsent, onResolve }: PickerProps) {
   // locked
   return (
     <>
-      {locked && lockedRect && <HighlightBox rect={lockedRect} animated />}
+      {locked && lockedRect && <HighlightBox rect={lockedRect} el={locked} animated />}
       {locked && (
         <Sidebar
           selector={selector}
