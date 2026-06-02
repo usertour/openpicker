@@ -48,7 +48,7 @@ document.getElementById("pickUrl")?.addEventListener("click", async () => {
   out.textContent = `opening ${url} and picking there…`
   showShot(undefined)
   try {
-    const r = await op.pick({ url, mode: "unique", screenshot: screenshotMode() })
+    const r = await op.pick({ url, screenshot: screenshotMode() })
     show("pick ok", r)
     showShot(r.screenshot)
   } catch (error) {

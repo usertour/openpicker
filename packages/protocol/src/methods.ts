@@ -1,6 +1,3 @@
-/** How the generated selector should match. See PROTOCOL.md §6.2 and DESIGN.md §5.1f. */
-export type SelectorMode = "unique" | "list"
-
 /**
  * What the returned screenshot covers. See DESIGN.md §5b.
  * - "none": no screenshot.
@@ -25,8 +22,6 @@ export interface PingResult {
 }
 
 export interface PickParams {
-  /** "unique" (default) selects one element; "list" selects a group of similar elements. */
-  mode?: SelectorMode
   /** Extra regex of id/class names to exclude, layered on the built-in blacklist. */
   exclude?: string
   /** Request resolution of elements inside iframes (may be reported unsupported in v1). */

@@ -115,7 +115,7 @@ Response `result`:
 {
   "extensionVersion": "1.4.0",
   "protocolVersions": [1],
-  "capabilities": ["pick", "highlight", "listMode", "exclude", "screenshot", "openUrl", "activateSelf", "isTargetOpen"]
+  "capabilities": ["pick", "highlight", "exclude", "screenshot", "openUrl", "activateSelf", "isTargetOpen"]
 }
 ```
 - `protocolVersions` — protocol majors the extension supports.
@@ -129,7 +129,6 @@ Request `params` (`url` required, the rest optional):
 ```json
 {
   "url": "https://example.com",
-  "mode": "unique",
   "exclude": "css-|sc-|jsx-",
   "iframe": false,
   "screenshot": "element",
@@ -137,7 +136,6 @@ Request `params` (`url` required, the rest optional):
   "appName": "Acme Onboarding"
 }
 ```
-- `mode`: `"unique"` (default) or `"list"` — single element vs a group of similar elements.
 - `exclude`: extra regex of id/class names to exclude (layered on the built-in blacklist).
 - `iframe`: request subframe resolution (v1 may report unsupported; see roadmap).
 - `screenshot`: `"none"` (default) | `"element"` (crop to the selected element) | `"viewport"`
@@ -299,10 +297,10 @@ Named here so the envelope and method space leave room (not implemented in v1):
 SDK  → ext : {channel:"openpicker", v:1, kind:"req", id:"op:7Hk2:1", method:"ping", params:{}}
 ext  → SDK : {channel:"openpicker", v:1, kind:"res", id:"op:7Hk2:1", ok:true,
               result:{extensionVersion:"1.4.0", protocolVersions:[1],
-                      capabilities:["pick","highlight","listMode","exclude","screenshot","openUrl","activateSelf","isTargetOpen"]}}
+                      capabilities:["pick","highlight","exclude","screenshot","openUrl","activateSelf","isTargetOpen"]}}
 
 SDK  → ext : {channel:"openpicker", v:1, kind:"req", id:"op:7Hk2:2", method:"pick",
-              params:{mode:"unique", appName:"Acme Onboarding"}}
+              params:{url:"https://app.example.com", appName:"Acme Onboarding"}}
         (extension shows consent prompt for this origin → user grants;
          user picks an element, refines in the sidebar, clicks OK)
 ext  → SDK : {channel:"openpicker", v:1, kind:"res", id:"op:7Hk2:2", ok:true,

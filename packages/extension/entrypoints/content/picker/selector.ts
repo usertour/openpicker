@@ -1,5 +1,4 @@
 import { finder } from "@medv/finder"
-import type { SelectorMode } from "@openpicker/protocol"
 
 /**
  * Selector generation, built on @medv/finder (a dependency) plus filters that
@@ -29,7 +28,6 @@ const HASHED_CLASS_PATTERNS: RegExp[] = [
 const PREFERRED_ATTR = /^data-(testid|test|test-id|cy|qa)$/i
 
 export interface SelectorConfig {
-  mode: SelectorMode
   /** Extra regex (source string) of id/class names to exclude. */
   exclude?: string
 }
@@ -59,8 +57,8 @@ export function isStableClass(name: string, excludeRe: RegExp | null): boolean {
   return !matchesAny(name, HASHED_CLASS_PATTERNS)
 }
 
-/** Build a selector that intentionally matches a group of similar elements. */
-function listSelector(el: Element, excludeRe: RegExp | null): string {
+/** Fallback when finder can't produce a unique selector: tag + stable classes. */
+function fallbackSelector(el: Element, excludeRe: RegExp | null): string {
   const tag = el.tagName.toLowerCase()
   const classes =
     typeof el.className === "string"
@@ -70,10 +68,9 @@ function listSelector(el: Element, excludeRe: RegExp | null): string {
   return `${tag}.${classes.map((c) => CSS.escape(c)).join(".")}`
 }
 
-/** Generate a CSS selector for an element according to the given config. */
+/** Generate a unique CSS selector for an element. */
 export function generateSelector(el: Element, config: SelectorConfig): string {
   const excludeRe = compileExclude(config.exclude)
-  if (config.mode === "list") return listSelector(el, excludeRe)
   try {
     return finder(el, {
       idName: (name) => isStableId(name, excludeRe),
@@ -82,7 +79,7 @@ export function generateSelector(el: Element, config: SelectorConfig): string {
     })
   } catch {
     // finder throws if it cannot find a unique selector; fall back to a tag path.
-    return listSelector(el, excludeRe)
+    return fallbackSelector(el, excludeRe)
   }
 }
 

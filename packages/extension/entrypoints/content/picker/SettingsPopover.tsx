@@ -1,8 +1,6 @@
-import type { SelectorMode } from "@openpicker/protocol"
 import { RiCloseLine } from "@remixicon/react"
 
 export interface SelectorSettings {
-  mode: SelectorMode
   exclude: string
   iframe: boolean
 }
@@ -22,7 +20,7 @@ export function SettingsPopover({ settings, onChange, onClose }: SettingsPopover
     <div className="absolute top-11 right-0 z-10 w-64 rounded-xl border border-slate-200 bg-white p-3 shadow-xl">
       <div className="mb-2.5 flex items-center justify-between">
         <span className="font-semibold text-[10px] text-slate-400 uppercase tracking-wider">
-          Selector mode
+          Selector settings
         </span>
         <button
           type="button"
@@ -32,23 +30,6 @@ export function SettingsPopover({ settings, onChange, onClose }: SettingsPopover
         >
           <RiCloseLine size={15} />
         </button>
-      </div>
-
-      <div className="mb-3 grid grid-cols-2 gap-1 rounded-lg bg-slate-100 p-1 text-xs">
-        {(["unique", "list"] as SelectorMode[]).map((m) => (
-          <button
-            key={m}
-            type="button"
-            onClick={() => onChange({ mode: m })}
-            className={`rounded-md py-1.5 font-medium capitalize transition-colors ${
-              settings.mode === m
-                ? "bg-white text-slate-800 shadow-sm"
-                : "text-slate-500 hover:text-slate-700"
-            }`}
-          >
-            {m}
-          </button>
-        ))}
       </div>
 
       <label className="mb-1.5 block font-semibold text-[11px] text-slate-600">Exclude</label>

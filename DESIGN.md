@@ -223,10 +223,7 @@ map onto `@medv/finder` configuration, surfaced as UI.
 
 ```
 ┌──────────────────────────────────┐
-│ Mode                          ✕  │
-│ ┌──────────┬───────────────────┐ │
-│ │  Unique  │       List        │ │  segmented toggle
-│ └──────────┴───────────────────┘ │
+│ Selector settings             ✕  │
 │                                  │
 │ Exclude                          │
 │ [ Pattern, e.g. keyword|keyword ]│  regex of id/class names to exclude
@@ -236,11 +233,9 @@ map onto `@medv/finder` configuration, surfaced as UI.
 └──────────────────────────────────┘
 ```
 
-- **Mode: Unique | List**
-  - *Unique* (default): selector matches exactly one element (finder's normal behavior).
-  - *List*: selector matches a **group** of similar elements (drop the single-element
-    discriminators like `:nth-of-type()`, keep the shared tag/class). Enables "select a class of
-    elements" use cases (batch highlight, instrument all buttons, etc.).
+- The generated selector always targets **exactly one element** (finder's unique selector). A
+  "list / group" mode was considered but cut — openpicker's purpose is targeting a single element,
+  and the feature was borrowed from a reference UI without a real use case (see git history).
 - **Exclude**: a regex of id/class names to exclude from generation (e.g. `css-|sc-|jsx-`).
   Layered on top of openpicker's **built-in default blacklist** that already filters hashed
   Tailwind / CSS-in-JS classes; this field lets the user add their own patterns. Maps to
@@ -529,7 +524,7 @@ Open decisions:
 | 5 | Support elements inside iframes | ⏳ UI toggle in v1; cross-origin resolution deferred to v2 (§5.1f) |
 | 6 | Pierce into Shadow DOM elements (v1?) | ⏳ |
 | 7 | Post-selection sidebar | ✅ Decided: full inspector panel (§5.1d, §5.1f), not select-and-return |
-| 11 | Selector settings popover (Mode Unique/List, Exclude, Iframe) | ✅ Decided (§5.1f) |
+| 11 | Selector settings popover (Exclude, Iframe) | ✅ Decided (§5.1f) |
 | 8 | Support Firefox/Edge from day one (WXT makes this cheap) | ⏳ |
 | 9 | Docs site choice | ⏳ |
 | 12 | Screenshot range (none/element/viewport) | ✅ Decided (§5b) |

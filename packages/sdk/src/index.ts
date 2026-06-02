@@ -228,5 +228,4 @@ export type {
   PingResult,
   ProtocolError,
   ScreenshotMode,
-  SelectorMode,
 } from "@openpicker/protocol"

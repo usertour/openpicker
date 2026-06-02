@@ -130,7 +130,7 @@
         out.textContent = `opening ${url} and picking there…`
         shot.style.display = "none"
         try {
-          const r = await call("pick", { url, mode: "unique", screenshot })
+          const r = await call("pick", { url, screenshot })
           show("pick ok", r)
           showShot(r)
         } catch (err) {
