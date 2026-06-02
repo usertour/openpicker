@@ -26,7 +26,20 @@ interface TargetEntry {
   sourceTabId: number
   url: string
   key?: string
+  params: CrossTabParams
 }
+
+/**
+ * In-memory registry of cross-tab picks awaiting a result, keyed by source tab id.
+ * Kept alive by the source tab's port. The result arrives as a `crossTab:result`
+ * message (which survives target-tab navigation, unlike a sendMessage response)
+ * and is routed here via the source↔target map. See DESIGN.md §5d phase 2.
+ */
+interface PendingPick {
+  resolve: (outcome: PickOutcome) => void
+  params: CrossTabParams
+}
+const pendingPicks = new Map<number, PendingPick>()
 
 const sourceToTargetKey = (sourceTabId: number) => `op:sourceToTarget:${sourceTabId}`
 const targetToSourceKey = (targetTabId: number) => `op:targetToSource:${targetTabId}`
@@ -153,45 +166,51 @@ async function runCrossTabPick(
     if (!(await waitForTabComplete(targetId))) return { type: "cancelled" }
   }
 
-  // Record the mapping so results can route back and the tab can be reused.
-  if (source.tabId !== undefined) {
-    await mapTabs(source.tabId, targetId, { sourceTabId: source.tabId, url, key: params.key })
-  }
+  // A cross-tab pick needs a source tab to route the result back to.
+  if (source.tabId === undefined) return { type: "cancelled" }
+  const sourceTabId = source.tabId
 
-  // If the user closes the target tab before finishing, resolve as cancelled.
+  // Record the mapping so the result can route back and the tab can be reused.
+  await mapTabs(sourceTabId, targetId, { sourceTabId, url, key: params.key, params })
+
+  // The result is delivered later via a `crossTab:result` message (which survives
+  // the target navigating), routed here through the map into pendingPicks. We also
+  // settle if the user closes the target tab.
   let onRemoved: ((id: number) => void) | undefined
-  const removed = new Promise<PickOutcome>((resolve) => {
-    onRemoved = (id: number) => {
-      if (id === targetId) resolve({ type: "cancelled" })
-    }
-    browser.tabs.onRemoved.addListener(onRemoved)
-  })
-
   try {
-    // Ask the target's content script to run the picker (consent already handled).
-    const pick = browser.tabs
-      .sendMessage(targetId, { kind: "crossTab:run", params })
-      .then(
-        (res) =>
-          (res as { outcome?: PickOutcome })?.outcome ?? ({ type: "cancelled" } as PickOutcome),
-      )
-      .catch((): PickOutcome => ({ type: "cancelled" }))
-
-    // Whichever happens first: the pick finishes, or the user closes the tab.
-    return await Promise.race([pick, removed])
+    const outcome = await new Promise<PickOutcome>((resolve) => {
+      let settled = false
+      const done = (o: PickOutcome) => {
+        if (settled) return
+        settled = true
+        resolve(o)
+      }
+      pendingPicks.set(sourceTabId, { resolve: done, params })
+      onRemoved = (id: number) => {
+        if (id === targetId) done({ type: "cancelled" })
+      }
+      browser.tabs.onRemoved.addListener(onRemoved)
+      // Tell the target to run the picker (it also writes a sessionStorage marker
+      // so the pick can resume after navigation / in a same-origin new tab).
+      browser.tabs
+        .sendMessage(targetId, { kind: "crossTab:run", sourceTabId, params })
+        .catch(() => {
+          // Target not ready yet; it will say hello on load and we'll start it then.
+        })
+    })
+    return outcome
   } finally {
+    pendingPicks.delete(sourceTabId)
     if (onRemoved) browser.tabs.onRemoved.removeListener(onRemoved)
     // Do NOT close the target tab — only refocus the source. The target stays open
     // for the user and for reuse by a follow-up pick.
-    if (source.tabId !== undefined) {
-      try {
-        await browser.tabs.update(source.tabId, { active: true })
-        if (source.windowId !== undefined) {
-          await browser.windows.update(source.windowId, { focused: true })
-        }
-      } catch {
-        // Source gone; nothing to focus.
+    try {
+      await browser.tabs.update(sourceTabId, { active: true })
+      if (source.windowId !== undefined) {
+        await browser.windows.update(source.windowId, { focused: true })
       }
+    } catch {
+      // Source gone; nothing to focus.
     }
   }
 }
@@ -252,8 +271,46 @@ export default defineBackground(() => {
   })
 
   browser.runtime.onMessage.addListener((message: unknown, sender, sendResponse) => {
-    const msg = message as { kind?: string; granted?: boolean }
+    const msg = message as {
+      kind?: string
+      granted?: boolean
+      sourceTabId?: number
+      outcome?: PickOutcome
+    }
     const origin = sender.origin ?? (sender.url ? new URL(sender.url).origin : "")
+    const senderTabId = sender.tab?.id
+
+    // A target tab reports a finished pick. Route it to the pending pick by the
+    // source tab id (recovered from the map — survives target navigation).
+    if (msg?.kind === "crossTab:result") {
+      ;(async () => {
+        let sourceTabId = msg.sourceTabId
+        if (sourceTabId === undefined && senderTabId !== undefined) {
+          sourceTabId = (await getTargetEntry(senderTabId))?.sourceTabId
+        }
+        if (sourceTabId !== undefined) {
+          pendingPicks.get(sourceTabId)?.resolve(msg.outcome ?? { type: "cancelled" })
+        }
+        sendResponse({ ok: true })
+      })()
+      return true
+    }
+
+    // A target content script announces itself on load. If a pick is still pending
+    // for its mapped source, tell it to (re)run with the original params — this is
+    // how picking resumes after the target navigates. See DESIGN.md §5d phase 2.
+    if (msg?.kind === "crossTab:hello") {
+      ;(async () => {
+        if (senderTabId === undefined) return sendResponse({ run: false })
+        const entry = await getTargetEntry(senderTabId)
+        if (entry && pendingPicks.has(entry.sourceTabId)) {
+          sendResponse({ run: true, sourceTabId: entry.sourceTabId, params: entry.params })
+        } else {
+          sendResponse({ run: false })
+        }
+      })()
+      return true
+    }
 
     if (msg?.kind === "consent:get") {
       getConsent(origin).then((status) => sendResponse({ status }))

@@ -10,6 +10,7 @@ import {
 } from "@openpicker/protocol"
 import { ensureConsent } from "./picker/consentGate"
 import { runCrossTabPick } from "./picker/crossTab"
+import { resumeCrossTabTargetOnLoad, startCrossTabTarget } from "./picker/crossTabTarget"
 import { clearHighlight, runHighlight } from "./picker/highlight"
 import { cancelActivePicker, runPicker } from "./picker/run"
 import "./style.css"
@@ -112,8 +113,12 @@ export default defineContentScript({
       void handle(data as RequestEnvelope)
     })
 
-    browser.runtime.onMessage.addListener((message: unknown, _sender, sendResponse) => {
-      const msg = message as { kind?: string; params?: RequestEnvelope<"pick">["params"] }
+    browser.runtime.onMessage.addListener((message: unknown) => {
+      const msg = message as {
+        kind?: string
+        sourceTabId?: number
+        params?: RequestEnvelope<"pick">["params"]
+      }
 
       // Toolbar icon → start a pick, so the picker works without the SDK.
       if (msg?.kind === "startPick") {
@@ -121,13 +126,18 @@ export default defineContentScript({
         return false
       }
 
-      // Cross-tab target tab: background asks us to run the picker here (consent
-      // already resolved in the source tab). The response carries the outcome.
-      if (msg?.kind === "crossTab:run") {
-        runPicker(msg.params ?? {}, { skipConsent: true }).then((outcome) => sendResponse({ outcome }))
-        return true // async response
+      // Cross-tab target tab: background tells us to run the picker here (consent
+      // already resolved in the source tab). The result is pushed back to the
+      // background so it survives navigation; no response is sent here.
+      if (msg?.kind === "crossTab:run" && msg.sourceTabId !== undefined) {
+        startCrossTabTarget(msg.sourceTabId, msg.params ?? {})
+        return false
       }
       return false
     })
+
+    // Resume a cross-tab pick if this tab navigated mid-pick or is an inherited
+    // same-origin target (DESIGN.md §5d phase 2).
+    void resumeCrossTabTargetOnLoad()
   },
 })
