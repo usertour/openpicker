@@ -142,19 +142,19 @@ All page-level listeners attach in the **capture** phase so the picker intercept
 - `keydown` (capture) → `Esc` cancels (later: `↑/↓` to walk the DOM tree)
 - While active, add a body class to force the crosshair cursor and disable text selection
 
-### 5.1b Bottom toolbar (the picker bar)
-While the picker is active, show a horizontal control bar (~52px tall). Render it **inside the
-same Shadow DOM** as the overlay — no iframe needed.
+### 5.1b One panel for the whole pick (no bottom bar)
+There is a single docked side panel for the entire pick — no separate bottom bar. (An earlier
+design had a bottom toolbar during hover; it was removed in favor of one persistent panel.) The
+panel renders inside the Shadow DOM, fixed full-height on the right (swappable to the left).
 
-Layout (left → right):
-- A drag/pin control to move the bar between **bottom** and **top** of the viewport
-  (so it never covers the element being picked)
-- Instruction / status text (e.g. "Hover and click an element to select it")
-- Live selector preview (the selector currently under the cursor)
-- A **Cancel** button (also `Esc`)
-- (Optional, later) a pick/pause toggle to temporarily interact with the page normally
+- **Hover phase** (still finding an element): the panel guides the user ("Move your mouse and click
+  an element to select it"), shows a **read-only live preview** of the selector under the cursor,
+  and a live match count. Header has swap-side (⇄) and close (✕); `Esc` also cancels.
+- **Locked phase** (element selected): the same panel becomes the inspector (§5.1d) — editable
+  selector + ⚙ settings, DOM-tree navigator, match count, attribute criteria, and a Close/OK footer.
 
-Styling: Tailwind, dark rounded bar, high `z-index`, `position: fixed`, centered horizontally.
+The page overlays (highlight box, ruler guides, tag tooltip) track the hovered element while
+finding and the locked element once selected.
 
 ### 5.1c Reverse lookup (highlight a stored selector)
 Beyond picking, support resolving a previously stored selector back to a live element (for

@@ -1,6 +1,5 @@
 import type { PickParams, PickResult } from "@openpicker/protocol"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { BottomBar } from "./BottomBar"
 import { ConsentPrompt } from "./ConsentPrompt"
 import {
   collectAttributes,
@@ -42,7 +41,6 @@ export function Picker({ params, host, skipConsent, onResolve }: PickerProps) {
   const [phase, setPhase] = useState<Phase>(skipConsent ? "hover" : "consent")
   const [hovered, setHovered] = useState<Element | null>(null)
   const [locked, setLocked] = useState<Element | null>(null)
-  const [pinTop, setPinTop] = useState(false)
   const [side, setSide] = useState<"left" | "right">("right")
   const [settings, setSettings] = useState<SelectorSettings>({
     mode: params.mode ?? "unique",
@@ -153,7 +151,10 @@ export function Picker({ params, host, skipConsent, onResolve }: PickerProps) {
   }, [phase, hovered, settings.mode, settings.exclude])
 
   const attributes = useMemo(() => (locked ? collectAttributes(locked) : []), [locked])
-  const matchCount = useMemo(() => countMatches(selector), [selector])
+  // The selector shown in the sidebar: live preview while hovering, the (editable)
+  // selector once locked. Match count tracks whatever is shown.
+  const shownSelector = locked ? selector : (preview ?? "")
+  const matchCount = useMemo(() => countMatches(shownSelector), [shownSelector])
 
   const retarget = useCallback((next: Element | null) => {
     if (!next) return
@@ -197,69 +198,58 @@ export function Picker({ params, host, skipConsent, onResolve }: PickerProps) {
     )
   }
 
-  if (phase === "hover") {
-    return (
-      <>
-        {hovered && hoverRect && <HighlightBox rect={hoverRect} el={hovered} glideMs={120} />}
-        {hovered && hoverRect && <RulerGuides rect={hoverRect} />}
-        {hovered && hoverRect && <TagTooltip el={hovered} rect={hoverRect} />}
-        <BottomBar
-          preview={preview}
-          pinTop={pinTop}
-          onTogglePin={() => setPinTop((v) => !v)}
-          onCancel={cancel}
-        />
-      </>
-    )
+  // hover + locked share one persistent Sidebar; page overlays reflect the
+  // current target (hovered while finding, locked once selected).
+  const overlayEl = locked ?? hovered
+  const overlayRect = locked ? lockedRect : hoverRect
+  const tree = {
+    parentLabel: locked && getParent(locked) ? tagLabel(getParent(locked) as Element) : null,
+    prevLabel:
+      locked && getPrevSibling(locked, host) ? tagLabel(getPrevSibling(locked, host) as Element) : null,
+    currentLabel: locked ? tagLabel(locked) : "",
+    nextLabel:
+      locked && getNextSibling(locked, host) ? tagLabel(getNextSibling(locked, host) as Element) : null,
+    childLabel:
+      locked && getFirstChild(locked, host) ? tagLabel(getFirstChild(locked, host) as Element) : null,
+    onParent: () => locked && retarget(getParent(locked)),
+    onPrev: () => locked && retarget(getPrevSibling(locked, host)),
+    onNext: () => locked && retarget(getNextSibling(locked, host)),
+    onChild: () => locked && retarget(getFirstChild(locked, host)),
   }
 
-  // locked
   return (
     <>
-      {locked && lockedRect && <HighlightBox rect={lockedRect} el={locked} glideMs={180} />}
-      {locked && (
-        <Sidebar
-          selector={selector}
-          matchCount={matchCount}
-          attributes={attributes}
-          checkedCriteria={checked}
-          settings={settings}
-          side={side}
-          tree={{
-            parentLabel: getParent(locked) ? tagLabel(getParent(locked) as Element) : null,
-            prevLabel: getPrevSibling(locked, host)
-              ? tagLabel(getPrevSibling(locked, host) as Element)
-              : null,
-            currentLabel: tagLabel(locked),
-            nextLabel: getNextSibling(locked, host)
-              ? tagLabel(getNextSibling(locked, host) as Element)
-              : null,
-            childLabel: getFirstChild(locked, host)
-              ? tagLabel(getFirstChild(locked, host) as Element)
-              : null,
-            onParent: () => retarget(getParent(locked)),
-            onPrev: () => retarget(getPrevSibling(locked, host)),
-            onNext: () => retarget(getNextSibling(locked, host)),
-            onChild: () => retarget(getFirstChild(locked, host)),
-          }}
-          onSelectorChange={(v) => {
-            setSelector(v)
-            setSelectorEdited(true)
-          }}
-          onToggleCriterion={(name) =>
-            setChecked((prev) => {
-              const next = new Set(prev)
-              if (next.has(name)) next.delete(name)
-              else next.add(name)
-              return next
-            })
-          }
-          onSettingsChange={(patch) => setSettings((s) => ({ ...s, ...patch }))}
-          onSwapSide={() => setSide((s) => (s === "right" ? "left" : "right"))}
-          onConfirm={confirm}
-          onCancel={cancel}
-        />
+      {overlayEl && overlayRect && (
+        <HighlightBox rect={overlayRect} el={overlayEl} glideMs={locked ? 180 : 120} />
       )}
+      {overlayEl && overlayRect && <RulerGuides rect={overlayRect} />}
+      {overlayEl && overlayRect && <TagTooltip el={overlayEl} rect={overlayRect} />}
+      <Sidebar
+        phase={locked ? "locked" : "hover"}
+        selector={shownSelector}
+        matchCount={matchCount}
+        attributes={attributes}
+        checkedCriteria={checked}
+        settings={settings}
+        side={side}
+        tree={tree}
+        onSelectorChange={(v) => {
+          setSelector(v)
+          setSelectorEdited(true)
+        }}
+        onToggleCriterion={(name) =>
+          setChecked((prev) => {
+            const next = new Set(prev)
+            if (next.has(name)) next.delete(name)
+            else next.add(name)
+            return next
+          })
+        }
+        onSettingsChange={(patch) => setSettings((s) => ({ ...s, ...patch }))}
+        onSwapSide={() => setSide((s) => (s === "right" ? "left" : "right"))}
+        onConfirm={confirm}
+        onCancel={cancel}
+      />
     </>
   )
 }

@@ -5,6 +5,9 @@ import { type SelectorSettings, SettingsPopover } from "./SettingsPopover"
 import { TreeNavigator } from "./TreeNavigator"
 
 interface SidebarProps {
+  /** "hover" = still finding an element; "locked" = an element is selected. */
+  phase: "hover" | "locked"
+  /** The current selector: live preview while hovering, editable once locked. */
   selector: string
   matchCount: number
   attributes: AttrEntry[]
@@ -30,9 +33,15 @@ interface SidebarProps {
   onCancel: () => void
 }
 
-/** The post-selection inspector panel. See DESIGN.md §5.1d. */
+/**
+ * The picker's single panel. It is shown for the whole pick: while hovering it
+ * guides the user and previews the selector under the cursor; once an element is
+ * locked it becomes the inspector (editable selector, DOM-tree navigator, match
+ * count, attribute criteria) with a confirm/close footer. See DESIGN.md §5.1d.
+ */
 export function Sidebar(props: SidebarProps) {
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const locked = props.phase === "locked"
   const matchOk = props.matchCount === 1
   const matchColor = matchOk ? "text-emerald-600" : "text-amber-600"
 
@@ -64,23 +73,35 @@ export function Sidebar(props: SidebarProps) {
       </div>
 
       <div className="flex min-h-0 flex-1 flex-col gap-3 p-3">
-        {/* Editable selector + settings gear */}
+        {!locked && (
+          <p className="text-sm text-slate-500">
+            Move your mouse and click an element to select it.
+          </p>
+        )}
+
+        {/* Selector: read-only live preview while hovering, editable once locked */}
         <div className="relative flex items-center gap-1">
           <input
             type="text"
             value={props.selector}
+            readOnly={!locked}
+            placeholder={locked ? "" : "hover an element…"}
             onChange={(e) => props.onSelectorChange(e.target.value)}
-            className="min-w-0 flex-1 rounded-lg border border-slate-200 px-2 py-1.5 font-mono text-xs outline-none focus:border-slate-400"
+            className={`min-w-0 flex-1 rounded-lg border border-slate-200 px-2 py-1.5 font-mono text-xs outline-none focus:border-slate-400 ${
+              locked ? "" : "bg-slate-50 text-slate-500"
+            }`}
           />
-          <button
-            type="button"
-            onClick={() => setSettingsOpen((v) => !v)}
-            title="Selector settings"
-            className="shrink-0 rounded-lg border border-slate-200 px-2 py-1.5 text-sm hover:bg-slate-50"
-          >
-            ⚙
-          </button>
-          {settingsOpen && (
+          {locked && (
+            <button
+              type="button"
+              onClick={() => setSettingsOpen((v) => !v)}
+              title="Selector settings"
+              className="shrink-0 rounded-lg border border-slate-200 px-2 py-1.5 text-sm hover:bg-slate-50"
+            >
+              ⚙
+            </button>
+          )}
+          {locked && settingsOpen && (
             <SettingsPopover
               settings={props.settings}
               onChange={props.onSettingsChange}
@@ -89,42 +110,48 @@ export function Sidebar(props: SidebarProps) {
           )}
         </div>
 
-        {/* DOM tree navigator */}
-        <div className="rounded-xl border border-slate-200">
-          <TreeNavigator {...props.tree} />
-        </div>
+        {/* Match count (shown in both phases) */}
+        {props.selector && (
+          <div className={`text-center text-xs font-medium ${matchColor}`}>
+            {matchOk ? "✓ " : "⚠ "}
+            Found {props.matchCount} element{props.matchCount === 1 ? "" : "s"}
+          </div>
+        )}
 
-        {/* Match count */}
-        <div className={`text-center text-xs font-medium ${matchColor}`}>
-          {matchOk ? "✓ " : "⚠ "}
-          Found {props.matchCount} element{props.matchCount === 1 ? "" : "s"}
-        </div>
-
-        {/* Attributes */}
-        <AttributeList
-          attributes={props.attributes}
-          checked={props.checkedCriteria}
-          onToggle={props.onToggleCriterion}
-        />
+        {/* Inspector tools (locked only) */}
+        {locked && (
+          <>
+            <div className="rounded-xl border border-slate-200">
+              <TreeNavigator {...props.tree} />
+            </div>
+            <AttributeList
+              attributes={props.attributes}
+              checked={props.checkedCriteria}
+              onToggle={props.onToggleCriterion}
+            />
+          </>
+        )}
       </div>
 
-      {/* Footer */}
-      <div className="flex justify-end gap-2 border-t border-slate-200 px-3 py-2">
-        <button
-          type="button"
-          onClick={props.onCancel}
-          className="rounded-lg px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-100"
-        >
-          Close
-        </button>
-        <button
-          type="button"
-          onClick={props.onConfirm}
-          className="rounded-lg bg-slate-800 px-4 py-1.5 text-sm font-medium text-white hover:bg-slate-700"
-        >
-          OK
-        </button>
-      </div>
+      {/* Footer (locked only) */}
+      {locked && (
+        <div className="flex justify-end gap-2 border-t border-slate-200 px-3 py-2">
+          <button
+            type="button"
+            onClick={props.onCancel}
+            className="rounded-lg px-3 py-1.5 text-sm text-slate-600 hover:bg-slate-100"
+          >
+            Close
+          </button>
+          <button
+            type="button"
+            onClick={props.onConfirm}
+            className="rounded-lg bg-slate-800 px-4 py-1.5 text-sm font-medium text-white hover:bg-slate-700"
+          >
+            OK
+          </button>
+        </div>
+      )}
     </div>
   )
 }
