@@ -4,43 +4,19 @@ import type { AttrEntry } from "./dom"
 
 interface AttributeListProps {
   attributes: AttrEntry[]
-  /** Names the user checked as extra match criteria. */
-  checked: Set<string>
-  onToggle: (name: string) => void
 }
 
 const TRUNCATE = 120
 
-function AttributeCard({
-  entry,
-  isChecked,
-  onToggle,
-}: {
-  entry: AttrEntry
-  isChecked: boolean
-  onToggle: () => void
-}) {
+function AttributeCard({ entry }: { entry: AttrEntry }) {
   const [expanded, setExpanded] = useState(false)
   const long = entry.value.length > TRUNCATE
   const shown = expanded || !long ? entry.value : `${entry.value.slice(0, TRUNCATE)}…`
   return (
-    <div
-      className={`rounded-lg border p-2.5 transition-colors ${
-        isChecked
-          ? "border-slate-300 bg-slate-50 ring-1 ring-slate-200"
-          : "border-slate-200 hover:border-slate-300 hover:bg-slate-50/60"
-      }`}
-    >
-      <div className="flex items-center justify-between gap-2">
-        <span className="truncate font-mono font-semibold text-slate-700 text-xs">{entry.name}</span>
-        <input
-          type="checkbox"
-          checked={isChecked}
-          onChange={onToggle}
-          title="Use as an extra match criterion"
-          className="h-3.5 w-3.5 shrink-0 cursor-pointer accent-slate-900"
-        />
-      </div>
+    <div className="rounded-lg border border-slate-200 p-2.5 transition-colors hover:border-slate-300 hover:bg-slate-50/60">
+      <span className="block truncate font-mono font-semibold text-slate-700 text-xs">
+        {entry.name}
+      </span>
       <div className="mt-1 break-all font-mono text-[11px] text-slate-500 leading-relaxed">
         {shown || <span className="text-slate-300 italic">empty</span>}
       </div>
@@ -57,8 +33,8 @@ function AttributeCard({
   )
 }
 
-/** Searchable list of element attributes, each checkable as a match criterion. */
-export function AttributeList({ attributes, checked, onToggle }: AttributeListProps) {
+/** Read-only, searchable list of the selected element's attributes and content. */
+export function AttributeList({ attributes }: AttributeListProps) {
   const [filter, setFilter] = useState("")
   const visible = useMemo(() => {
     const q = filter.trim().toLowerCase()
@@ -85,14 +61,7 @@ export function AttributeList({ attributes, checked, onToggle }: AttributeListPr
         {visible.length === 0 ? (
           <p className="px-1 py-3 text-center text-[11px] text-slate-400">No matching attributes.</p>
         ) : (
-          visible.map((entry) => (
-            <AttributeCard
-              key={entry.name}
-              entry={entry}
-              isChecked={checked.has(entry.name)}
-              onToggle={() => onToggle(entry.name)}
-            />
-          ))
+          visible.map((entry) => <AttributeCard key={entry.name} entry={entry} />)
         )}
       </div>
     </div>

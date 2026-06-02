@@ -24,7 +24,6 @@ interface SidebarProps {
   selector: string
   matchCount: number
   attributes: AttrEntry[]
-  checkedCriteria: Set<string>
   settings: SelectorSettings
   side: "left" | "right"
   tree: {
@@ -39,7 +38,6 @@ interface SidebarProps {
     onChild: () => void
   }
   onSelectorChange: (value: string) => void
-  onToggleCriterion: (name: string) => void
   onSettingsChange: (patch: Partial<SelectorSettings>) => void
   onSwapSide: () => void
   /** Return to hover mode to pick a different element. */
@@ -231,11 +229,7 @@ export function Sidebar(props: SidebarProps) {
             </div>
             <div className="flex min-h-0 flex-1 flex-col gap-1.5">
               <span className={sectionLabel}>Attributes</span>
-              <AttributeList
-                attributes={props.attributes}
-                checked={props.checkedCriteria}
-                onToggle={props.onToggleCriterion}
-              />
+              <AttributeList attributes={props.attributes} />
             </div>
           </>
         )}

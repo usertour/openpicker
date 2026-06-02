@@ -165,11 +165,9 @@ Response `result` (on OK):
     "text": "Google",
     "attributes": { "aria-label": "Google" }
   },
-  "criteria": { "innerText": "Google" },
   "screenshot": "data:image/png;base64,…"
 }
 ```
-- `criteria` — the attributes the user checked as extra match conditions (§ sidebar).
 - `screenshot` present only if requested (a `data:` URL; cropped to the element for `"element"`).
 
 Failure: `consent_denied`, or `cancelled` if the user closes/cancels the picker (including closing
@@ -306,5 +304,5 @@ SDK  → ext : {channel:"openpicker", v:1, kind:"req", id:"op:7Hk2:2", method:"p
 ext  → SDK : {channel:"openpicker", v:1, kind:"res", id:"op:7Hk2:2", ok:true,
               result:{selector:"button.cta", matchCount:1,
                       element:{tag:"button", classes:["cta"], text:"Get started"},
-                      criteria:{}}}
+                      screenshot:undefined}}}
 ```

@@ -62,7 +62,6 @@ export function Picker({ params, host, skipConsent, canNavigate, onResolve }: Pi
   })
   const [selector, setSelector] = useState("")
   const [selectorEdited, setSelectorEdited] = useState(false)
-  const [checked, setChecked] = useState<Set<string>>(new Set())
 
   const hoverRect = useTrackedRect(phase === "hover" ? hovered : null)
   const lockedRect = useTrackedRect(phase === "locked" ? locked : null)
@@ -184,7 +183,6 @@ export function Picker({ params, host, skipConsent, canNavigate, onResolve }: Pi
     if (!next) return
     setLocked(next)
     setSelectorEdited(false)
-    setChecked(new Set())
   }, [])
 
   // Return to hover mode to pick a different element (clears the current selection).
@@ -195,7 +193,6 @@ export function Picker({ params, host, skipConsent, canNavigate, onResolve }: Pi
     setHovered(null)
     setSelector("")
     setSelectorEdited(false)
-    setChecked(new Set())
     setPhase("hover")
   }, [])
 
@@ -208,21 +205,15 @@ export function Picker({ params, host, skipConsent, canNavigate, onResolve }: Pi
 
   const confirm = useCallback(async () => {
     if (!locked) return onResolve({ type: "cancelled" })
-    const criteria: Record<string, string> = {}
-    const all = collectAttributes(locked)
-    for (const entry of all) {
-      if (checked.has(entry.name)) criteria[entry.name] = entry.value
-    }
     const screenshot = await captureScreenshot(normalizeScreenshotMode(params.screenshot), locked, host)
     const result: PickResult = {
       selector,
       matchCount: countMatches(selector),
       element: describeElement(locked),
-      criteria: Object.keys(criteria).length ? criteria : undefined,
       screenshot,
     }
     onResolve({ type: "result", result })
-  }, [locked, checked, selector, params.screenshot, onResolve, host])
+  }, [locked, selector, params.screenshot, onResolve, host])
 
   if (phase === "consent") {
     return (
@@ -273,7 +264,6 @@ export function Picker({ params, host, skipConsent, canNavigate, onResolve }: Pi
         selector={shownSelector}
         matchCount={matchCount}
         attributes={attributes}
-        checkedCriteria={checked}
         settings={settings}
         side={side}
         tree={tree}
@@ -281,14 +271,6 @@ export function Picker({ params, host, skipConsent, canNavigate, onResolve }: Pi
           setSelector(v)
           setSelectorEdited(true)
         }}
-        onToggleCriterion={(name) =>
-          setChecked((prev) => {
-            const next = new Set(prev)
-            if (next.has(name)) next.delete(name)
-            else next.add(name)
-            return next
-          })
-        }
         onSettingsChange={(patch) => setSettings((s) => ({ ...s, ...patch }))}
         onSwapSide={() => setSide((s) => (s === "right" ? "left" : "right"))}
         onReselect={reselect}

@@ -151,7 +151,8 @@ panel renders inside the Shadow DOM, fixed full-height on the right (swappable t
   an element to select it"), shows a **read-only live preview** of the selector under the cursor,
   and a live match count. Header has swap-side (⇄) and close (✕); `Esc` also cancels.
 - **Locked phase** (element selected): the same panel becomes the inspector (§5.1d) — editable
-  selector + ⚙ settings, DOM-tree navigator, match count, attribute criteria, and a Close/OK footer.
+  selector + ⚙ settings, DOM-tree navigator, match count, a read-only attribute list, and a
+  Close/OK footer.
 
 The page overlays (highlight box, ruler guides, tag tooltip) track the hovered element while
 finding and the locked element once selected.
@@ -204,15 +205,16 @@ Components (all v1, "full" scope):
    clicking re-targets the highlighted element and regenerates the selector. Mirrors the
    `↑/↓` keyboard walk, exposed as a visual control.
 4. **Match count** — `querySelectorAll(sel).length`; green when exactly 1, warning otherwise
-5. **Attributes list** — searchable list of the element's props/attributes (`innerText`,
-   `topText`, `textContent`, `innerHTML`, `outerHTML`, `class`, `id`, `data-*`, `aria-*`, …).
-   Each card shows name + truncated value with "Show more"; a checkbox marks the attribute as
-   an **extra match criterion** beyond the CSS selector (e.g. also match on `innerText`).
-   (No "Interactions" tab — that was specific to the reference product, not part of openpicker.)
+5. **Attributes list** — a **read-only**, searchable list of the element's props/attributes
+   (`textContent`, `innerHTML`, `outerHTML`, `class`, `id`, `data-*`, `aria-*`, …). Each card shows
+   name + truncated value with "Show more". It is purely for inspection (the hover tag tooltip is
+   gone once locked, so this is where you read the element's details). No checkboxes / "match
+   criteria" — that was a data-extraction concept borrowed from the reference scraper, not ours.
+   (No "Interactions" tab either — also reference-product-specific.)
 6. **Footer** — `Close` (cancel, return nothing) / `OK` (confirm, return the result to the SDK)
 
-Result returned on OK (shape TBD in PROTOCOL.md) includes at least: the chosen `selector`,
-the selected element's tag/text, the checked match criteria, and (optionally) a screenshot.
+Result returned on OK (see PROTOCOL.md) includes: the chosen `selector`, a match count,
+the selected element's summary, and (optionally) a screenshot.
 
 Rendering: the sidebar lives in the **same Shadow DOM** as the overlay (Tailwind-styled),
 `position: fixed`, full viewport height, dockable left/right.

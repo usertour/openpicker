@@ -64,8 +64,6 @@ export interface PickResult {
   matchCount: number
   /** A summary of the selected element. */
   element: PickedElement
-  /** Attributes the user checked as extra match criteria (e.g. innerText). */
-  criteria?: Record<string, string>
   /** Present only when `screenshot` was requested. */
   screenshot?: string
 }
