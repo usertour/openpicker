@@ -12,6 +12,7 @@ import {
   tagLabel,
 } from "./dom"
 import { HighlightBox } from "./HighlightBox"
+import { applyHostCursor, clearHostCursor } from "./hostCursor"
 import { getConsent, setConsent } from "./messaging"
 import { RulerGuides } from "./RulerGuides"
 import { captureScreenshot, normalizeScreenshotMode } from "./screenshot"
@@ -117,14 +118,14 @@ export function Picker({ params, host, skipConsent, onResolve }: PickerProps) {
     window.addEventListener("click", swallow, true)
     window.addEventListener("contextmenu", swallow, true)
     window.addEventListener("keydown", onKey, true)
-    document.body.classList.add("openpicker-active")
+    applyHostCursor()
     return () => {
       window.removeEventListener("mousemove", onMove, true)
       window.removeEventListener("pointerdown", onPointerDown, true)
       window.removeEventListener("click", swallow, true)
       window.removeEventListener("contextmenu", swallow, true)
       window.removeEventListener("keydown", onKey, true)
-      document.body.classList.remove("openpicker-active")
+      clearHostCursor()
     }
   }, [phase, host, cancel])
 

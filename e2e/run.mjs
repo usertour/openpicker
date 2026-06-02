@@ -92,10 +92,12 @@ async function attach(targetId) {
 }
 
 async function waitInjected(sessionId) {
+  // The content script adds no marker to the host DOM, so detect readiness via a
+  // real ping round-trip: send ping until a pong (the protocol's own signal).
   for (let i = 0; i < 30; i++) {
+    await run(sessionId, "window.__opPing()")
     await sleep(300)
-    if ((await evalJson(sessionId, "document.documentElement.dataset.openpicker || null")) === "loaded")
-      return true
+    if (await evalJson(sessionId, "window.__op.pong")) return true
   }
   return false
 }
