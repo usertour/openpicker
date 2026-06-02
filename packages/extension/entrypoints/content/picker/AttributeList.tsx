@@ -48,7 +48,7 @@ export function AttributeList({ attributes }: AttributeListProps) {
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-2">
       {showFilter && (
-        <div className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-2.5 transition focus-within:border-slate-400 focus-within:ring-2 focus-within:ring-slate-100">
+        <div className="flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-2.5 transition focus-within:border-slate-500 focus-within:ring-2 focus-within:ring-slate-200">
           <RiSearchLine size={14} className="shrink-0 text-slate-400" />
           <input
             type="text"

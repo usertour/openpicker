@@ -156,7 +156,7 @@ export function Sidebar(props: SidebarProps) {
           <span className="grid h-12 w-12 place-items-center rounded-full bg-slate-100 text-slate-400">
             <RiCompass3Line size={24} />
           </span>
-          <p className="max-w-[15rem] text-slate-500 text-sm leading-relaxed">
+          <p className="max-w-[15rem] text-slate-600 text-sm leading-relaxed">
             Picking is paused. Go to the page that has your element, then resume.
           </p>
           <button
@@ -188,8 +188,10 @@ export function Sidebar(props: SidebarProps) {
               readOnly={!locked}
               placeholder={locked ? "" : "hover an element…"}
               onChange={(e) => props.onSelectorChange(e.target.value)}
-              className={`min-w-0 flex-1 rounded-lg border px-2.5 py-2 font-mono text-xs outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-100 ${
-                locked ? "border-slate-200 bg-white text-slate-800" : "border-slate-200 bg-slate-50 text-slate-500"
+              className={`min-w-0 flex-1 rounded-lg border px-2.5 py-2 font-mono text-xs outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200 ${
+                locked
+                  ? "border-slate-300 bg-white text-slate-800"
+                  : "border-slate-300 bg-slate-50 text-slate-500"
               }`}
             />
             {locked && (
@@ -197,7 +199,7 @@ export function Sidebar(props: SidebarProps) {
                 type="button"
                 onClick={props.onReselect}
                 title="Pick another element"
-                className="grid h-[34px] w-[34px] shrink-0 place-items-center rounded-lg border border-slate-200 text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700"
+                className="grid h-[34px] w-[34px] shrink-0 place-items-center rounded-lg border border-slate-300 text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700"
               >
                 <RiCrosshair2Line size={16} />
               </button>
