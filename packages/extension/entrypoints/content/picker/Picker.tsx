@@ -11,7 +11,7 @@ import {
   getPrevSibling,
   tagLabel,
 } from "./dom"
-import { HighlightBox } from "./HighlightBox"
+import { HighlightBox, PulseRing } from "./HighlightBox"
 import { getConsent, setConsent } from "./messaging"
 import { RulerGuides } from "./RulerGuides"
 import { captureScreenshot, normalizeScreenshotMode } from "./screenshot"
@@ -51,16 +51,21 @@ export function Picker({ params, host, skipConsent, onResolve }: PickerProps) {
   const [selector, setSelector] = useState("")
   const [selectorEdited, setSelectorEdited] = useState(false)
   const [checked, setChecked] = useState<Set<string>>(new Set())
-  // Bumped each time an element is locked/re-targeted; keys the pulse ring so it
-  // remounts and replays its one-shot animation.
-  const [pulseKey, setPulseKey] = useState(0)
+  // True briefly after an element is locked/re-targeted, to play the one-shot
+  // "selected!" pulse ring. A counter keys the ring so it remounts and replays.
+  const [pulseId, setPulseId] = useState(0)
+  const [pulsing, setPulsing] = useState(false)
 
   const hoverRect = useTrackedRect(phase === "hover" ? hovered : null)
   const lockedRect = useTrackedRect(phase === "locked" ? locked : null)
 
   // Play the "selected!" pulse whenever a new element becomes the locked target.
   useEffect(() => {
-    if (phase === "locked" && locked) setPulseKey((k) => k + 1)
+    if (phase !== "locked" || !locked) return
+    setPulseId((n) => n + 1)
+    setPulsing(true)
+    const t = setTimeout(() => setPulsing(false), 600) // a bit longer than the 500ms animation
+    return () => clearTimeout(t)
   }, [phase, locked])
 
   // Decide whether to show the consent prompt on mount (unless already resolved
@@ -223,8 +228,9 @@ export function Picker({ params, host, skipConsent, onResolve }: PickerProps) {
   // locked
   return (
     <>
-      {locked && lockedRect && (
-        <HighlightBox key={pulseKey} rect={lockedRect} el={locked} animated pulse />
+      {locked && lockedRect && <HighlightBox rect={lockedRect} el={locked} animated />}
+      {locked && lockedRect && pulsing && (
+        <PulseRing key={pulseId} rect={lockedRect} el={locked} />
       )}
       {locked && (
         <Sidebar

@@ -6,8 +6,6 @@ interface HighlightBoxProps {
   el?: Element | null
   /** Smoothly animate between elements (used once a target is locked). */
   animated?: boolean
-  /** Play a one-shot expand-and-fade ring (a "selected!" pulse) over the box. */
-  pulse?: boolean
 }
 
 /** Minimum corner radius so even square elements get a subtly softened outline. */
@@ -38,7 +36,7 @@ function cornerRadii(el: Element | null | undefined): string {
  * both jobs: a glow outline around the target and a huge box-shadow spread that
  * darkens the rest of the page. See DESIGN.md §5.3.
  */
-export function HighlightBox({ rect, el, animated, pulse }: HighlightBoxProps) {
+export function HighlightBox({ rect, el, animated }: HighlightBoxProps) {
   const radius = useMemo(() => cornerRadii(el), [el])
 
   const style = useMemo<React.CSSProperties>(
@@ -56,10 +54,22 @@ export function HighlightBox({ rect, el, animated, pulse }: HighlightBoxProps) {
     [rect, radius, animated],
   )
 
-  // The pulse ring sits over the box and expands/fades once via CSS. It is made
-  // visually distinct from the box (thicker, brighter, soft glow) so the expand
-  // reads clearly. transform-origin center so it grows outward symmetrically.
-  const ringStyle = useMemo<React.CSSProperties>(
+  return <div style={style} />
+}
+
+interface PulseRingProps {
+  rect: DOMRect
+  el?: Element | null
+}
+
+/**
+ * One-shot "selected!" ring over the locked element: a thicker, brighter outline
+ * with a soft glow that expands and fades once (CSS `openpicker-lock-pulse`).
+ * Render it under a changing `key` so it remounts and replays on each lock.
+ */
+export function PulseRing({ rect, el }: PulseRingProps) {
+  const radius = useMemo(() => cornerRadii(el), [el])
+  const style = useMemo<React.CSSProperties>(
     () => ({
       position: "fixed",
       top: rect.top,
@@ -74,11 +84,5 @@ export function HighlightBox({ rect, el, animated, pulse }: HighlightBoxProps) {
     }),
     [rect, radius],
   )
-
-  return (
-    <>
-      <div style={style} />
-      {pulse && <div className="openpicker-lock-pulse" style={ringStyle} />}
-    </>
-  )
+  return <div className="openpicker-lock-pulse" style={style} />
 }
