@@ -1,4 +1,5 @@
 import type { SelectorMode } from "@openpicker/protocol"
+import { RiCloseLine } from "@remixicon/react"
 
 export interface SelectorSettings {
   mode: SelectorMode
@@ -27,7 +28,7 @@ export function SettingsPopover({ settings, onChange, onClose }: SettingsPopover
           className="text-slate-400 hover:text-slate-600"
           title="Close"
         >
-          ✕
+          <RiCloseLine size={16} />
         </button>
       </div>
 

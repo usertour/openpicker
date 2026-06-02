@@ -1,3 +1,10 @@
+import {
+  RiArrowDownSLine,
+  RiArrowLeftSLine,
+  RiArrowRightSLine,
+  RiArrowUpSLine,
+} from "@remixicon/react"
+
 interface TreeNavigatorProps {
   parentLabel: string | null
   prevLabel: string | null
@@ -12,10 +19,13 @@ interface TreeNavigatorProps {
 
 const node =
   "max-w-[8rem] truncate rounded px-2 py-0.5 font-mono text-xs text-slate-600 hover:bg-slate-100 disabled:cursor-default disabled:opacity-30 disabled:hover:bg-transparent"
+const arrow = "text-slate-300"
+const sibBtn =
+  "rounded p-0.5 text-slate-500 hover:bg-slate-100 disabled:cursor-default disabled:opacity-30 disabled:hover:bg-transparent"
 
 /**
- * Visual DOM-tree navigator: walk to parent (▲), first child (▼), or previous /
- * next sibling (« »). Clicking re-targets the selection. See DESIGN.md §5.1d.
+ * Visual DOM-tree navigator: walk to parent (up), first child (down), or previous
+ * / next sibling (left / right). Clicking re-targets the selection. See DESIGN.md §5.1d.
  */
 export function TreeNavigator(props: TreeNavigatorProps) {
   return (
@@ -23,19 +33,31 @@ export function TreeNavigator(props: TreeNavigatorProps) {
       <button type="button" className={node} disabled={!props.parentLabel} onClick={props.onParent}>
         {props.parentLabel ?? "—"}
       </button>
-      <span className="text-slate-300">▲</span>
+      <RiArrowUpSLine size={14} className={arrow} />
       <div className="flex items-center gap-1">
-        <button type="button" className={node} disabled={!props.prevLabel} onClick={props.onPrev}>
-          «
+        <button
+          type="button"
+          className={sibBtn}
+          title="Previous sibling"
+          disabled={!props.prevLabel}
+          onClick={props.onPrev}
+        >
+          <RiArrowLeftSLine size={16} />
         </button>
         <span className="max-w-[9rem] truncate rounded bg-slate-800 px-2 py-0.5 font-mono text-xs text-white">
           {props.currentLabel}
         </span>
-        <button type="button" className={node} disabled={!props.nextLabel} onClick={props.onNext}>
-          »
+        <button
+          type="button"
+          className={sibBtn}
+          title="Next sibling"
+          disabled={!props.nextLabel}
+          onClick={props.onNext}
+        >
+          <RiArrowRightSLine size={16} />
         </button>
       </div>
-      <span className="text-slate-300">▼</span>
+      <RiArrowDownSLine size={14} className={arrow} />
       <button type="button" className={node} disabled={!props.childLabel} onClick={props.onChild}>
         {props.childLabel ?? "—"}
       </button>

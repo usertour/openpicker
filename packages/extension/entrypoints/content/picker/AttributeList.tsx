@@ -1,3 +1,4 @@
+import { RiSearchLine } from "@remixicon/react"
 import { useMemo, useState } from "react"
 import type { AttrEntry } from "./dom"
 
@@ -60,13 +61,19 @@ export function AttributeList({ attributes, checked, onToggle }: AttributeListPr
 
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-2">
-      <input
-        type="text"
-        value={filter}
-        placeholder="🔍 filter attributes…"
-        onChange={(e) => setFilter(e.target.value)}
-        className="w-full rounded-lg border border-slate-200 px-2 py-1 text-xs outline-none focus:border-slate-400"
-      />
+      <div className="relative">
+        <RiSearchLine
+          size={14}
+          className="-translate-y-1/2 absolute top-1/2 left-2 text-slate-400"
+        />
+        <input
+          type="text"
+          value={filter}
+          placeholder="Filter attributes…"
+          onChange={(e) => setFilter(e.target.value)}
+          className="w-full rounded-lg border border-slate-200 py-1 pr-2 pl-7 text-xs outline-none focus:border-slate-400"
+        />
+      </div>
       <div className="flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto">
         {visible.map((entry) => (
           <AttributeCard

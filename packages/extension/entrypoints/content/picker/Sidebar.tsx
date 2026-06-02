@@ -1,3 +1,10 @@
+import {
+  RiArrowLeftRightLine,
+  RiCheckLine,
+  RiCloseLine,
+  RiErrorWarningLine,
+  RiSettings3Line,
+} from "@remixicon/react"
 import { useState } from "react"
 import { AttributeList } from "./AttributeList"
 import type { AttrEntry } from "./dom"
@@ -59,7 +66,7 @@ export function Sidebar(props: SidebarProps) {
           title="Swap side"
           className="text-slate-400 hover:text-slate-600"
         >
-          ⇄
+          <RiArrowLeftRightLine size={16} />
         </button>
         <span className="text-sm font-semibold text-slate-800">openpicker</span>
         <button
@@ -68,7 +75,7 @@ export function Sidebar(props: SidebarProps) {
           title="Close"
           className="text-slate-400 hover:text-slate-600"
         >
-          ✕
+          <RiCloseLine size={16} />
         </button>
       </div>
 
@@ -96,9 +103,9 @@ export function Sidebar(props: SidebarProps) {
               type="button"
               onClick={() => setSettingsOpen((v) => !v)}
               title="Selector settings"
-              className="shrink-0 rounded-lg border border-slate-200 px-2 py-1.5 text-sm hover:bg-slate-50"
+              className="shrink-0 rounded-lg border border-slate-200 px-2 py-1.5 text-slate-600 hover:bg-slate-50"
             >
-              ⚙
+              <RiSettings3Line size={16} />
             </button>
           )}
           {locked && settingsOpen && (
@@ -112,8 +119,10 @@ export function Sidebar(props: SidebarProps) {
 
         {/* Match count (shown in both phases) */}
         {props.selector && (
-          <div className={`text-center text-xs font-medium ${matchColor}`}>
-            {matchOk ? "✓ " : "⚠ "}
+          <div
+            className={`flex items-center justify-center gap-1 text-xs font-medium ${matchColor}`}
+          >
+            {matchOk ? <RiCheckLine size={14} /> : <RiErrorWarningLine size={14} />}
             Found {props.matchCount} element{props.matchCount === 1 ? "" : "s"}
           </div>
         )}
