@@ -51,7 +51,7 @@ async function runAndReport(sourceTabId: number, params: Partial<PickParams>): P
   running = true
   writeMarker({ sourceTabId, params })
   try {
-    const outcome = await runPicker(params, { skipConsent: true })
+    const outcome = await runPicker(params, { skipConsent: true, canNavigate: true })
     clearMarker()
     await browser.runtime.sendMessage({ kind: "crossTab:result", sourceTabId, outcome })
   } finally {

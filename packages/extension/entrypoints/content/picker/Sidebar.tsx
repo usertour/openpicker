@@ -2,6 +2,7 @@ import {
   RiArrowLeftRightLine,
   RiCheckLine,
   RiCloseLine,
+  RiCompass3Line,
   RiCrosshair2Line,
   RiErrorWarningLine,
   RiSettings3Line,
@@ -13,8 +14,11 @@ import { type SelectorSettings, SettingsPopover } from "./SettingsPopover"
 import { TreeNavigator } from "./TreeNavigator"
 
 interface SidebarProps {
-  /** "hover" = still finding an element; "locked" = an element is selected. */
-  phase: "hover" | "locked"
+  /**
+   * "hover" = still finding an element; "locked" = an element is selected;
+   * "navigate" = the pick is suspended so the user can navigate to another page.
+   */
+  phase: "hover" | "locked" | "navigate"
   /** The current selector: live preview while hovering, editable once locked. */
   selector: string
   matchCount: number
@@ -39,6 +43,15 @@ interface SidebarProps {
   onSwapSide: () => void
   /** Return to hover mode to pick a different element. */
   onReselect: () => void
+  /**
+   * Whether to offer "navigate to another page" (only safe in the cross-tab target
+   * tab, where the pick resumes after navigation). See Picker `canNavigate`.
+   */
+  canNavigate: boolean
+  /** Suspend the pick so the page is interactive and the user can navigate away. */
+  onNavigate: () => void
+  /** Resume picking after navigating (back to hover mode). */
+  onResume: () => void
   onConfirm: () => void
   onCancel: () => void
 }
@@ -52,6 +65,7 @@ interface SidebarProps {
 export function Sidebar(props: SidebarProps) {
   const [settingsOpen, setSettingsOpen] = useState(false)
   const locked = props.phase === "locked"
+  const navigating = props.phase === "navigate"
   const matchOk = props.matchCount === 1
   const matchColor = matchOk ? "text-emerald-600" : "text-amber-600"
 
@@ -72,16 +86,45 @@ export function Sidebar(props: SidebarProps) {
           <RiArrowLeftRightLine size={16} />
         </button>
         <span className="text-sm font-semibold text-slate-800">openpicker</span>
-        <button
-          type="button"
-          onClick={props.onCancel}
-          title="Close"
-          className="text-slate-400 hover:text-slate-600"
-        >
-          <RiCloseLine size={16} />
-        </button>
+        <div className="flex items-center gap-2">
+          {props.canNavigate && !navigating && (
+            <button
+              type="button"
+              onClick={props.onNavigate}
+              title="Navigate to another page"
+              className="text-slate-400 hover:text-slate-600"
+            >
+              <RiCompass3Line size={16} />
+            </button>
+          )}
+          <button
+            type="button"
+            onClick={props.onCancel}
+            title="Close"
+            className="text-slate-400 hover:text-slate-600"
+          >
+            <RiCloseLine size={16} />
+          </button>
+        </div>
       </div>
 
+      {navigating ? (
+        <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-3 p-6 text-center">
+          <RiCompass3Line size={28} className="text-slate-300" />
+          <p className="text-sm text-slate-600">
+            Picking is paused. Go to the page that has your element, then resume.
+          </p>
+          <button
+            type="button"
+            onClick={props.onResume}
+            className="inline-flex items-center gap-1.5 rounded-lg bg-slate-800 px-4 py-1.5 text-sm font-medium text-white hover:bg-slate-700"
+          >
+            <RiCrosshair2Line size={16} />
+            Resume picking
+          </button>
+        </div>
+      ) : (
+        <>
       <div className="flex min-h-0 flex-1 flex-col gap-3 p-3">
         {!locked && (
           <p className="text-sm text-slate-500">
@@ -173,6 +216,8 @@ export function Sidebar(props: SidebarProps) {
             OK
           </button>
         </div>
+      )}
+        </>
       )}
     </div>
   )

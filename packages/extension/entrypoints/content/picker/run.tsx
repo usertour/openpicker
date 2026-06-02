@@ -22,11 +22,13 @@ export function cancelActivePicker(): void {
  * (PickResult) or cancels/denies. Only one picker runs at a time.
  *
  * `skipConsent` is used in the cross-tab target tab, where consent was already
- * resolved against the source origin before the tab was opened.
+ * resolved against the source origin before the tab was opened. `canNavigate`
+ * offers the "navigate to another page" control — only safe there, since the pick
+ * resumes after navigation and the result is routed back via the background.
  */
 export async function runPicker(
   params: Partial<PickParams> = {},
-  options: { skipConsent?: boolean } = {},
+  options: { skipConsent?: boolean; canNavigate?: boolean } = {},
 ): Promise<PickOutcome> {
   if (active) return { type: "cancelled" }
   active = true
@@ -51,6 +53,7 @@ export async function runPicker(
         params={params}
         host={mount.host}
         skipConsent={options.skipConsent}
+        canNavigate={options.canNavigate}
         onResolve={finish}
       />,
     )

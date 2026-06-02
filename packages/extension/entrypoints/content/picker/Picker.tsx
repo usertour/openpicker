@@ -254,7 +254,7 @@ export function Picker({ params, host, skipConsent, canNavigate, onResolve }: Pi
       {overlayEl && overlayRect && <RulerGuides rect={overlayRect} />}
       {overlayEl && overlayRect && <TagTooltip el={overlayEl} rect={overlayRect} />}
       <Sidebar
-        phase={locked ? "locked" : "hover"}
+        phase={phase === "navigate" ? "navigate" : locked ? "locked" : "hover"}
         selector={shownSelector}
         matchCount={matchCount}
         attributes={attributes}
@@ -277,6 +277,9 @@ export function Picker({ params, host, skipConsent, canNavigate, onResolve }: Pi
         onSettingsChange={(patch) => setSettings((s) => ({ ...s, ...patch }))}
         onSwapSide={() => setSide((s) => (s === "right" ? "left" : "right"))}
         onReselect={reselect}
+        canNavigate={!!canNavigate}
+        onNavigate={() => setPhase("navigate")}
+        onResume={reselect}
         onConfirm={confirm}
         onCancel={cancel}
       />
