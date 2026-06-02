@@ -55,7 +55,11 @@ function withPropertyFallbacks(css: string): string {
  * zoom, which scales px too, still works).
  */
 function remToPx(css: string): string {
-  return css.replace(/(-?[\d.]+)rem\b/g, (_m, n) => `${Number.parseFloat(n) * 16}px`)
+  // Convert rem only in declaration values. The negative lookahead skips rem inside
+  // arbitrary-value class selectors (Tailwind escapes them as `…\[10rem\]`); without
+  // it we'd rename the selector (e.g. `.max-w-\[10rem\]` → `.max-w-\[160px\]`) so it
+  // no longer matches the element's class, silently dropping that utility.
+  return css.replace(/(-?[\d.]+)rem\b(?![\\\]])/g, (_m, n) => `${Number.parseFloat(n) * 16}px`)
 }
 
 export interface ShadowMount {
