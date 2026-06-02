@@ -48,17 +48,14 @@ export function AttributeList({ attributes }: AttributeListProps) {
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-2">
       {showFilter && (
-        <div className="relative">
-          <RiSearchLine
-            size={14}
-            className="-translate-y-1/2 absolute top-1/2 left-2.5 text-slate-400"
-          />
+        <div className="flex items-center gap-2 rounded-lg border border-slate-200 bg-white px-2.5 transition focus-within:border-slate-400 focus-within:ring-2 focus-within:ring-slate-100">
+          <RiSearchLine size={14} className="shrink-0 text-slate-400" />
           <input
             type="text"
             value={filter}
             placeholder="Filter attributes…"
             onChange={(e) => setFilter(e.target.value)}
-            className="w-full rounded-lg border border-slate-200 bg-white py-2 pr-2.5 pl-8 text-xs outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-100"
+            className="w-full bg-transparent py-2 text-xs outline-none"
           />
         </div>
       )}
