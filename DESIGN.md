@@ -435,6 +435,14 @@ openpicker: different host → new tab; same host but different `key` → new ta
   integrator knows. The reference could read flow_id because it *is* the business; openpicker is a
   tool, so the business identity must come in from the caller.
 
+**One target per source (decided: keep it single).** A source holds exactly one target mapping
+(`op:sourceToTarget:<sourceTabId>` is a single value, keyed only by source id). Opening a target
+for a different host overwrites it. Consequence: pick google → pick facebook → pick google again
+opens a *new* google tab (the google mapping was overwritten by facebook); it does not jump back to
+the first google tab. Same-host repeat picks (URL/host unchanged) do reuse and jump back. This
+matches the reference pattern (also single-target) and is intentionally simple. A "single source →
+many targets (reuse per host/key)" model was considered and **declined** for now.
+
 ### Continuity across navigation (sessionStorage marker)
 When picking is active in a tab, mark it in that page's `sessionStorage`; the content script checks
 the marker on load and re-arms the picker automatically. This rides the browser's `sessionStorage`
