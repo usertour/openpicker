@@ -36,6 +36,7 @@ interface SidebarProps {
     onPrev: () => void
     onNext: () => void
     onChild: () => void
+    onCenter: () => void
   }
   onSelectorChange: (value: string) => void
   onSettingsChange: (patch: Partial<SelectorSettings>) => void
@@ -125,11 +126,30 @@ export function Sidebar(props: SidebarProps) {
               <RiCompass3Line size={16} />
             </button>
           )}
+          {locked && (
+            <button
+              type="button"
+              onClick={() => setSettingsOpen((v) => !v)}
+              title="Selector settings"
+              className={settingsOpen ? `${iconBtn} bg-slate-100 text-slate-700` : iconBtn}
+            >
+              <RiSettings3Line size={16} />
+            </button>
+          )}
           <button type="button" onClick={props.onCancel} title="Close" className={iconBtn}>
             <RiCloseLine size={16} />
           </button>
         </div>
       </div>
+
+      {/* Settings popover (drops from the gear in the header) */}
+      {locked && settingsOpen && (
+        <SettingsPopover
+          settings={props.settings}
+          onChange={props.onSettingsChange}
+          onClose={() => setSettingsOpen(false)}
+        />
+      )}
 
       {navigating ? (
         <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-4 p-6 text-center">
@@ -181,27 +201,6 @@ export function Sidebar(props: SidebarProps) {
               >
                 <RiCrosshair2Line size={16} />
               </button>
-            )}
-            {locked && (
-              <button
-                type="button"
-                onClick={() => setSettingsOpen((v) => !v)}
-                title="Selector settings"
-                className={`grid h-[34px] w-[34px] shrink-0 place-items-center rounded-lg border transition-colors ${
-                  settingsOpen
-                    ? "border-slate-300 bg-slate-100 text-slate-700"
-                    : "border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-slate-700"
-                }`}
-              >
-                <RiSettings3Line size={16} />
-              </button>
-            )}
-            {locked && settingsOpen && (
-              <SettingsPopover
-                settings={props.settings}
-                onChange={props.onSettingsChange}
-                onClose={() => setSettingsOpen(false)}
-              />
             )}
           </div>
 

@@ -254,6 +254,7 @@ export function Picker({ params, host, skipConsent, canNavigate, onResolve }: Pi
     onPrev: () => locked && retarget(getPrevSibling(locked, host)),
     onNext: () => locked && retarget(getNextSibling(locked, host)),
     onChild: () => locked && retarget(getFirstChild(locked, host)),
+    onCenter: () => locked?.scrollIntoView({ block: "center", inline: "center", behavior: "smooth" }),
   }
 
   return (

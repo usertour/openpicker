@@ -42,21 +42,26 @@ export function AttributeList({ attributes }: AttributeListProps) {
     return attributes.filter((a) => a.name.toLowerCase().includes(q))
   }, [attributes, filter])
 
+  // The filter only earns its row when there are enough attributes to scan.
+  const showFilter = attributes.length > 8
+
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-2">
-      <div className="relative">
-        <RiSearchLine
-          size={14}
-          className="-translate-y-1/2 absolute top-1/2 left-2.5 text-slate-400"
-        />
-        <input
-          type="text"
-          value={filter}
-          placeholder="Filter attributes…"
-          onChange={(e) => setFilter(e.target.value)}
-          className="w-full rounded-lg border border-slate-200 bg-white py-2 pr-2.5 pl-8 text-xs outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-100"
-        />
-      </div>
+      {showFilter && (
+        <div className="relative">
+          <RiSearchLine
+            size={14}
+            className="-translate-y-1/2 absolute top-1/2 left-2.5 text-slate-400"
+          />
+          <input
+            type="text"
+            value={filter}
+            placeholder="Filter attributes…"
+            onChange={(e) => setFilter(e.target.value)}
+            className="w-full rounded-lg border border-slate-200 bg-white py-2 pr-2.5 pl-8 text-xs outline-none transition focus:border-slate-400 focus:ring-2 focus:ring-slate-100"
+          />
+        </div>
+      )}
       <div className="flex min-h-0 flex-1 flex-col gap-1.5 overflow-y-auto pr-0.5">
         {visible.length === 0 ? (
           <p className="px-1 py-3 text-center text-[11px] text-slate-400">No matching attributes.</p>
