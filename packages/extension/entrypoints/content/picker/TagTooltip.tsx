@@ -1,28 +1,87 @@
-import { openingTag } from "./dom"
+import { contentSummary, openingTag, openingTagParts } from "./dom"
 
 interface TagTooltipProps {
   el: Element
   rect: DOMRect
+  /** Rich multi-line tag (locked) vs a compact one-liner that follows the cursor. */
+  detailed?: boolean
+}
+
+const MAX_VALUE = 160
+const MAX_CONTENT = 200
+
+function truncate(value: string, max: number): string {
+  return value.length > max ? `${value.slice(0, max)}…` : value
 }
 
 /**
- * A floating card near the target showing its opening tag, so the user can
- * confirm the right element is targeted. See DESIGN.md §5.1e.
+ * A floating card near the target. While hovering it shows a compact opening tag;
+ * once locked it expands to the full tag — name, every attribute on its own line
+ * (syntax-highlighted), and a content summary — so the user can verify the exact
+ * element. See DESIGN.md §5.1e.
  */
-export function TagTooltip({ el, rect }: TagTooltipProps) {
-  const below = rect.top < 28
+export function TagTooltip({ el, rect, detailed }: TagTooltipProps) {
+  if (!detailed) {
+    const below = rect.top < 28
+    const style: React.CSSProperties = {
+      position: "fixed",
+      left: Math.max(4, Math.min(rect.left, window.innerWidth - 320)),
+      top: below ? rect.bottom + 4 : rect.top - 24,
+      maxWidth: 320,
+      pointerEvents: "none",
+    }
+    return (
+      <div style={style}>
+        <code className="inline-block max-w-full truncate rounded bg-slate-900/95 px-2 py-1 font-mono text-[11px] text-emerald-300 shadow">
+          {openingTag(el)}
+        </code>
+      </div>
+    )
+  }
+
+  const { tag, attrs } = openingTagParts(el)
+  const content = contentSummary(el)
+
+  // Place the rich card below the element; flip above if it would overflow.
+  const cardWidth = 420
+  const belowSpace = window.innerHeight - rect.bottom
+  const placeBelow = belowSpace > 160 || belowSpace > rect.top
   const style: React.CSSProperties = {
     position: "fixed",
-    left: Math.max(4, Math.min(rect.left, window.innerWidth - 320)),
-    top: below ? rect.bottom + 4 : rect.top - 24,
-    maxWidth: 320,
+    left: Math.max(8, Math.min(rect.left, window.innerWidth - cardWidth - 8)),
+    top: placeBelow ? rect.bottom + 8 : undefined,
+    bottom: placeBelow ? undefined : window.innerHeight - rect.top + 8,
+    maxWidth: cardWidth,
     pointerEvents: "none",
+    zIndex: 1,
   }
+
   return (
     <div style={style}>
-      <code className="inline-block max-w-full truncate rounded bg-slate-900/95 px-2 py-1 font-mono text-[11px] text-emerald-300 shadow">
-        {openingTag(el)}
-      </code>
+      <div
+        className="overflow-hidden rounded-lg border border-slate-200 bg-white px-3 py-2 font-mono text-[11px] leading-relaxed shadow-lg"
+        style={{ maxHeight: "50vh" }}
+      >
+        <div className="text-slate-400">
+          &lt;<span className="text-rose-600">{tag}</span>
+          {attrs.length === 0 && <span>&gt;</span>}
+        </div>
+        {attrs.map((a, i) => (
+          <div key={`${a.name}-${i}`} className="pl-3">
+            <span className="text-sky-700">{a.name}</span>
+            <span className="text-slate-400">=</span>
+            <span className="break-all text-amber-700">"{truncate(a.value, MAX_VALUE)}"</span>
+            {i === attrs.length - 1 && <span className="text-slate-400">&gt;</span>}
+          </div>
+        ))}
+        <div className="mt-1.5 border-slate-100 border-t pt-1.5 text-slate-500">
+          {content ? (
+            truncate(content, MAX_CONTENT)
+          ) : (
+            <span className="text-slate-400 italic">No Content</span>
+          )}
+        </div>
+      </div>
     </div>
   )
 }

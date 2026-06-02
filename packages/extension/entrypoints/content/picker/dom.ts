@@ -21,6 +21,19 @@ export function openingTag(el: Element): string {
   return `<${el.tagName.toLowerCase()}${attrs ? ` ${attrs}` : ""}>`
 }
 
+/** The opening tag split into parts, for a syntax-highlighted multi-line preview. */
+export function openingTagParts(el: Element): { tag: string; attrs: AttrEntry[] } {
+  return {
+    tag: el.tagName.toLowerCase(),
+    attrs: Array.from(el.attributes).map((a) => ({ name: a.name, value: a.value })),
+  }
+}
+
+/** Collapsed text content for the element preview ("" → caller shows "No Content"). */
+export function contentSummary(el: Element): string {
+  return (el.textContent ?? "").replace(/\s+/g, " ").trim()
+}
+
 export interface AttrEntry {
   name: string
   value: string
