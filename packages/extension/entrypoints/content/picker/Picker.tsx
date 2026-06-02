@@ -84,19 +84,26 @@ export function Picker({ params, host, skipConsent, onResolve }: PickerProps) {
       if (insideUs(t)) return
       if (t instanceof Element) setHovered(t)
     }
-    const onPointerDown = (e: PointerEvent) => {
+    // Select on click and cancel that same click, so a link/button can never
+    // navigate or activate. Selecting on pointerdown instead would leave the
+    // browser's own click to fire after React tears these listeners down
+    // (passive effects flush between pointerdown and click in one gesture).
+    const onClick = (e: MouseEvent) => {
       if (insideUs(e.target)) return
       e.preventDefault()
       e.stopPropagation()
-      if (e.button === 2) {
-        cancel()
-        return
-      }
       if (e.target instanceof Element) {
         setLocked(e.target)
         setSelectorEdited(false)
         setPhase("locked")
       }
+    }
+    // Right-click cancels the pick (and never opens the page's context menu).
+    const onContextMenu = (e: MouseEvent) => {
+      if (insideUs(e.target)) return
+      e.preventDefault()
+      e.stopPropagation()
+      cancel()
     }
     const swallow = (e: Event) => {
       if (insideUs(e.target)) return
@@ -104,25 +111,29 @@ export function Picker({ params, host, skipConsent, onResolve }: PickerProps) {
       e.stopPropagation()
     }
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        e.preventDefault()
-        e.stopPropagation()
-        cancel()
-      }
+      // Neutralize the page's keyboard shortcuts while picking; let Esc cancel.
+      e.preventDefault()
+      e.stopPropagation()
+      if (e.key === "Escape") cancel()
     }
 
+    // Swallow the rest of the gesture at capture phase so the page can't move
+    // focus, drag, submit, or run mousedown-driven widgets. preventDefault on
+    // mousedown blocks the focus shift while still letting our click fire.
+    const SWALLOW = ["mousedown", "mouseup", "dblclick", "auxclick", "focusin", "submit", "dragstart"]
+
     window.addEventListener("mousemove", onMove, true)
-    window.addEventListener("pointerdown", onPointerDown, true)
-    window.addEventListener("click", swallow, true)
-    window.addEventListener("contextmenu", swallow, true)
+    window.addEventListener("click", onClick, true)
+    window.addEventListener("contextmenu", onContextMenu, true)
     window.addEventListener("keydown", onKey, true)
+    for (const type of SWALLOW) window.addEventListener(type, swallow, true)
     applyHostCursor()
     return () => {
       window.removeEventListener("mousemove", onMove, true)
-      window.removeEventListener("pointerdown", onPointerDown, true)
-      window.removeEventListener("click", swallow, true)
-      window.removeEventListener("contextmenu", swallow, true)
+      window.removeEventListener("click", onClick, true)
+      window.removeEventListener("contextmenu", onContextMenu, true)
       window.removeEventListener("keydown", onKey, true)
+      for (const type of SWALLOW) window.removeEventListener(type, swallow, true)
       clearHostCursor()
     }
   }, [phase, host, cancel])
