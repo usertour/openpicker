@@ -14,13 +14,19 @@ const CSS_PATH = "content-scripts/content.css"
 
 let cachedCss: string | null = null
 
+// Tailwind v4 leaves clickable controls at the browser's default cursor, and the
+// host page's picking cursor can't reach into our shadow root — so give our enabled
+// buttons / checkboxes a pointer cursor here.
+const BASE_RULES =
+  'button:not(:disabled),label:has(input:not(:disabled)),input[type="checkbox"]:not(:disabled){cursor:pointer}'
+
 async function loadCss(): Promise<string> {
   if (cachedCss !== null) return cachedCss
   try {
     // CSS_PATH is a generated content-script asset, not in WXT's typed PublicPath.
     const url = (browser.runtime.getURL as (p: string) => string)(`/${CSS_PATH}`)
     const res = await fetch(url)
-    cachedCss = withPropertyFallbacks(remToPx(await res.text()))
+    cachedCss = `${BASE_RULES}${withPropertyFallbacks(remToPx(await res.text()))}`
   } catch {
     cachedCss = ""
   }
