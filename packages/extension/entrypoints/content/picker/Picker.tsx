@@ -13,6 +13,7 @@ import {
 import { HighlightBox } from "./HighlightBox"
 import { applyHostCursor, clearHostCursor } from "./hostCursor"
 import { getConsent, setConsent } from "./messaging"
+import { isNavigateMode, setNavigateMode } from "./navigateMode"
 import { RulerGuides } from "./RulerGuides"
 import { captureScreenshot, normalizeScreenshotMode } from "./screenshot"
 import { generateSelector, matchCount as countMatches } from "./selector"
@@ -46,7 +47,12 @@ interface PickerProps {
 }
 
 export function Picker({ params, host, skipConsent, canNavigate, onResolve }: PickerProps) {
-  const [phase, setPhase] = useState<Phase>(skipConsent ? "hover" : "consent")
+  // Resume straight into navigate mode if a navigation happened mid-pick while the
+  // user was navigating (the flag rides the target tab's sessionStorage). Otherwise
+  // a cross-tab target resumes in hover; a fresh same-tab pick asks consent first.
+  const [phase, setPhase] = useState<Phase>(() =>
+    canNavigate && isNavigateMode() ? "navigate" : skipConsent ? "hover" : "consent",
+  )
   const [hovered, setHovered] = useState<Element | null>(null)
   const [locked, setLocked] = useState<Element | null>(null)
   const [side, setSide] = useState<"left" | "right">("right")
@@ -183,13 +189,22 @@ export function Picker({ params, host, skipConsent, canNavigate, onResolve }: Pi
   }, [])
 
   // Return to hover mode to pick a different element (clears the current selection).
+  // Also leaves navigate mode (used as "Resume picking").
   const reselect = useCallback(() => {
+    setNavigateMode(false)
     setLocked(null)
     setHovered(null)
     setSelector("")
     setSelectorEdited(false)
     setChecked(new Set())
     setPhase("hover")
+  }, [])
+
+  // Suspend the pick so the page is interactive; persist it so navigation stays in
+  // navigate mode (the user may hop through several pages) until they resume.
+  const enterNavigate = useCallback(() => {
+    setNavigateMode(true)
+    setPhase("navigate")
   }, [])
 
   const confirm = useCallback(async () => {
@@ -278,7 +293,7 @@ export function Picker({ params, host, skipConsent, canNavigate, onResolve }: Pi
         onSwapSide={() => setSide((s) => (s === "right" ? "left" : "right"))}
         onReselect={reselect}
         canNavigate={!!canNavigate}
-        onNavigate={() => setPhase("navigate")}
+        onNavigate={enterNavigate}
         onResume={reselect}
         onConfirm={confirm}
         onCancel={cancel}

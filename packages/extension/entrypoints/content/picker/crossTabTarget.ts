@@ -1,4 +1,5 @@
 import type { PickParams } from "@openpicker/protocol"
+import { setNavigateMode } from "./navigateMode"
 import { runPicker } from "./run"
 
 /**
@@ -59,6 +60,10 @@ async function runAndReport(
   try {
     const outcome = await runPicker(params, { skipConsent: true, canNavigate: true })
     clearMarker()
+    // The pick is over (confirmed/cancelled); don't let a reused pick on this tab
+    // start in navigate mode. (Navigation abandons runPicker, so this isn't reached
+    // then and the flag persists to resume in navigate mode — which is the point.)
+    setNavigateMode(false)
     await browser.runtime.sendMessage({ kind: "crossTab:result", sourceTabId, outcome, pickId })
   } finally {
     running = false

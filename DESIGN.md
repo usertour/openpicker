@@ -461,6 +461,12 @@ rules:
   re-arms automatically.
 - **cross-origin new tab** / manually opened tab → no inheritance → not auto-resumed (documented limit).
 
+**Navigate mode is sticky.** When the user suspends the pick to navigate ("navigate to another
+page"), that intent is also recorded in `sessionStorage` (a separate flag). So after a navigation the
+pick re-arms **in navigate mode**, not select mode — the user may need to hop through several pages,
+and re-arming select mode would re-lock the page each time. The user returns to select mode
+explicitly via "Resume picking"; the flag is cleared then and when the pick ends.
+
 openpicker's twist over the reference: after re-arming on a new page/tab, the result still has to
 reach the original **source** tab. Delivery is **stateless** — there is no long-lived port and no
 in-memory registry of pending picks in the background. Instead:
