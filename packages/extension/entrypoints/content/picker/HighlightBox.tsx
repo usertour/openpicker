@@ -56,7 +56,9 @@ export function HighlightBox({ rect, el, animated, pulse }: HighlightBoxProps) {
     [rect, radius, animated],
   )
 
-  // The pulse ring sits exactly over the box and expands/fades once via CSS.
+  // The pulse ring sits over the box and expands/fades once via CSS. It is made
+  // visually distinct from the box (thicker, brighter, soft glow) so the expand
+  // reads clearly. transform-origin center so it grows outward symmetrically.
   const ringStyle = useMemo<React.CSSProperties>(
     () => ({
       position: "fixed",
@@ -65,7 +67,9 @@ export function HighlightBox({ rect, el, animated, pulse }: HighlightBoxProps) {
       width: rect.width,
       height: rect.height,
       borderRadius: radius,
-      border: "2px solid rgba(59,130,246,0.9)",
+      border: "3px solid rgba(59,130,246,0.95)",
+      boxShadow: "0 0 8px 2px rgba(59,130,246,0.6)",
+      transformOrigin: "center",
       pointerEvents: "none",
     }),
     [rect, radius],

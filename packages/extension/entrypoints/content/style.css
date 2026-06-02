@@ -15,14 +15,14 @@ body.openpicker-active * {
 @keyframes openpicker-lock-pulse {
   from {
     transform: scale(1);
-    opacity: 0.7;
+    opacity: 0.9;
   }
   to {
-    transform: scale(1.12);
+    transform: scale(1.4);
     opacity: 0;
   }
 }
 
 .openpicker-lock-pulse {
-  animation: openpicker-lock-pulse 300ms ease-out forwards;
+  animation: openpicker-lock-pulse 500ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
 }
