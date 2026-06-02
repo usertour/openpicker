@@ -62,6 +62,17 @@ interface SidebarProps {
  * locked it becomes the inspector (editable selector, DOM-tree navigator, match
  * count, attribute criteria) with a confirm/close footer. See DESIGN.md §5.1d.
  */
+function isFocusable(target: EventTarget | null): boolean {
+  const el = target as HTMLElement | null
+  if (!el || !el.tagName) return false
+  return (
+    el.tagName === "INPUT" ||
+    el.tagName === "TEXTAREA" ||
+    el.tagName === "SELECT" ||
+    el.isContentEditable
+  )
+}
+
 export function Sidebar(props: SidebarProps) {
   const [settingsOpen, setSettingsOpen] = useState(false)
   const locked = props.phase === "locked"
@@ -69,8 +80,22 @@ export function Sidebar(props: SidebarProps) {
   const matchOk = props.matchCount === 1
   const matchColor = matchOk ? "text-emerald-600" : "text-amber-600"
 
+  // Keep our interactions inside the panel: a click in the picker must not reach the
+  // host page's "close on outside click" or focus handlers (e.g. an open Google menu
+  // would otherwise dismiss). We're in Shadow DOM (same document), so unlike an
+  // iframe these events would propagate to the page unless we stop them here. Inputs
+  // still take focus. (Capture-phase host listeners can't be stopped from here.)
+  const stop = (e: React.SyntheticEvent) => e.stopPropagation()
+  const onMouseDown = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (!isFocusable(e.target)) e.preventDefault() // don't steal focus from the host page
+  }
+
   return (
     <div
+      onPointerDown={stop}
+      onMouseDown={onMouseDown}
+      onClick={stop}
       className={`fixed top-0 z-[2147483646] flex h-screen w-80 flex-col bg-white shadow-2xl ${
         props.side === "right" ? "right-0" : "left-0"
       }`}

@@ -278,6 +278,14 @@ Configure and wrap it for our needs:
   overlay and vice versa)
 - Default `pointer-events: none`; switch to `auto` when active
 - Position with `getBoundingClientRect()` + `position: fixed`; recompute on scroll/resize via rAF
+- **Event containment.** Shadow DOM isolates *styles*, not *events*: a click in the panel is a
+  composed event that still bubbles to the host document (retargeted to our host element), so the
+  page sees it as an outside click — which would dismiss an open host popover (e.g. a Google menu)
+  and steal its focus. The panel root therefore `stopPropagation`s pointer/mouse/click and
+  `preventDefault`s mousedown on non-input targets (no focus steal; inputs still focus). A
+  capture-phase host listener can't be stopped from inside our tree — only a separate browsing
+  context (iframe) fully isolates that, which is a heavier tradeoff we don't take (our highlight /
+  ruler / tooltip overlays must live in the host document anyway).
 
 #### Highlight box technique
 A single `position: fixed; pointer-events: none` box does both the highlight and the page dimming
