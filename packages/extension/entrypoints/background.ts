@@ -249,14 +249,8 @@ async function setConsent(origin: string, granted: boolean): Promise<void> {
 }
 
 export default defineBackground(() => {
-  // Toolbar icon → tell the active tab's content script to start a pick.
-  browser.action.onClicked.addListener((tab) => {
-    if (tab.id === undefined) return
-    browser.tabs.sendMessage(tab.id, { kind: "startPick" }).catch((error) => {
-      // Expected on pages without a content script (e.g. chrome:// URLs).
-      console.debug("openpicker: could not reach content script", error)
-    })
-  })
+  // The toolbar icon opens the popup (entrypoints/popup); its "Pick" button sends
+  // `startPick` to the active tab's content script — so there is no action.onClicked.
 
   // Keep the source↔target map clean: when a mapped tab closes, drop its pair.
   browser.tabs.onRemoved.addListener(async (tabId) => {

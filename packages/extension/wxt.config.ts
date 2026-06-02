@@ -22,6 +22,6 @@ export default defineConfig({
     // SDK-triggered picks have no per-tab gesture, so grant host access for the
     // screenshot capability to work on any page.
     host_permissions: ["<all_urls>"],
-    action: {},
+    // The toolbar action + its popup are wired automatically from entrypoints/popup.
   },
 })
