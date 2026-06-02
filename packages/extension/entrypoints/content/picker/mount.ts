@@ -20,11 +20,31 @@ async function loadCss(): Promise<string> {
     // CSS_PATH is a generated content-script asset, not in WXT's typed PublicPath.
     const url = (browser.runtime.getURL as (p: string) => string)(`/${CSS_PATH}`)
     const res = await fetch(url)
-    cachedCss = remToPx(await res.text())
+    cachedCss = withPropertyFallbacks(remToPx(await res.text()))
   } catch {
     cachedCss = ""
   }
   return cachedCss
+}
+
+/**
+ * Tailwind v4 registers `--tw-*` vars (e.g. `--tw-border-style`) via `@property`,
+ * but `@property` only registers at the document level — inside a shadow root it is
+ * ignored, leaving those vars undefined. Utilities like `border-style:
+ * var(--tw-border-style)` then resolve to nothing, so borders, rings, and shadows
+ * silently disappear. Replay each `@property`'s `initial-value` as a plain custom
+ * property on every element (the same fallback Tailwind ships for old browsers),
+ * scoped to our shadow root so the host page is untouched.
+ */
+function withPropertyFallbacks(css: string): string {
+  const decls: string[] = []
+  const re = /@property\s+(--[\w-]+)\s*\{([^}]*)\}/g
+  for (let m = re.exec(css); m; m = re.exec(css)) {
+    const initial = m[2].match(/initial-value:\s*([^;]*)/)
+    if (initial && initial[1].trim()) decls.push(`${m[1]}: ${initial[1].trim()};`)
+  }
+  if (decls.length === 0) return css
+  return `*,::before,::after,::backdrop{${decls.join("")}}\n${css}`
 }
 
 /**
