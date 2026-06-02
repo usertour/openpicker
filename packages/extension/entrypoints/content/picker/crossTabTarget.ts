@@ -16,6 +16,8 @@ const MARKER_KEY = "openpicker:crossTabPick"
 interface Marker {
   sourceTabId: number
   params: Partial<PickParams>
+  /** Correlates the result with the source's awaiting pick. */
+  pickId?: string
 }
 
 function readMarker(): Marker | null {
@@ -46,41 +48,50 @@ function clearMarker(): void {
 let running = false
 
 /** Run the picker as a cross-tab target and push the outcome to the background. */
-async function runAndReport(sourceTabId: number, params: Partial<PickParams>): Promise<void> {
+async function runAndReport(
+  sourceTabId: number,
+  params: Partial<PickParams>,
+  pickId: string | undefined,
+): Promise<void> {
   if (running) return
   running = true
-  writeMarker({ sourceTabId, params })
+  writeMarker({ sourceTabId, params, pickId })
   try {
     const outcome = await runPicker(params, { skipConsent: true, canNavigate: true })
     clearMarker()
-    await browser.runtime.sendMessage({ kind: "crossTab:result", sourceTabId, outcome })
+    await browser.runtime.sendMessage({ kind: "crossTab:result", sourceTabId, outcome, pickId })
   } finally {
     running = false
   }
 }
 
 /** Called when the background tells this tab (freshly) to run a cross-tab pick. */
-export function startCrossTabTarget(sourceTabId: number, params: Partial<PickParams>): void {
-  void runAndReport(sourceTabId, params)
+export function startCrossTabTarget(
+  sourceTabId: number,
+  params: Partial<PickParams>,
+  pickId: string | undefined,
+): void {
+  void runAndReport(sourceTabId, params, pickId)
 }
 
 /**
- * On content-script load, resume a cross-tab pick if this tab is (or inherited) an
- * active target. Asks the background whether a pick is still pending for it; the
- * background is the source of truth (the sessionStorage marker alone can't tell if
- * the source already gave up).
+ * On content-script load, resume a cross-tab pick if this tab is an active target.
+ * Asks the background, which is the source of truth: its source↔target map lives in
+ * storage.session, so it still knows about the pick even after the service worker
+ * was recycled. (The marker only gates the lookup to same-origin navigation, which
+ * is the supported continuity case; cross-origin is out of scope — DESIGN.md §5d.)
  */
 export async function resumeCrossTabTargetOnLoad(): Promise<void> {
   const marker = readMarker()
   if (!marker) return
   try {
     const res = (await browser.runtime.sendMessage({ kind: "crossTab:hello" })) as
-      | { run?: boolean; sourceTabId?: number; params?: Partial<PickParams> }
+      | { run?: boolean; sourceTabId?: number; params?: Partial<PickParams>; pickId?: string }
       | undefined
     if (res?.run && res.sourceTabId !== undefined) {
-      void runAndReport(res.sourceTabId, res.params ?? marker.params)
+      void runAndReport(res.sourceTabId, res.params ?? marker.params, res.pickId ?? marker.pickId)
     } else {
-      clearMarker() // the pick is no longer wanted here
+      clearMarker() // the pick is no longer wanted here (the map has no entry)
     }
   } catch {
     // Background unreachable; leave the marker for a later attempt.

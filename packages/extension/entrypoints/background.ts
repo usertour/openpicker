@@ -27,19 +27,15 @@ interface TargetEntry {
   url: string
   key?: string
   params: CrossTabParams
+  /** Correlates the eventual result with the source's awaiting pick. */
+  pickId?: string
 }
 
-/**
- * In-memory registry of cross-tab picks awaiting a result, keyed by source tab id.
- * Kept alive by the source tab's port. The result arrives as a `crossTab:result`
- * message (which survives target-tab navigation, unlike a sendMessage response)
- * and is routed here via the source↔target map. See DESIGN.md §5d phase 2.
- */
-interface PendingPick {
-  resolve: (outcome: PickOutcome) => void
-  params: CrossTabParams
-}
-const pendingPicks = new Map<number, PendingPick>()
+// Cross-tab delivery is stateless: the source↔target mapping lives entirely in
+// storage.session (above) and the result is routed back as a one-shot message
+// (`crossTab:deliver`) looked up from that map. There is deliberately no in-memory
+// registry of pending picks and no long-lived port — so the pick survives the MV3
+// service worker being recycled mid-pick. Mirrors the proven cross-tab pattern.
 
 const sourceToTargetKey = (sourceTabId: number) => `op:sourceToTarget:${sourceTabId}`
 const targetToSourceKey = (targetTabId: number) => `op:targetToSource:${targetTabId}`
@@ -150,33 +146,38 @@ async function findReusableTarget(
 }
 
 /**
- * Run a cross-tab pick: reuse the mapped target tab if it matches, else open `url`
- * in a new tab next to the source. Run the picker there once it loads, then
- * refocus the source tab — the target tab is NOT closed. See DESIGN.md §5c/§5d.
+ * Start a cross-tab pick: reuse the mapped target tab if it matches, else open
+ * `url` in a new tab next to the source. Map source↔target (with `pickId`) and tell
+ * the target to run the picker. Returns once the target is set up — it does NOT
+ * await the result. The result is delivered later via `crossTab:result`, routed
+ * back to the source by storage lookup, so it survives the worker being recycled.
+ * See DESIGN.md §5c/§5d.
  */
-async function runCrossTabPick(
+async function startCrossTabPick(
   url: string,
   params: CrossTabParams,
+  pickId: string,
   source: { tabId?: number; windowId?: number; index?: number },
-): Promise<PickOutcome> {
+): Promise<boolean> {
+  // A cross-tab pick needs a source tab to route the result back to.
+  if (source.tabId === undefined) return false
+  const sourceTabId = source.tabId
   let targetId: number | undefined
 
   // Reuse an existing target tab when it matches (host + caller key).
-  if (source.tabId !== undefined) {
-    const reusable = await findReusableTarget(source.tabId, url, params.key)
-    if (reusable !== undefined) {
-      targetId = reusable
-      try {
-        // Reuse: only focus the existing target tab — do NOT navigate it. The user
-        // may have moved it elsewhere on the same host during a previous pick (via
-        // "navigate to another page"), and forcing `url` would discard where they
-        // went. Reuse is host-gated (findReusableTarget), so the tab is already on
-        // the right host. Matches the proven cross-tab pattern. See DESIGN.md §5e.
-        await browser.tabs.update(reusable, { active: true })
-        await waitForTabComplete(reusable)
-      } catch {
-        targetId = undefined // fall through to creating a new tab
-      }
+  const reusable = await findReusableTarget(sourceTabId, url, params.key)
+  if (reusable !== undefined) {
+    targetId = reusable
+    try {
+      // Reuse: only focus the existing target tab — do NOT navigate it. The user
+      // may have moved it elsewhere on the same host during a previous pick (via
+      // "navigate to another page"), and forcing `url` would discard where they
+      // went. Reuse is host-gated (findReusableTarget), so the tab is already on
+      // the right host. Matches the proven cross-tab pattern. See DESIGN.md §5e.
+      await browser.tabs.update(reusable, { active: true })
+      await waitForTabComplete(reusable)
+    } catch {
+      targetId = undefined // fall through to creating a new tab
     }
   }
 
@@ -191,57 +192,46 @@ async function runCrossTabPick(
       windowId: source.windowId,
       index: source.index === undefined ? undefined : source.index + 1,
     })
-    if (created.id === undefined) return { type: "cancelled" }
+    if (created.id === undefined) return false
     targetId = created.id
-    if (!(await waitForTabComplete(targetId))) return { type: "cancelled" }
+    if (!(await waitForTabComplete(targetId))) return false
   }
 
-  // A cross-tab pick needs a source tab to route the result back to.
-  if (source.tabId === undefined) return { type: "cancelled" }
-  const sourceTabId = source.tabId
-
   // Record the mapping so the result can route back and the tab can be reused.
-  await mapTabs(sourceTabId, targetId, { sourceTabId, url, key: params.key, params })
+  await mapTabs(sourceTabId, targetId, { sourceTabId, url, key: params.key, params, pickId })
 
-  // The result is delivered later via a `crossTab:result` message (which survives
-  // the target navigating), routed here through the map into pendingPicks. We also
-  // settle if the user closes the target tab.
-  let onRemoved: ((id: number) => void) | undefined
+  // Tell the target to run the picker (it also writes a sessionStorage marker so the
+  // pick can resume after navigation). If it is not ready yet, it will say hello on
+  // load and we start it then.
+  browser.tabs.sendMessage(targetId, { kind: "crossTab:run", sourceTabId, params, pickId }).catch(() => {})
+  return true
+}
+
+/**
+ * Route a finished/aborted pick back to its source tab as a one-shot message. The
+ * source content script resolves the awaiting `pick` when it sees the matching
+ * `pickId`. Stateless: looked up from storage, so it works after a worker recycle.
+ */
+async function deliverToSource(
+  sourceTabId: number,
+  pickId: string | undefined,
+  outcome: PickOutcome,
+): Promise<void> {
   try {
-    const outcome = await new Promise<PickOutcome>((resolve) => {
-      let settled = false
-      const done = (o: PickOutcome) => {
-        if (settled) return
-        settled = true
-        resolve(o)
-      }
-      pendingPicks.set(sourceTabId, { resolve: done, params })
-      onRemoved = (id: number) => {
-        if (id === targetId) done({ type: "cancelled" })
-      }
-      browser.tabs.onRemoved.addListener(onRemoved)
-      // Tell the target to run the picker (it also writes a sessionStorage marker
-      // so the pick can resume after navigation / in a same-origin new tab).
-      browser.tabs
-        .sendMessage(targetId, { kind: "crossTab:run", sourceTabId, params })
-        .catch(() => {
-          // Target not ready yet; it will say hello on load and we'll start it then.
-        })
-    })
-    return outcome
-  } finally {
-    pendingPicks.delete(sourceTabId)
-    if (onRemoved) browser.tabs.onRemoved.removeListener(onRemoved)
-    // Do NOT close the target tab — only refocus the source. The target stays open
-    // for the user and for reuse by a follow-up pick.
-    try {
-      await browser.tabs.update(sourceTabId, { active: true })
-      if (source.windowId !== undefined) {
-        await browser.windows.update(source.windowId, { focused: true })
-      }
-    } catch {
-      // Source gone; nothing to focus.
-    }
+    await browser.tabs.sendMessage(sourceTabId, { kind: "crossTab:deliver", pickId, outcome })
+  } catch {
+    // Source tab gone or has no listener; nothing to deliver to.
+  }
+}
+
+/** Refocus a source tab (and its window) after its target reports a result. */
+async function refocusSource(sourceTabId: number): Promise<void> {
+  try {
+    await browser.tabs.update(sourceTabId, { active: true })
+    const tab = await browser.tabs.get(sourceTabId)
+    if (tab.windowId !== undefined) await browser.windows.update(tab.windowId, { focused: true })
+  } catch {
+    // Source gone; nothing to focus.
   }
 }
 
@@ -268,32 +258,12 @@ export default defineBackground(() => {
     })
   })
 
-  // Cross-tab pick: the source tab opens a long-lived port (which also keeps this
-  // service worker alive for the duration). We open the URL, run the picker there,
-  // and send the outcome back over the port. See DESIGN.md §5c.
-  browser.runtime.onConnect.addListener((port) => {
-    if (port.name !== "openpicker:crossTab") return
-    const sourceTab = port.sender?.tab
-    port.onMessage.addListener((msg: unknown) => {
-      const m = msg as { kind?: string; url?: string; params?: CrossTabParams }
-      if (m?.kind !== "crossTab:open" || !m.url) return
-      runCrossTabPick(m.url, m.params ?? {}, {
-        tabId: sourceTab?.id,
-        windowId: sourceTab?.windowId,
-        index: sourceTab?.index,
-      })
-        .then((outcome) => {
-          try {
-            port.postMessage({ kind: "crossTab:outcome", outcome })
-          } catch {
-            // Source port already closed.
-          }
-        })
-    })
-  })
-
   // Keep the source↔target map clean: when a mapped tab closes, drop its pair.
   browser.tabs.onRemoved.addListener(async (tabId) => {
+    // If the closed tab was a target with a pick in flight, tell its source the pick
+    // was cancelled (a stale pickId is simply ignored by the source).
+    const entry = await getTargetEntry(tabId)
+    if (entry) await deliverToSource(entry.sourceTabId, entry.pickId, { type: "cancelled" })
     // The closed tab might be a target or a source; clear whichever pair it's in.
     await unmapByTarget(tabId)
     const mappedTarget = await getMappedTargetId(tabId)
@@ -306,35 +276,59 @@ export default defineBackground(() => {
       granted?: boolean
       sourceTabId?: number
       outcome?: PickOutcome
+      url?: string
+      params?: CrossTabParams
+      pickId?: string
     }
     const origin = sender.origin ?? (sender.url ? new URL(sender.url).origin : "")
     const senderTabId = sender.tab?.id
 
-    // A target tab reports a finished pick. Route it to the pending pick by the
-    // source tab id (recovered from the map — survives target navigation).
+    // A source tab asks to start a cross-tab pick. We open/reuse the target tab and
+    // map it; the result is delivered later (crossTab:result → crossTab:deliver), so
+    // this only acks whether the pick started. See DESIGN.md §5c.
+    if (msg?.kind === "crossTab:open" && msg.url && msg.pickId) {
+      ;(async () => {
+        const ok = await startCrossTabPick(msg.url as string, msg.params ?? {}, msg.pickId as string, {
+          tabId: senderTabId,
+          windowId: sender.tab?.windowId,
+          index: sender.tab?.index,
+        })
+        sendResponse({ ok })
+      })()
+      return true
+    }
+
+    // A target tab reports a finished pick. Route it back to the source tab by the
+    // map (survives target navigation and a worker recycle), then refocus the source.
     if (msg?.kind === "crossTab:result") {
       ;(async () => {
-        let sourceTabId = msg.sourceTabId
-        if (sourceTabId === undefined && senderTabId !== undefined) {
-          sourceTabId = (await getTargetEntry(senderTabId))?.sourceTabId
-        }
+        const entry = senderTabId !== undefined ? await getTargetEntry(senderTabId) : undefined
+        const sourceTabId = entry?.sourceTabId ?? msg.sourceTabId
+        const pickId = entry?.pickId ?? msg.pickId
         if (sourceTabId !== undefined) {
-          pendingPicks.get(sourceTabId)?.resolve(msg.outcome ?? { type: "cancelled" })
+          await deliverToSource(sourceTabId, pickId, msg.outcome ?? { type: "cancelled" })
+          // Do NOT close the target tab — keep it for the user and for reuse.
+          await refocusSource(sourceTabId)
         }
         sendResponse({ ok: true })
       })()
       return true
     }
 
-    // A target content script announces itself on load. If a pick is still pending
-    // for its mapped source, tell it to (re)run with the original params — this is
-    // how picking resumes after the target navigates. See DESIGN.md §5d phase 2.
+    // A target content script announces itself on load. If a pick is still mapped to
+    // this tab, tell it to (re)run with the original params — this is how picking
+    // resumes after the target navigates. The map (storage.session) is authoritative,
+    // so resume works even after a worker recycle. See DESIGN.md §5d phase 2.
     if (msg?.kind === "crossTab:hello") {
       ;(async () => {
-        if (senderTabId === undefined) return sendResponse({ run: false })
-        const entry = await getTargetEntry(senderTabId)
-        if (entry && pendingPicks.has(entry.sourceTabId)) {
-          sendResponse({ run: true, sourceTabId: entry.sourceTabId, params: entry.params })
+        const entry = senderTabId !== undefined ? await getTargetEntry(senderTabId) : undefined
+        if (entry) {
+          sendResponse({
+            run: true,
+            sourceTabId: entry.sourceTabId,
+            params: entry.params,
+            pickId: entry.pickId,
+          })
         } else {
           sendResponse({ run: false })
         }

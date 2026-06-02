@@ -365,9 +365,9 @@ dashboard tab (source)                         target tab (the url)
                                                  → picker runs: hover → click →
                                                    sidebar (editable selector) → OK
                                                  → result (+ cropped screenshot)
-          4. focus source tab  (target stays open)
-          5. route result back to source
-   ← source content script ← background
+          4. route result back to source (by map lookup)
+          5. focus source tab  (target stays open)
+   ← source content script ← background  (one-shot crossTab:deliver, no port)
   op.pick() resolves with the PickResult
 ```
 
@@ -414,7 +414,7 @@ directions — it stores two flat keys (rebuilt as code, not copied):
 
 ```
 op:sourceToTarget:<sourceTabId>  →  targetTabId
-op:targetToSource:<targetTabId>  →  { sourceTabId, params, key? }
+op:targetToSource:<targetTabId>  →  { sourceTabId, params, key?, pickId? }
 ```
 - Flat keys (not one big object) give O(1) lookup from **either** side.
 - The tabId is encoded **in the key**, so cleanup can scan keys and drop entries whose tab is gone
@@ -462,10 +462,19 @@ rules:
 - **cross-origin new tab** / manually opened tab → no inheritance → not auto-resumed (documented limit).
 
 openpicker's twist over the reference: after re-arming on a new page/tab, the result still has to
-reach the original **source** tab. The content script reconnects via background, which looks up the
-source from the `targetToSource` map and forwards the result. (The reference didn't need this — its
-injected SDK carried its own connection; openpicker has no resident SDK, so it reconnects through
-the map.)
+reach the original **source** tab. Delivery is **stateless** — there is no long-lived port and no
+in-memory registry of pending picks in the background. Instead:
+- The source sends a one-shot `crossTab:open` (with a `pickId`) and then waits for a `crossTab:deliver`
+  message; it holds no port that could be severed.
+- The target reports its outcome with `crossTab:result`; the background looks up the source from the
+  `targetToSource` map and forwards it as `crossTab:deliver { pickId, outcome }`.
+- On load, the target re-arms by asking `crossTab:hello`; the answer comes from the **map**, not from
+  memory.
+
+Because every step reads the map fresh, a pick **survives the MV3 service worker being recycled
+mid-pick** (an earlier port + in-memory-resolver design lost the pick when the worker died, and
+needed the worker kept alive). This matches how the reference stays resilient. (The reference's
+injected SDK carried its own connection; openpicker has no resident SDK, so it routes through the map.)
 
 ### Phasing
 1. **Phase 1:** background bidirectional map + reuse decision (host/URL + optional `key`) + refocus-

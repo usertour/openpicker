@@ -138,6 +138,7 @@ export default defineContentScript({
         kind?: string
         sourceTabId?: number
         params?: RequestEnvelope<"pick">["params"]
+        pickId?: string
       }
 
       // Toolbar icon → start a pick, so the picker works without the SDK.
@@ -150,7 +151,7 @@ export default defineContentScript({
       // already resolved in the source tab). The result is pushed back to the
       // background so it survives navigation; no response is sent here.
       if (msg?.kind === "crossTab:run" && msg.sourceTabId !== undefined) {
-        startCrossTabTarget(msg.sourceTabId, msg.params ?? {})
+        startCrossTabTarget(msg.sourceTabId, msg.params ?? {}, msg.pickId)
         return false
       }
       return false
