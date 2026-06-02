@@ -12,6 +12,7 @@ import { useState } from "react"
 import { AttributeList } from "./AttributeList"
 import type { AttrEntry } from "./dom"
 import { type SelectorSettings, SettingsPopover } from "./SettingsPopover"
+import { Tooltip } from "./Tooltip"
 import { TreeNavigator } from "./TreeNavigator"
 
 interface SidebarProps {
@@ -115,32 +116,34 @@ export function Sidebar(props: SidebarProps) {
           <span className="font-semibold text-slate-800 text-sm tracking-tight">openpicker</span>
         </div>
         <div className="flex items-center gap-0.5">
-          <button type="button" onClick={props.onSwapSide} title="Swap side" className={iconBtn}>
-            <RiArrowLeftRightLine size={16} />
-          </button>
-          {props.canNavigate && !navigating && (
-            <button
-              type="button"
-              onClick={props.onNavigate}
-              title="Navigate to another page"
-              className={iconBtn}
-            >
-              <RiCompass3Line size={16} />
+          <Tooltip label="Swap side" align="end">
+            <button type="button" onClick={props.onSwapSide} className={iconBtn}>
+              <RiArrowLeftRightLine size={16} />
             </button>
+          </Tooltip>
+          {props.canNavigate && !navigating && (
+            <Tooltip label="Navigate to another page" align="end">
+              <button type="button" onClick={props.onNavigate} className={iconBtn}>
+                <RiCompass3Line size={16} />
+              </button>
+            </Tooltip>
           )}
           {locked && (
-            <button
-              type="button"
-              onClick={() => setSettingsOpen((v) => !v)}
-              title="Selector settings"
-              className={settingsOpen ? `${iconBtn} bg-slate-100 text-slate-700` : iconBtn}
-            >
-              <RiSettings3Line size={16} />
-            </button>
+            <Tooltip label="Selector settings" align="end">
+              <button
+                type="button"
+                onClick={() => setSettingsOpen((v) => !v)}
+                className={settingsOpen ? `${iconBtn} bg-slate-100 text-slate-700` : iconBtn}
+              >
+                <RiSettings3Line size={16} />
+              </button>
+            </Tooltip>
           )}
-          <button type="button" onClick={props.onCancel} title="Close" className={iconBtn}>
-            <RiCloseLine size={16} />
-          </button>
+          <Tooltip label="Close" align="end">
+            <button type="button" onClick={props.onCancel} className={iconBtn}>
+              <RiCloseLine size={16} />
+            </button>
+          </Tooltip>
         </div>
       </div>
 
@@ -197,14 +200,15 @@ export function Sidebar(props: SidebarProps) {
               }`}
             />
             {locked && (
-              <button
-                type="button"
-                onClick={props.onReselect}
-                title="Pick another element"
-                className="grid h-[34px] w-[34px] shrink-0 place-items-center rounded-lg border border-slate-300 text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700"
-              >
-                <RiCrosshair2Line size={16} />
-              </button>
+              <Tooltip label="Pick another element" align="end">
+                <button
+                  type="button"
+                  onClick={props.onReselect}
+                  className="grid h-[34px] w-[34px] shrink-0 place-items-center rounded-lg border border-slate-300 text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700"
+                >
+                  <RiCrosshair2Line size={16} />
+                </button>
+              </Tooltip>
             )}
           </div>
 

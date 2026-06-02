@@ -4,6 +4,7 @@ import {
   RiArrowRightDoubleLine,
   RiArrowUpDoubleLine,
 } from "@remixicon/react"
+import { Tooltip } from "./Tooltip"
 
 interface TreeNavigatorProps {
   parentLabel: string | null
@@ -35,54 +36,59 @@ export function TreeNavigator(props: TreeNavigatorProps) {
       <span className={`${info} ${props.parentLabel ? "text-sky-600" : "text-slate-300"}`}>
         {props.parentLabel ?? "—"}
       </span>
-      <button
-        type="button"
-        className={arrowBtn}
-        title="Select parent"
-        disabled={!props.parentLabel}
-        onClick={props.onParent}
-      >
-        <RiArrowUpDoubleLine size={16} />
-      </button>
+      <Tooltip label="Select parent" side="top">
+        <button
+          type="button"
+          className={arrowBtn}
+          disabled={!props.parentLabel}
+          onClick={props.onParent}
+        >
+          <RiArrowUpDoubleLine size={16} />
+        </button>
+      </Tooltip>
 
       <div className="flex items-center gap-1.5">
-        <button
-          type="button"
-          className={arrowBtn}
-          title="Previous sibling"
-          disabled={!props.prevLabel}
-          onClick={props.onPrev}
-        >
-          <RiArrowLeftDoubleLine size={16} />
-        </button>
-        <button
-          type="button"
-          onClick={props.onCenter}
-          title="Scroll into view"
-          className="max-w-[10rem] truncate rounded-md bg-slate-900 px-2.5 py-1 font-medium font-mono text-[11px] text-white shadow-sm transition-colors hover:bg-slate-700"
-        >
-          {props.currentLabel}
-        </button>
-        <button
-          type="button"
-          className={arrowBtn}
-          title="Next sibling"
-          disabled={!props.nextLabel}
-          onClick={props.onNext}
-        >
-          <RiArrowRightDoubleLine size={16} />
-        </button>
+        <Tooltip label="Previous sibling" side="top">
+          <button
+            type="button"
+            className={arrowBtn}
+            disabled={!props.prevLabel}
+            onClick={props.onPrev}
+          >
+            <RiArrowLeftDoubleLine size={16} />
+          </button>
+        </Tooltip>
+        <Tooltip label="Scroll into view" side="top">
+          <button
+            type="button"
+            onClick={props.onCenter}
+            className="max-w-[10rem] truncate rounded-md bg-slate-900 px-2.5 py-1 font-medium font-mono text-[11px] text-white shadow-sm transition-colors hover:bg-slate-700"
+          >
+            {props.currentLabel}
+          </button>
+        </Tooltip>
+        <Tooltip label="Next sibling" side="top">
+          <button
+            type="button"
+            className={arrowBtn}
+            disabled={!props.nextLabel}
+            onClick={props.onNext}
+          >
+            <RiArrowRightDoubleLine size={16} />
+          </button>
+        </Tooltip>
       </div>
 
-      <button
-        type="button"
-        className={arrowBtn}
-        title="Select first child"
-        disabled={!props.childLabel}
-        onClick={props.onChild}
-      >
-        <RiArrowDownDoubleLine size={16} />
-      </button>
+      <Tooltip label="Select first child" side="bottom">
+        <button
+          type="button"
+          className={arrowBtn}
+          disabled={!props.childLabel}
+          onClick={props.onChild}
+        >
+          <RiArrowDownDoubleLine size={16} />
+        </button>
+      </Tooltip>
       <span className={`${info} ${props.childLabel ? "text-slate-400" : "text-slate-300"}`}>
         {props.childLabel ?? "—"}
       </span>
