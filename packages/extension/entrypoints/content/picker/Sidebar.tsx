@@ -2,6 +2,7 @@ import {
   RiArrowLeftRightLine,
   RiCheckLine,
   RiCloseLine,
+  RiCrosshair2Line,
   RiErrorWarningLine,
   RiSettings3Line,
 } from "@remixicon/react"
@@ -36,6 +37,8 @@ interface SidebarProps {
   onToggleCriterion: (name: string) => void
   onSettingsChange: (patch: Partial<SelectorSettings>) => void
   onSwapSide: () => void
+  /** Return to hover mode to pick a different element. */
+  onReselect: () => void
   onConfirm: () => void
   onCancel: () => void
 }
@@ -98,6 +101,16 @@ export function Sidebar(props: SidebarProps) {
               locked ? "" : "bg-slate-50 text-slate-500"
             }`}
           />
+          {locked && (
+            <button
+              type="button"
+              onClick={props.onReselect}
+              title="Pick another element"
+              className="shrink-0 rounded-lg border border-slate-200 px-2 py-1.5 text-slate-600 hover:bg-slate-50"
+            >
+              <RiCrosshair2Line size={16} />
+            </button>
+          )}
           {locked && (
             <button
               type="button"

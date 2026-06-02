@@ -163,6 +163,16 @@ export function Picker({ params, host, skipConsent, onResolve }: PickerProps) {
     setChecked(new Set())
   }, [])
 
+  // Return to hover mode to pick a different element (clears the current selection).
+  const reselect = useCallback(() => {
+    setLocked(null)
+    setHovered(null)
+    setSelector("")
+    setSelectorEdited(false)
+    setChecked(new Set())
+    setPhase("hover")
+  }, [])
+
   const confirm = useCallback(async () => {
     if (!locked) return onResolve({ type: "cancelled" })
     const criteria: Record<string, string> = {}
@@ -247,6 +257,7 @@ export function Picker({ params, host, skipConsent, onResolve }: PickerProps) {
         }
         onSettingsChange={(patch) => setSettings((s) => ({ ...s, ...patch }))}
         onSwapSide={() => setSide((s) => (s === "right" ? "left" : "right"))}
+        onReselect={reselect}
         onConfirm={confirm}
         onCancel={cancel}
       />
