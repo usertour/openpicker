@@ -49,40 +49,14 @@ export function HighlightBox({ rect, el, animated }: HighlightBoxProps) {
       borderRadius: radius,
       boxShadow: "0 0 0 2px rgba(59,130,246,0.9), 0 0 0 100000px rgba(15,23,42,0.45)",
       pointerEvents: "none",
-      transition: animated ? "all 120ms cubic-bezier(0.25,0.8,0.5,1)" : "none",
+      // When moving between elements, ease only position/size (not the corner
+      // radius) so the box glides smoothly to the new target.
+      transition: animated
+        ? "top 180ms ease-out, left 180ms ease-out, width 180ms ease-out, height 180ms ease-out"
+        : "none",
     }),
     [rect, radius, animated],
   )
 
   return <div style={style} />
-}
-
-interface PulseRingProps {
-  rect: DOMRect
-  el?: Element | null
-}
-
-/**
- * One-shot "selected!" ring over the locked element: a thicker, brighter outline
- * with a soft glow that expands and fades once (CSS `openpicker-lock-pulse`).
- * Render it under a changing `key` so it remounts and replays on each lock.
- */
-export function PulseRing({ rect, el }: PulseRingProps) {
-  const radius = useMemo(() => cornerRadii(el), [el])
-  const style = useMemo<React.CSSProperties>(
-    () => ({
-      position: "fixed",
-      top: rect.top,
-      left: rect.left,
-      width: rect.width,
-      height: rect.height,
-      borderRadius: radius,
-      border: "3px solid rgba(59,130,246,0.95)",
-      boxShadow: "0 0 8px 2px rgba(59,130,246,0.6)",
-      transformOrigin: "center",
-      pointerEvents: "none",
-    }),
-    [rect, radius],
-  )
-  return <div className="openpicker-lock-pulse" style={style} />
 }
