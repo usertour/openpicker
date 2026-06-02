@@ -23,6 +23,8 @@ interface SidebarProps {
   /** The current selector: live preview while hovering, editable once locked. */
   selector: string
   matchCount: number
+  /** False when the selector is not valid CSS (querySelectorAll would throw). */
+  selectorValid: boolean
   attributes: AttrEntry[]
   settings: SelectorSettings
   side: "left" | "right"
@@ -206,17 +208,23 @@ export function Sidebar(props: SidebarProps) {
             )}
           </div>
 
-          {/* Match count */}
-          {props.selector && (
-            <span
-              className={`mt-0.5 inline-flex w-fit items-center gap-1 rounded-full px-2 py-0.5 font-medium text-[11px] ${
-                matchOk ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"
-              }`}
-            >
-              {matchOk ? <RiCheckLine size={12} /> : <RiErrorWarningLine size={12} />}
-              {props.matchCount} match{props.matchCount === 1 ? "" : "es"}
-            </span>
-          )}
+          {/* Match count / validity */}
+          {props.selector &&
+            (!props.selectorValid ? (
+              <span className="mt-0.5 inline-flex w-fit items-center gap-1 rounded-full bg-rose-50 px-2 py-0.5 font-medium text-[11px] text-rose-600">
+                <RiErrorWarningLine size={12} />
+                Invalid selector
+              </span>
+            ) : (
+              <span
+                className={`mt-0.5 inline-flex w-fit items-center gap-1 rounded-full px-2 py-0.5 font-medium text-[11px] ${
+                  matchOk ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"
+                }`}
+              >
+                {matchOk ? <RiCheckLine size={12} /> : <RiErrorWarningLine size={12} />}
+                {props.matchCount} match{props.matchCount === 1 ? "" : "es"}
+              </span>
+            ))}
         </div>
 
         {/* Inspector tools (locked only) */}

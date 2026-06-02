@@ -16,7 +16,7 @@ import { getConsent, setConsent } from "./messaging"
 import { isNavigateMode, setNavigateMode } from "./navigateMode"
 import { RulerGuides } from "./RulerGuides"
 import { captureScreenshot, normalizeScreenshotMode } from "./screenshot"
-import { generateSelector, matchCount as countMatches } from "./selector"
+import { evalSelector, generateSelector, matchCount as countMatches } from "./selector"
 import type { SelectorSettings } from "./SettingsPopover"
 import { Sidebar } from "./Sidebar"
 import { TagTooltip } from "./TagTooltip"
@@ -182,7 +182,7 @@ export function Picker({ params, host, skipConsent, canNavigate, onResolve }: Pi
   // The selector shown in the sidebar: live preview while hovering, the (editable)
   // selector once locked. Match count tracks whatever is shown.
   const shownSelector = locked ? selector : (preview ?? "")
-  const matchCount = useMemo(() => countMatches(shownSelector), [shownSelector])
+  const selectorEval = useMemo(() => evalSelector(shownSelector), [shownSelector])
 
   const retarget = useCallback((next: Element | null) => {
     if (!next) return
@@ -286,7 +286,8 @@ export function Picker({ params, host, skipConsent, canNavigate, onResolve }: Pi
       <Sidebar
         phase={phase === "navigate" ? "navigate" : locked ? "locked" : "hover"}
         selector={shownSelector}
-        matchCount={matchCount}
+        matchCount={selectorEval.count}
+        selectorValid={selectorEval.valid}
         attributes={attributes}
         settings={settings}
         side={side}

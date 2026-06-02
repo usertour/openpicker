@@ -126,3 +126,17 @@ export function matchCount(selector: string): number {
     return 0
   }
 }
+
+/**
+ * Evaluate a selector: its match count, and whether it is even valid CSS.
+ * `querySelectorAll` throws a SyntaxError on an invalid selector, which lets us
+ * distinguish "0 matches" from "you mistyped the selector".
+ */
+export function evalSelector(selector: string): { valid: boolean; count: number } {
+  if (!selector.trim()) return { valid: true, count: 0 }
+  try {
+    return { valid: true, count: document.querySelectorAll(selector).length }
+  } catch {
+    return { valid: false, count: 0 }
+  }
+}
