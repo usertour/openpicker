@@ -42,6 +42,12 @@ export interface PickParams {
    * Absent → pick on the current page. Requires the "openUrl" capability.
    */
   url?: string
+  /**
+   * Optional opaque identifier for "which task" this pick is for. Only used to
+   * decide whether a follow-up cross-tab pick reuses the existing target tab or
+   * opens a new one (equality compare; never interpreted). See DESIGN.md §5d.
+   */
+  key?: string
   /** Display-only application name, surfaced in the consent prompt. Never trusted. */
   appName?: string
 }
