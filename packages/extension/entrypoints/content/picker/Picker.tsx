@@ -208,6 +208,24 @@ export function Picker({ params, host, skipConsent, canNavigate, onResolve }: Pi
     setPhase("navigate")
   }, [])
 
+  // Manual selector edit: keep the typed value (turn off auto-regeneration) and
+  // re-lock to the first element it matches, so the highlight, tree, attributes,
+  // and screenshot follow what the selector targets. If it matches nothing or is
+  // invalid, keep the current selection (don't flicker to nothing mid-typing).
+  const editSelector = useCallback(
+    (value: string) => {
+      setSelector(value)
+      setSelectorEdited(true)
+      try {
+        const match = value.trim() ? document.querySelector(value) : null
+        if (match && match !== host) setLocked(match)
+      } catch {
+        // invalid selector — leave the current selection as-is
+      }
+    },
+    [host],
+  )
+
   const confirm = useCallback(async () => {
     if (!locked) return onResolve({ type: "cancelled" })
     const screenshot = await captureScreenshot(normalizeScreenshotMode(params.screenshot), locked, host)
@@ -273,10 +291,7 @@ export function Picker({ params, host, skipConsent, canNavigate, onResolve }: Pi
         settings={settings}
         side={side}
         tree={tree}
-        onSelectorChange={(v) => {
-          setSelector(v)
-          setSelectorEdited(true)
-        }}
+        onSelectorChange={editSelector}
         onSettingsChange={(patch) => setSettings((s) => ({ ...s, ...patch }))}
         onSwapSide={() => setSide((s) => (s === "right" ? "left" : "right"))}
         onReselect={reselect}
