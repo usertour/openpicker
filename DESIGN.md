@@ -335,8 +335,9 @@ captures the **visible viewport**; for `"element"` we then crop it on a `<canvas
 ## 5c. Cross-tab picking (v2): open a URL, pick there, return to the caller
 
 The core v2 capability: a SaaS dashboard lets the user enter a URL, opens it, the user picks an
-element (and may edit the selector), clicks OK, the target tab closes, focus returns to the
-dashboard, and the dashboard receives the selector (+ optional element screenshot).
+element (and may edit the selector), clicks OK; focus returns to the dashboard and it receives the
+selector (+ optional element screenshot). The target tab stays open (it is not closed) so the user
+can keep working in it and a follow-up pick can reuse it (§5e).
 
 ### API (same method, one extra param — caller is unaware of the cross-tab mechanics)
 ```ts
@@ -354,21 +355,25 @@ dashboard tab (source)                         target tab (the url)
   op.pick({url})
    → source content script → background
         background:
-          1. tabs.create({ url })               target loads; content script ready
-          2. map targetTab → {sourceTab, reqId} → "am I a pick target?" (handshake, not a timer)
-          3. reply "yes, pick(params)"          → picker runs: consent → hover → click →
+          1. reuse existing target tab if it matches (§5e), else tabs.create({ url })
+          2. map source↔target (§5e)            target loads; content script ready
+          3. tell target "pick(params)"         → "am I a pick target?" (handshake, not a timer)
+                                                 → picker runs: hover → click →
                                                    sidebar (editable selector) → OK
                                                  → result (+ cropped screenshot)
-          4. close target tab
-          5. focus source window
-          6. route result back by reqId
+          4. focus source tab  (target stays open)
+          5. route result back to source
    ← source content script ← background
   op.pick() resolves with the PickResult
 ```
 
-### Key decisions (all decided with the user)
+### Key decisions
 - **Trigger:** `url` param on `pick` (not a separate method).
-- **On OK:** auto-close the target tab and refocus the source window.
+- **Do NOT close the target tab.** On finish, the extension only **refocuses the source tab** —
+  the target tab stays open and is the user's to keep or close. (See §5e: the established
+  cross-tab pattern this follows never closes tabs; it only creates/focuses them.)
+- **Reuse the target tab when appropriate** (§5e): a second pick may reuse the already-open target
+  tab instead of opening another, decided by host/URL (+ optional caller `key`).
 - **Consent:** bound to the **source origin** (the dashboard), prompted once (PROTOCOL §7); the URL
   is user-entered and the picker is visible in the foreground tab the whole time.
 - **Open as:** a new **tab** (placed next to / after the source tab), not a new window.
@@ -376,17 +381,80 @@ dashboard tab (source)                         target tab (the url)
 ### Engineering points
 - **Readiness handshake, not a delay:** the target content script announces itself to background
   on load; background checks the map and tells it to start. No `sleep`.
-- **User closes the target tab manually:** background listens to `tabs.onRemoved`; if no OK was
-  received, the source `pick` promise rejects with `cancelled`.
+- **User closes the target tab manually:** background listens to `tabs.onRemoved`; if no result was
+  received, the source `pick` promise rejects with `cancelled`, and the mapping is cleaned up.
 - **Login-walled targets:** fine — it's a real tab; the user can log in there before picking.
-- **Permissions:** manifest needs `"tabs"` (create/focus/close, read windowId); element screenshots
-  reuse `captureVisibleTab` on the (foreground) target tab.
+- **Permissions:** manifest needs `"tabs"` (create/focus, read windowId) and `host_permissions`
+  `<all_urls>` (so `captureVisibleTab` works on the target without a per-tab gesture).
 
 ### Security (the part that needs care)
 Cross-tab amplifies power: a source origin can open an arbitrary URL and read its DOM — close to
 "arbitrary cross-origin read." Mitigations: per-source-origin consent (§6 / PROTOCOL §7); the URL
 is user-entered; the picker is visible in a foreground tab; and (recommended) a banner in the
 target tab — e.g. "openpicker is selecting an element for dashboard.example.com" — for transparency.
+
+---
+
+## 5d. Source↔target tab mapping, reuse, and continuity (v2.x, designed)
+
+This is the heart of robust cross-tab picking. The architecture follows a proven, production cross-
+tab pattern (studied for ideas; **all code is openpicker's own — no third-party code is copied, and
+no third-party product name appears anywhere in the repo**). Vendor-specific concerns from that
+pattern — injecting a vendor SDK, CSP adaptation, debugger UI, hardcoded origin allowlists — are
+deliberately dropped; only the generic "open a tab, pick there, route the result back, survive
+navigation" machinery is adopted, with one substitution (see "key" below).
+
+### Background keeps a bidirectional tab map
+For background to route a result from the target tab back to the right source tab — in both
+directions — it stores two flat keys (rebuilt as code, not copied):
+
+```
+op:sourceToTarget:<sourceTabId>  →  targetTabId
+op:targetToSource:<targetTabId>  →  { sourceTabId, params, key? }
+```
+- Flat keys (not one big object) give O(1) lookup from **either** side.
+- The tabId is encoded **in the key**, so cleanup can scan keys and drop entries whose tab is gone
+  (and `tabs.onRemoved` cleans the matching pair precisely when a tab closes).
+- Stored in `chrome.storage.session` (survives the MV3 service-worker being recycled, cleared when
+  the browser closes).
+
+### Target tab reuse (the "flow_id" substitution)
+When a pick requests a `url` and a target tab is already mapped to this source, decide reuse vs.
+open-new the same way the reference pattern does — except the business-identity dimension (its
+`flow_id`) is replaced by openpicker-native inputs, since openpicker has no business concepts:
+
+```
+reference: different host → new tab; same host but different flow_id → new tab; same host, different pathname → new tab
+openpicker: different host → new tab; same host but different `key` → new tab; (optional) different pathname → new tab
+```
+- `key` is an **optional, caller-supplied** opaque string (e.g. the integrator's own step id).
+  openpicker never interprets it — it only compares equality, exactly as the reference compares
+  flow_id. This keeps the reuse logic identical while staying business-agnostic and open (§1.1).
+- No `key` → fall back to host/URL comparison alone.
+- Why caller-supplied, not internal: "is this the same task?" is a business judgment only the
+  integrator knows. The reference could read flow_id because it *is* the business; openpicker is a
+  tool, so the business identity must come in from the caller.
+
+### Continuity across navigation (sessionStorage marker)
+When picking is active in a tab, mark it in that page's `sessionStorage`; the content script checks
+the marker on load and re-arms the picker automatically. This rides the browser's `sessionStorage`
+rules:
+- **same-tab navigation / reload** → marker persists → picker re-arms.
+- **same-origin new tab** (`window.open` / `target="_blank"`) → the new tab inherits the marker →
+  re-arms automatically.
+- **cross-origin new tab** / manually opened tab → no inheritance → not auto-resumed (documented limit).
+
+openpicker's twist over the reference: after re-arming on a new page/tab, the result still has to
+reach the original **source** tab. The content script reconnects via background, which looks up the
+source from the `targetToSource` map and forwards the result. (The reference didn't need this — its
+injected SDK carried its own connection; openpicker has no resident SDK, so it reconnects through
+the map.)
+
+### Phasing
+1. **Phase 1:** background bidirectional map + reuse decision (host/URL + optional `key`) + refocus-
+   source-don't-close. This makes repeated cross-tab picks reuse one target tab correctly.
+2. **Phase 2:** sessionStorage continuity so picking survives same-tab navigation and same-origin
+   new tabs, with result re-routing back to the source via the map.
 
 ---
 
@@ -419,8 +487,9 @@ Open decisions:
 | 8 | Support Firefox/Edge from day one (WXT makes this cheap) | ⏳ |
 | 9 | Docs site choice | ⏳ |
 | 12 | Screenshot range (none/element/viewport) | ✅ Decided (§5b) |
-| 13 | Cross-tab picking via `pick({ url })` | ✅ Designed (§5c) — v2, not yet implemented |
+| 13 | Cross-tab picking via `pick({ url })` | ✅ Designed (§5c) — implemented |
 | 14 | "Open by parameter" design principle | ✅ Decided (§1.1) |
+| 15 | Cross-tab source↔target map, tab reuse (host/URL + optional `key`), sessionStorage continuity | ✅ Designed (§5d); follows a proven cross-tab pattern, own code; not yet implemented |
 
 ---
 

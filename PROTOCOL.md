@@ -133,6 +133,7 @@ Request `params` (all optional):
   "iframe": false,
   "screenshot": "element",
   "url": "https://example.com",
+  "key": "onboarding-step-1",
   "appName": "Acme Onboarding"
 }
 ```
@@ -142,9 +143,14 @@ Request `params` (all optional):
 - `screenshot`: `"none"` (default) | `"element"` (crop to the selected element) | `"viewport"`
   (full visible viewport). Booleans are accepted for compatibility: `true`→`"element"`,
   `false`→`"none"`. Reserved (not implemented): `"fullpage"`.
-- `url`: when present, the extension opens this URL in a **new tab**, the user picks there, and
-  the result is routed back to the calling tab; the tab closes and focus returns on OK. Absent →
-  pick on the current page. Requires the `"openUrl"` capability (v2). See DESIGN.md §5c.
+- `url`: when present, the extension opens this URL in a **new tab**, the user picks there, and the
+  result is routed back to the calling tab; focus returns to the source tab on finish. The target
+  tab is **not** closed (the caller/user keeps it; a later pick may reuse it). Absent → pick on the
+  current page. Requires the `"openUrl"` capability. See DESIGN.md §5c/§5d.
+- `key`: optional, caller-supplied opaque string identifying "which task" this pick is for. Used
+  only to decide whether a follow-up `url` pick reuses the existing target tab or opens a new one
+  (equality compare; never interpreted). No `key` → reuse is decided by host/URL alone. See
+  DESIGN.md §5d.
 - `appName`: shown in the consent prompt (informational, not trusted).
 
 Response `result` (on OK):
@@ -167,7 +173,7 @@ Response `result` (on OK):
 - `screenshot` present only if requested (a `data:` URL; cropped to the element for `"element"`).
 
 Failure: `consent_denied`, or `cancelled` if the user closes/cancels the picker (including closing
-the cross-tab target tab before clicking OK).
+the cross-tab target tab before finishing).
 
 ### 6.3 `cancel`
 SDK → extension. Cancels an in-flight `pick`. The pending `pick` rejects with `cancelled`.
@@ -183,8 +189,9 @@ Response `result`: `{ "matchCount": number }`
 SDK → extension. Removes any active highlight. Response `result`: `{}`.
 
 ### 6.6 Events (`evt`)
-v1 defines none as required. Reserved names for future use: `hoverChange` (live element under
-cursor during a pick), `consentChange`. The SDK must ignore unknown events.
+v1 defines none as required. The SDK must ignore unknown events.
+
+Reserved for future use: `hoverChange` (live element under the cursor), `consentChange`.
 
 ---
 
