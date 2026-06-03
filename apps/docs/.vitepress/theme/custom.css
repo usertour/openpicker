@@ -16,3 +16,16 @@
 
   --vp-home-hero-name-color: #f8fafc;
 }
+
+/* No hero image — center the hero so the right half isn't left empty. */
+.VPHero:not(.has-image) .container {
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.VPHero:not(.has-image) .main {
+  max-width: 720px;
+}
+.VPHero:not(.has-image) .actions {
+  justify-content: center;
+}

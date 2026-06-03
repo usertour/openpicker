@@ -15,6 +15,7 @@
 <p align="center">
   <a href="https://openpicker.dev"><strong>Website</strong></a> ·
   <a href="https://demo.openpicker.dev">Live demo</a> ·
+  <a href="https://docs.openpicker.dev">Docs</a> ·
   <a href="./PROTOCOL.md">Protocol</a> ·
   <a href="https://www.npmjs.com/package/@openpicker/sdk">npm</a>
 </p>
