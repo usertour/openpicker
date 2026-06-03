@@ -1,4 +1,5 @@
 import { RiCrosshair2Line, RiSettings3Line } from "@remixicon/react"
+import { BrandMark, Wordmark } from "@/components/Brand"
 
 /**
  * Toolbar popup — the picker's home. Start a pick on the current page, or open the
@@ -28,11 +29,9 @@ export function App() {
   return (
     <div className="w-72 p-4 font-sans text-slate-800">
       <div className="flex items-center gap-2.5">
-        <span className="grid h-7 w-7 place-items-center rounded-md bg-slate-900 text-white">
-          <RiCrosshair2Line size={16} />
-        </span>
+        <BrandMark />
         <div className="leading-tight">
-          <div className="font-semibold tracking-tight">openpicker</div>
+          <Wordmark className="text-[15px]" />
           <div className="text-[11px] text-slate-400">Pick an element, get its selector</div>
         </div>
       </div>

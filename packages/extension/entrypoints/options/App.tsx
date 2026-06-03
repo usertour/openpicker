@@ -1,5 +1,6 @@
-import { RiCheckLine, RiCrosshair2Line } from "@remixicon/react"
+import { RiCheckLine } from "@remixicon/react"
 import { useCallback, useEffect, useState } from "react"
+import { BrandMark, Wordmark } from "@/components/Brand"
 
 /**
  * Options page (opened from the popup or chrome://extensions). Sets the
@@ -119,10 +120,8 @@ export function App() {
     <div className="min-h-screen bg-slate-50 font-sans text-slate-800">
       <header className="border-slate-200 border-b bg-white">
         <div className="mx-auto flex max-w-2xl items-center gap-2.5 px-6 py-3.5">
-          <span className="grid h-7 w-7 place-items-center rounded-md bg-slate-900 text-white">
-            <RiCrosshair2Line size={16} />
-          </span>
-          <span className="font-semibold tracking-tight">openpicker</span>
+          <BrandMark />
+          <Wordmark className="text-[15px]" />
         </div>
       </header>
 

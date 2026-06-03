@@ -9,6 +9,7 @@ import {
   RiSettings3Line,
 } from "@remixicon/react"
 import { useState } from "react"
+import { BrandMark, Wordmark } from "@/components/Brand"
 import { AttributeList } from "./AttributeList"
 import type { AttrEntry } from "./dom"
 import { type SelectorSettings, SettingsPopover } from "./SettingsPopover"
@@ -114,10 +115,8 @@ export function Sidebar(props: SidebarProps) {
       {/* Header */}
       <div className="flex items-center justify-between border-slate-200 border-b px-3 py-2.5">
         <div className="flex items-center gap-2">
-          <span className="grid h-6 w-6 place-items-center rounded-md bg-slate-900 text-white">
-            <RiCrosshair2Line size={14} />
-          </span>
-          <span className="font-semibold text-slate-800 text-sm tracking-tight">openpicker</span>
+          <BrandMark className="h-6 w-6" glyph={14} />
+          <Wordmark className="text-sm" />
         </div>
         <div className="flex items-center gap-0.5">
           <Tooltip label="Swap side" align="end">
