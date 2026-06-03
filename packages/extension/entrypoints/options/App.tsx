@@ -121,7 +121,7 @@ export function App() {
       <header className="border-slate-200 border-b bg-white">
         <div className="mx-auto flex max-w-2xl items-center gap-2.5 px-6 py-3.5">
           <BrandMark />
-          <Wordmark className="text-[15px]" />
+          <Wordmark className="text-lg" />
         </div>
       </header>
 

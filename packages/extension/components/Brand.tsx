@@ -6,7 +6,7 @@
  * a solid center dot) whose stroke weight matches the wordmark, so it reads as a
  * designed logo rather than a stock line-icon dropped into a box. It sits in a
  * rounded squircle with a subtle gradient and inset bezel for a crafted, app-icon
- * feel. The wordmark is a two-tone logotype: a lighter "open" + a solid "picker".
+ * feel. The wordmark is a solid, slightly larger logotype set in semibold.
  */
 
 export function BrandMark({
@@ -39,10 +39,5 @@ export function BrandMark({
 }
 
 export function Wordmark({ className = "" }: { className?: string }) {
-  return (
-    <span className={`font-semibold tracking-tight ${className}`}>
-      <span className="text-slate-400">open</span>
-      <span className="text-slate-900">picker</span>
-    </span>
-  )
+  return <span className={`font-semibold text-slate-900 tracking-tight ${className}`}>openpicker</span>
 }

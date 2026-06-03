@@ -31,7 +31,7 @@ export function App() {
       <div className="flex items-center gap-2.5">
         <BrandMark />
         <div className="leading-tight">
-          <Wordmark className="text-[15px]" />
+          <Wordmark className="text-lg" />
           <div className="text-[11px] text-slate-400">Pick an element, get its selector</div>
         </div>
       </div>
