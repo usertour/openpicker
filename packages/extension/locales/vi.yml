@@ -1,0 +1,86 @@
+# Vietnamese (Tiếng Việt) — machine-translated, review welcome. Mirrors en.yml.
+# Brand names (openpicker, Usertour) and example/regex values stay in English.
+
+extDescription: Công cụ chọn phần tử CSS mã nguồn mở.
+
+brandTagline: Chọn một phần tử, nhận selector của nó
+maintainedBy: Được duy trì bởi Usertour
+
+popup:
+  pickThisPage: Chọn một phần tử trên trang này
+  manageSites: Quản lý các trang được ủy quyền
+  docs: Tài liệu
+
+theme:
+  light: Sáng
+  dark: Tối
+  system: Hệ thống
+
+options:
+  authTitle: Ủy quyền
+  authDesc: Chọn những trang nào có thể dùng công cụ chọn phần tử.
+  allowAll: Cho phép tất cả
+  allowAllNote: Bất kỳ trang nào cũng có thể dùng công cụ. Không có gì được thu thập cho đến khi bạn chọn và xác nhận.
+  ask: Hỏi từng trang
+  askNote: Mỗi trang được hỏi trong lần đầu tiên; lựa chọn của bạn được ghi nhớ trong danh sách bên dưới.
+  blocklist: Danh sách chặn
+  blocklistNote: Mọi trang đều được phép trừ những trang bạn chặn bên dưới.
+  sitePermsTitle: Quyền của trang
+  blockedSitesTitle: Các trang bị chặn
+  sitePermsDesc: Cho phép hoặc chặn trước những trang cụ thể.
+  blockedSitesDesc: Các trang liệt kê ở đây không bao giờ có thể dùng công cụ.
+  allow: Cho phép
+  block: Chặn
+  unblock: Bỏ chặn
+  reset: Đặt lại
+  allowed: Đã cho phép
+  blocked: Đã chặn
+  loading: Đang tải…
+  noBlocked: Chưa có trang nào bị chặn.
+  noConfigured: Chưa có trang nào được cấu hình.
+  invalidOrigin: Nhập một nguồn hợp lệ, ví dụ https://example.com
+  removeDecision: Xóa quyết định này
+  appearanceTitle: Giao diện
+  appearanceDesc: Chủ đề cho giao diện của chính openpicker.
+
+picker:
+  hoverHint: Di chuyển chuột và nhấp vào một phần tử để chọn nó.
+  selectorLabel: Selector
+  hoverPlaceholder: di chuột lên một phần tử…
+  invalidSelector: Selector không hợp lệ
+  matchCount:
+    1: $1 kết quả khớp
+    n: $1 kết quả khớp
+  elementLabel: Phần tử
+  attributesLabel: Thuộc tính
+  filterAttrs: Lọc thuộc tính…
+  noMatchingAttrs: Không có thuộc tính nào khớp.
+  showMore: Hiện thêm
+  showLess: Thu gọn
+  empty: trống
+  paused: Việc chọn đã tạm dừng. Hãy đến trang có phần tử của bạn rồi tiếp tục.
+  resume: Tiếp tục chọn
+  ok: OK
+  copy: Sao chép
+  copied: Đã sao chép
+  noContent: Không có nội dung
+  swapSide: Đổi bên
+  navigateAway: Đi đến trang khác
+  selectorSettings: Cài đặt selector
+  close: Đóng
+  pickAnother: Chọn phần tử khác
+  prevSibling: Phần tử anh em trước
+  nextSibling: Phần tử anh em sau
+  scrollIntoView: Cuộn đến vùng hiển thị
+  selectParent: Chọn phần tử cha
+  selectFirstChild: Chọn phần tử con đầu tiên
+
+settings:
+  allowSelectorTypes: Các loại selector được phép
+  enableId: Bật ID
+  enableClass: Bật Class
+  enableAttribute: Bật thuộc tính
+  idHint: Dùng id của phần tử. Ô này là một regex các tên id cần bỏ qua (ví dụ ^ember|^radix- cho các id tạo tự động).
+  classHint: Dùng tên lớp. Ô này là một regex các tên lớp cần bỏ qua (ví dụ css-|sc-|jsx- cho các lớp đã băm).
+  attrHintEmpty: 'Tên thuộc tính cần dùng, ví dụ "data-testid, name". Để trống = tự động: $1 (chỉ giá trị ổn định).'
+  attrHintFilled: Chỉ dùng các tên thuộc tính này (giá trị bất kỳ).

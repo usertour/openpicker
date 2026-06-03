@@ -1,4 +1,5 @@
 import { useId } from "react"
+import { i18n } from "#i18n"
 
 /**
  * Brand lockup, shared by the popup, options page, and picker sidebar so the mark
@@ -55,9 +56,6 @@ export function Wordmark({ className = "" }: { className?: string }) {
   )
 }
 
-/** One-line description shown under the wordmark; reused across the logo lockups. */
-export const BRAND_TAGLINE = "Pick an element, get its selector"
-
 /**
  * The full logo lockup (mark + wordmark, with an optional tagline beneath). Used by
  * the popup and options header so the brand area stays consistent and well-filled.
@@ -80,7 +78,7 @@ export function BrandLockup({
         <Wordmark className={nameClass} />
         {tagline && (
           <div className="text-[11px] text-slate-400 leading-tight dark:text-slate-500">
-            {BRAND_TAGLINE}
+            {i18n.t("brandTagline")}
           </div>
         )}
       </div>

@@ -1,11 +1,12 @@
 import { RiComputerLine, RiMoonLine, RiSunLine } from "@remixicon/react"
 import { useCallback, useEffect, useState } from "react"
+import { i18n } from "#i18n"
 import { getTheme, setTheme, THEME_KEY, type Theme } from "@/lib/theme"
 
 const OPTIONS: { value: Theme; label: string; Icon: typeof RiSunLine }[] = [
-  { value: "light", label: "Light", Icon: RiSunLine },
-  { value: "dark", label: "Dark", Icon: RiMoonLine },
-  { value: "system", label: "System", Icon: RiComputerLine },
+  { value: "light", label: i18n.t("theme.light"), Icon: RiSunLine },
+  { value: "dark", label: i18n.t("theme.dark"), Icon: RiMoonLine },
+  { value: "system", label: i18n.t("theme.system"), Icon: RiComputerLine },
 ]
 
 /**

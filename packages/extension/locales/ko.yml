@@ -1,0 +1,86 @@
+# Korean (한국어) — machine-translated, review welcome. Mirrors en.yml.
+# Brand names (openpicker, Usertour) and example/regex values stay in English.
+
+extDescription: 오픈 소스 CSS 요소 선택기.
+
+brandTagline: 요소를 선택하면 선택자를 얻습니다
+maintainedBy: Usertour 관리
+
+popup:
+  pickThisPage: 이 페이지에서 요소 선택
+  manageSites: 허용된 사이트 관리
+  docs: 문서
+
+theme:
+  light: 라이트
+  dark: 다크
+  system: 시스템
+
+options:
+  authTitle: 권한 부여
+  authDesc: 요소 선택기를 사용할 수 있는 사이트를 선택합니다.
+  allowAll: 모두 허용
+  allowAllNote: 모든 사이트에서 선택기를 사용할 수 있습니다. 선택하고 확인하기 전에는 아무것도 수집되지 않습니다.
+  ask: 사이트마다 확인
+  askNote: 각 사이트에서 처음 사용할 때 확인합니다. 선택한 내용은 아래 목록에 기억됩니다.
+  blocklist: 차단 목록
+  blocklistNote: 아래에서 차단한 사이트를 제외한 모든 사이트가 허용됩니다.
+  sitePermsTitle: 사이트 권한
+  blockedSitesTitle: 차단된 사이트
+  sitePermsDesc: 특정 사이트를 미리 허용하거나 차단합니다.
+  blockedSitesDesc: 여기에 표시된 사이트는 선택기를 사용할 수 없습니다.
+  allow: 허용
+  block: 차단
+  unblock: 차단 해제
+  reset: 재설정
+  allowed: 허용됨
+  blocked: 차단됨
+  loading: 불러오는 중…
+  noBlocked: 아직 차단된 사이트가 없습니다.
+  noConfigured: 아직 설정된 사이트가 없습니다.
+  invalidOrigin: '유효한 출처를 입력하세요. 예: https://example.com'
+  removeDecision: 이 설정 제거
+  appearanceTitle: 모양
+  appearanceDesc: openpicker 자체 UI의 테마.
+
+picker:
+  hoverHint: 마우스를 움직여 요소를 클릭하면 선택됩니다.
+  selectorLabel: 선택자
+  hoverPlaceholder: 요소 위에 마우스를 올리세요…
+  invalidSelector: 잘못된 선택자
+  matchCount:
+    1: $1개 일치
+    n: $1개 일치
+  elementLabel: 요소
+  attributesLabel: 속성
+  filterAttrs: 속성 필터…
+  noMatchingAttrs: 일치하는 속성이 없습니다.
+  showMore: 더 보기
+  showLess: 접기
+  empty: 비어 있음
+  paused: 선택이 일시 중지되었습니다. 원하는 요소가 있는 페이지로 이동한 후 다시 시작하세요.
+  resume: 선택 다시 시작
+  ok: 확인
+  copy: 복사
+  copied: 복사됨
+  noContent: 콘텐츠 없음
+  swapSide: 위치 바꾸기
+  navigateAway: 다른 페이지로 이동
+  selectorSettings: 선택자 설정
+  close: 닫기
+  pickAnother: 다른 요소 선택
+  prevSibling: 이전 형제 요소
+  nextSibling: 다음 형제 요소
+  scrollIntoView: 화면에 보이도록 스크롤
+  selectParent: 부모 요소 선택
+  selectFirstChild: 첫 번째 자식 요소 선택
+
+settings:
+  allowSelectorTypes: 허용할 선택자 유형
+  enableId: ID 사용
+  enableClass: Class 사용
+  enableAttribute: 속성 사용
+  idHint: '요소의 id를 사용합니다. 입력란은 무시할 id 이름의 정규식입니다(자동 생성된 id의 경우 예: ^ember|^radix-).'
+  classHint: '클래스 이름을 사용합니다. 입력란은 무시할 클래스 이름의 정규식입니다(해시 클래스의 경우 예: css-|sc-|jsx-).'
+  attrHintEmpty: '사용할 속성 이름. 예: "data-testid, name". 비움 = 자동: $1(안정적인 값만).'
+  attrHintFilled: 이 속성 이름만 사용합니다(값은 무관).

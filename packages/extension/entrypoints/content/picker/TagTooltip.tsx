@@ -1,3 +1,4 @@
+import { i18n } from "#i18n"
 import { contentSummary, openingTagParts } from "./dom"
 
 interface TagTooltipProps {
@@ -62,7 +63,9 @@ export function TagTooltip({ el, rect }: TagTooltipProps) {
           {content ? (
             truncate(content, MAX_CONTENT)
           ) : (
-            <span className="text-slate-400 italic dark:text-slate-500">No Content</span>
+            <span className="text-slate-400 italic dark:text-slate-500">
+              {i18n.t("picker.noContent")}
+            </span>
           )}
         </div>
       </div>

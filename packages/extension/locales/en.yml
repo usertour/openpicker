@@ -1,0 +1,87 @@
+# openpicker UI strings (source locale). Other locales mirror these keys.
+# Brand names (openpicker, Usertour) and example/regex values stay in English.
+
+# Shown in chrome://extensions and the Web Store (the name stays "openpicker").
+extDescription: Open-source CSS element picker.
+
+brandTagline: Pick an element, get its selector
+maintainedBy: Maintained by Usertour
+
+popup:
+  pickThisPage: Pick an element on this page
+  manageSites: Manage authorized sites
+  docs: Docs
+
+theme:
+  light: Light
+  dark: Dark
+  system: System
+
+options:
+  authTitle: Authorization
+  authDesc: Choose which sites may use the element picker.
+  allowAll: Allow all
+  allowAllNote: Any site can use the picker. Nothing is captured without you picking and confirming.
+  ask: Ask each site
+  askNote: Each site is asked the first time; your choice is remembered in the list below.
+  blocklist: Blocklist
+  blocklistNote: Every site is allowed except the ones you block below.
+  sitePermsTitle: Site permissions
+  blockedSitesTitle: Blocked sites
+  sitePermsDesc: Allow or block specific sites ahead of time.
+  blockedSitesDesc: Sites listed here can never use the picker.
+  allow: Allow
+  block: Block
+  unblock: Unblock
+  reset: Reset
+  allowed: Allowed
+  blocked: Blocked
+  loading: Loading…
+  noBlocked: No sites blocked yet.
+  noConfigured: No sites configured yet.
+  invalidOrigin: Enter a valid origin, e.g. https://example.com
+  removeDecision: Remove this decision
+  appearanceTitle: Appearance
+  appearanceDesc: Theme for openpicker's own UI.
+
+picker:
+  hoverHint: Move your mouse and click an element to select it.
+  selectorLabel: Selector
+  hoverPlaceholder: hover an element…
+  invalidSelector: Invalid selector
+  matchCount:
+    1: $1 match
+    n: $1 matches
+  elementLabel: Element
+  attributesLabel: Attributes
+  filterAttrs: Filter attributes…
+  noMatchingAttrs: No matching attributes.
+  showMore: Show more
+  showLess: Show less
+  empty: empty
+  paused: Picking is paused. Go to the page that has your element, then resume.
+  resume: Resume picking
+  ok: OK
+  copy: Copy
+  copied: Copied
+  noContent: No Content
+  swapSide: Swap side
+  navigateAway: Navigate to another page
+  selectorSettings: Selector settings
+  close: Close
+  pickAnother: Pick another element
+  prevSibling: Previous sibling
+  nextSibling: Next sibling
+  scrollIntoView: Scroll into view
+  selectParent: Select parent
+  selectFirstChild: Select first child
+
+settings:
+  allowSelectorTypes: Allow selector types
+  enableId: Enable ID
+  enableClass: Enable Class
+  enableAttribute: Enable Attribute
+  idHint: Use the element's id. The box is a regex of id names to ignore (e.g. ^ember|^radix- for auto-generated ids).
+  classHint: Use class names. The box is a regex of class names to ignore (e.g. css-|sc-|jsx- for hashed classes).
+  attrHintEmpty: 'Attribute names to use, e.g. "data-testid, name". Empty = auto: $1 (stable values only).'
+  attrHintFilled: Only these attribute names are used (any value).

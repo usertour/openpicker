@@ -1,3 +1,5 @@
+import { i18n } from "#i18n"
+
 /**
  * "Maintained by Usertour" attribution, styled after Usertour's own "made with"
  * badge: a small, muted icon + text link. The mark is Usertour's brand glyph,
@@ -29,7 +31,7 @@ export function MaintainedByUsertour({ className = "" }: { className?: string })
       className={`inline-flex items-center gap-1 text-slate-400 text-xs no-underline transition-colors hover:text-slate-600 ${className}`}
     >
       <UsertourMark />
-      <span>Maintained by Usertour</span>
+      <span>{i18n.t("maintainedBy")}</span>
     </a>
   )
 }

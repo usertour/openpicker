@@ -9,6 +9,7 @@ import {
   RiSettings3Line,
 } from "@remixicon/react"
 import { useState } from "react"
+import { i18n } from "#i18n"
 import { BrandMark, Wordmark } from "@/components/Brand"
 import { MaintainedByUsertour } from "@/components/MaintainedBy"
 import { AttributeList } from "./AttributeList"
@@ -128,20 +129,20 @@ export function Sidebar(props: SidebarProps) {
           <Wordmark className="text-base" />
         </div>
         <div className="flex items-center gap-0.5">
-          <Tooltip label="Swap side" align="end">
+          <Tooltip label={i18n.t("picker.swapSide")} align="end">
             <button type="button" onClick={props.onSwapSide} className={iconBtn}>
               <RiArrowLeftRightLine size={16} />
             </button>
           </Tooltip>
           {props.canNavigate && !navigating && (
-            <Tooltip label="Navigate to another page" align="end">
+            <Tooltip label={i18n.t("picker.navigateAway")} align="end">
               <button type="button" onClick={props.onNavigate} className={iconBtn}>
                 <RiCompass3Line size={16} />
               </button>
             </Tooltip>
           )}
           {locked && (
-            <Tooltip label="Selector settings" align="end">
+            <Tooltip label={i18n.t("picker.selectorSettings")} align="end">
               <button
                 type="button"
                 onClick={() => setSettingsOpen((v) => !v)}
@@ -155,7 +156,7 @@ export function Sidebar(props: SidebarProps) {
               </button>
             </Tooltip>
           )}
-          <Tooltip label="Close" align="end">
+          <Tooltip label={i18n.t("picker.close")} align="end">
             <button type="button" onClick={props.onCancel} className={iconBtn}>
               <RiCloseLine size={16} />
             </button>
@@ -178,7 +179,7 @@ export function Sidebar(props: SidebarProps) {
             <RiCompass3Line size={24} />
           </span>
           <p className="max-w-[15rem] text-slate-600 text-sm leading-relaxed dark:text-slate-300">
-            Picking is paused. Go to the page that has your element, then resume.
+            {i18n.t("picker.paused")}
           </p>
           <button
             type="button"
@@ -186,7 +187,7 @@ export function Sidebar(props: SidebarProps) {
             className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-4 py-2 font-medium text-sm text-white shadow-sm transition-colors hover:bg-slate-700 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200"
           >
             <RiCrosshair2Line size={16} />
-            Resume picking
+            {i18n.t("picker.resume")}
           </button>
         </div>
       ) : (
@@ -194,19 +195,19 @@ export function Sidebar(props: SidebarProps) {
           {!locked && (
             <div className="flex items-center gap-2 rounded-lg bg-slate-50 px-3 py-2.5 text-slate-500 text-xs dark:bg-slate-800 dark:text-slate-400">
               <RiCursorLine size={15} className="shrink-0 text-slate-400 dark:text-slate-500" />
-              Move your mouse and click an element to select it.
+              {i18n.t("picker.hoverHint")}
             </div>
           )}
 
           {/* Selector: read-only live preview while hovering, editable once locked */}
           <div className="flex flex-col gap-1.5">
-            <span className={sectionLabel}>Selector</span>
+            <span className={sectionLabel}>{i18n.t("picker.selectorLabel")}</span>
             <div className="relative flex items-center gap-1.5">
               <input
                 type="text"
                 value={props.selector}
                 readOnly={!locked}
-                placeholder={locked ? "" : "hover an element…"}
+                placeholder={locked ? "" : i18n.t("picker.hoverPlaceholder")}
                 onChange={(e) => props.onSelectorChange(e.target.value)}
                 className={`min-w-0 flex-1 rounded-lg border px-2.5 py-2 font-mono text-xs outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200 dark:focus:ring-slate-700 ${
                   locked
@@ -215,7 +216,7 @@ export function Sidebar(props: SidebarProps) {
                 }`}
               />
               {locked && (
-                <Tooltip label="Pick another element" align="end">
+                <Tooltip label={i18n.t("picker.pickAnother")} align="end">
                   <button
                     type="button"
                     onClick={props.onReselect}
@@ -232,7 +233,7 @@ export function Sidebar(props: SidebarProps) {
               (!props.selectorValid ? (
                 <span className="mt-0.5 inline-flex w-fit items-center gap-1 rounded-full bg-rose-50 px-2 py-0.5 font-medium text-[11px] text-rose-600 dark:bg-rose-500/15 dark:text-rose-400">
                   <RiErrorWarningLine size={12} />
-                  Invalid selector
+                  {i18n.t("picker.invalidSelector")}
                 </span>
               ) : (
                 <span
@@ -243,7 +244,7 @@ export function Sidebar(props: SidebarProps) {
                   }`}
                 >
                   {matchOk ? <RiCheckLine size={12} /> : <RiErrorWarningLine size={12} />}
-                  {props.matchCount} match{props.matchCount === 1 ? "" : "es"}
+                  {i18n.t("picker.matchCount", props.matchCount)}
                 </span>
               ))}
           </div>
@@ -252,13 +253,13 @@ export function Sidebar(props: SidebarProps) {
           {locked && (
             <>
               <div className="flex flex-col gap-1.5">
-                <span className={sectionLabel}>Element</span>
+                <span className={sectionLabel}>{i18n.t("picker.elementLabel")}</span>
                 <div className="rounded-xl border border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-800/50">
                   <TreeNavigator {...props.tree} />
                 </div>
               </div>
               <div className="flex min-h-0 flex-1 flex-col gap-1.5">
-                <span className={sectionLabel}>Attributes</span>
+                <span className={sectionLabel}>{i18n.t("picker.attributesLabel")}</span>
                 <AttributeList attributes={props.attributes} />
               </div>
             </>
@@ -278,7 +279,7 @@ export function Sidebar(props: SidebarProps) {
               onClick={props.onCancel}
               className="rounded-lg px-3.5 py-2 font-medium text-slate-600 text-sm transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
             >
-              Close
+              {i18n.t("picker.close")}
             </button>
             <button
               type="button"
@@ -293,10 +294,10 @@ export function Sidebar(props: SidebarProps) {
               {props.confirmDone ? (
                 <>
                   <RiCheckLine size={16} />
-                  Copied
+                  {i18n.t("picker.copied")}
                 </>
               ) : (
-                (props.confirmLabel ?? "OK")
+                (props.confirmLabel ?? i18n.t("picker.ok"))
               )}
             </button>
           </div>

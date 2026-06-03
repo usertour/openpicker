@@ -4,6 +4,7 @@ import {
   RiArrowRightDoubleLine,
   RiArrowUpDoubleLine,
 } from "@remixicon/react"
+import { i18n } from "#i18n"
 import { Tooltip } from "./Tooltip"
 
 interface TreeNavigatorProps {
@@ -38,7 +39,7 @@ export function TreeNavigator(props: TreeNavigatorProps) {
       >
         {props.parentLabel ?? "—"}
       </span>
-      <Tooltip label="Select parent" side="top">
+      <Tooltip label={i18n.t("picker.selectParent")} side="top">
         <button
           type="button"
           className={arrowBtn}
@@ -50,7 +51,7 @@ export function TreeNavigator(props: TreeNavigatorProps) {
       </Tooltip>
 
       <div className="flex items-center gap-1.5">
-        <Tooltip label="Previous sibling" side="top">
+        <Tooltip label={i18n.t("picker.prevSibling")} side="top">
           <button
             type="button"
             className={arrowBtn}
@@ -60,7 +61,7 @@ export function TreeNavigator(props: TreeNavigatorProps) {
             <RiArrowLeftDoubleLine size={16} />
           </button>
         </Tooltip>
-        <Tooltip label="Scroll into view" side="top">
+        <Tooltip label={i18n.t("picker.scrollIntoView")} side="top">
           <button
             type="button"
             onClick={props.onCenter}
@@ -69,7 +70,7 @@ export function TreeNavigator(props: TreeNavigatorProps) {
             {props.currentLabel}
           </button>
         </Tooltip>
-        <Tooltip label="Next sibling" side="top">
+        <Tooltip label={i18n.t("picker.nextSibling")} side="top">
           <button
             type="button"
             className={arrowBtn}
@@ -81,7 +82,7 @@ export function TreeNavigator(props: TreeNavigatorProps) {
         </Tooltip>
       </div>
 
-      <Tooltip label="Select first child" side="bottom">
+      <Tooltip label={i18n.t("picker.selectFirstChild")} side="bottom">
         <button
           type="button"
           className={arrowBtn}

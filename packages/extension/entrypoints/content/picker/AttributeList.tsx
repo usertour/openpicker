@@ -1,5 +1,6 @@
 import { RiSearchLine } from "@remixicon/react"
 import { useMemo, useState } from "react"
+import { i18n } from "#i18n"
 import type { AttrEntry } from "./dom"
 
 interface AttributeListProps {
@@ -18,7 +19,11 @@ function AttributeCard({ entry }: { entry: AttrEntry }) {
         {entry.name}
       </span>
       <div className="mt-1 break-all font-mono text-[11px] text-slate-500 leading-relaxed dark:text-slate-400">
-        {shown || <span className="text-slate-300 italic dark:text-slate-600">empty</span>}
+        {shown || (
+          <span className="text-slate-300 italic dark:text-slate-600">
+            {i18n.t("picker.empty")}
+          </span>
+        )}
       </div>
       {long && (
         <button
@@ -26,7 +31,7 @@ function AttributeCard({ entry }: { entry: AttrEntry }) {
           onClick={() => setExpanded((v) => !v)}
           className="mt-1 font-medium text-[11px] text-slate-500 hover:text-slate-700 hover:underline dark:text-slate-400 dark:hover:text-slate-200"
         >
-          {expanded ? "Show less" : "Show more"}
+          {expanded ? i18n.t("picker.showLess") : i18n.t("picker.showMore")}
         </button>
       )}
     </div>
@@ -53,7 +58,7 @@ export function AttributeList({ attributes }: AttributeListProps) {
           <input
             type="text"
             value={filter}
-            placeholder="Filter attributes…"
+            placeholder={i18n.t("picker.filterAttrs")}
             onChange={(e) => setFilter(e.target.value)}
             className="w-full bg-transparent py-2 text-xs outline-none"
           />
@@ -62,7 +67,7 @@ export function AttributeList({ attributes }: AttributeListProps) {
       <div className="flex min-h-0 flex-1 flex-col gap-1.5 overflow-y-auto pr-0.5">
         {visible.length === 0 ? (
           <p className="px-1 py-3 text-center text-[11px] text-slate-400 dark:text-slate-500">
-            No matching attributes.
+            {i18n.t("picker.noMatchingAttrs")}
           </p>
         ) : (
           visible.map((entry) => <AttributeCard key={entry.name} entry={entry} />)

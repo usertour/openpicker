@@ -1,0 +1,86 @@
+# Polish (Polski) — machine-translated, review welcome. Mirrors en.yml.
+# Brand names (openpicker, Usertour) and example/regex values stay in English.
+
+extDescription: Otwartoźródłowy selektor elementów CSS.
+
+brandTagline: Wybierz element i uzyskaj jego selektor
+maintainedBy: Utrzymywane przez Usertour
+
+popup:
+  pickThisPage: Wybierz element na tej stronie
+  manageSites: Zarządzaj autoryzowanymi witrynami
+  docs: Dokumentacja
+
+theme:
+  light: Jasny
+  dark: Ciemny
+  system: Systemowy
+
+options:
+  authTitle: Autoryzacja
+  authDesc: Wybierz, które witryny mogą używać selektora elementów.
+  allowAll: Zezwól na wszystkie
+  allowAllNote: Każda witryna może używać selektora. Nic nie jest przechwytywane, dopóki nie wybierzesz i nie potwierdzisz.
+  ask: Pytaj na każdej witrynie
+  askNote: Każda witryna jest pytana za pierwszym razem; Twój wybór jest zapamiętywany na liście poniżej.
+  blocklist: Lista blokowania
+  blocklistNote: Dozwolone są wszystkie witryny z wyjątkiem tych, które zablokujesz poniżej.
+  sitePermsTitle: Uprawnienia witryn
+  blockedSitesTitle: Zablokowane witryny
+  sitePermsDesc: Z wyprzedzeniem zezwalaj na konkretne witryny lub je blokuj.
+  blockedSitesDesc: Witryny z tej listy nigdy nie mogą używać selektora.
+  allow: Zezwól
+  block: Zablokuj
+  unblock: Odblokuj
+  reset: Resetuj
+  allowed: Dozwolona
+  blocked: Zablokowana
+  loading: Ładowanie…
+  noBlocked: Brak zablokowanych witryn.
+  noConfigured: Brak skonfigurowanych witryn.
+  invalidOrigin: Wpisz prawidłowe źródło, np. https://example.com
+  removeDecision: Usuń tę decyzję
+  appearanceTitle: Wygląd
+  appearanceDesc: Motyw własnego interfejsu openpicker.
+
+picker:
+  hoverHint: Przesuń myszą i kliknij element, aby go wybrać.
+  selectorLabel: Selektor
+  hoverPlaceholder: najedź na element…
+  invalidSelector: Nieprawidłowy selektor
+  matchCount:
+    1: $1 dopasowanie
+    n: $1 dopasowań
+  elementLabel: Element
+  attributesLabel: Atrybuty
+  filterAttrs: Filtruj atrybuty…
+  noMatchingAttrs: Brak pasujących atrybutów.
+  showMore: Pokaż więcej
+  showLess: Pokaż mniej
+  empty: puste
+  paused: Wybieranie jest wstrzymane. Przejdź na stronę z Twoim elementem, a następnie wznów.
+  resume: Wznów wybieranie
+  ok: OK
+  copy: Kopiuj
+  copied: Skopiowano
+  noContent: Brak treści
+  swapSide: Zamień stronę
+  navigateAway: Przejdź na inną stronę
+  selectorSettings: Ustawienia selektora
+  close: Zamknij
+  pickAnother: Wybierz inny element
+  prevSibling: Poprzedni element równorzędny
+  nextSibling: Następny element równorzędny
+  scrollIntoView: Przewiń do widoku
+  selectParent: Wybierz element nadrzędny
+  selectFirstChild: Wybierz pierwszy element podrzędny
+
+settings:
+  allowSelectorTypes: Dozwolone typy selektora
+  enableId: Włącz ID
+  enableClass: Włącz Class
+  enableAttribute: Włącz atrybut
+  idHint: Używa id elementu. Pole to wyrażenie regularne nazw id do zignorowania (np. ^ember|^radix- dla automatycznie generowanych id).
+  classHint: Używa nazw klas. Pole to wyrażenie regularne nazw klas do zignorowania (np. css-|sc-|jsx- dla zahaszowanych klas).
+  attrHintEmpty: 'Nazwy atrybutów do użycia, np. "data-testid, name". Puste = automatycznie: $1 (tylko stabilne wartości).'
+  attrHintFilled: Używane są tylko te nazwy atrybutów (dowolna wartość).

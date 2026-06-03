@@ -1,0 +1,86 @@
+# German (Deutsch) — machine-translated, review welcome. Mirrors en.yml.
+# Brand names (openpicker, Usertour) and example/regex values stay in English.
+
+extDescription: Open-Source-CSS-Element-Picker.
+
+brandTagline: Wähle ein Element und erhalte seinen Selektor
+maintainedBy: Betreut von Usertour
+
+popup:
+  pickThisPage: Ein Element auf dieser Seite auswählen
+  manageSites: Autorisierte Websites verwalten
+  docs: Doku
+
+theme:
+  light: Hell
+  dark: Dunkel
+  system: System
+
+options:
+  authTitle: Autorisierung
+  authDesc: Lege fest, welche Websites den Element-Picker verwenden dürfen.
+  allowAll: Alle zulassen
+  allowAllNote: Jede Website kann den Picker verwenden. Es wird nichts erfasst, bevor du auswählst und bestätigst.
+  ask: Bei jeder Website fragen
+  askNote: Jede Website wird beim ersten Mal gefragt; deine Wahl wird in der Liste unten gemerkt.
+  blocklist: Sperrliste
+  blocklistNote: Alle Websites sind erlaubt, außer denen, die du unten sperrst.
+  sitePermsTitle: Website-Berechtigungen
+  blockedSitesTitle: Gesperrte Websites
+  sitePermsDesc: Erlaube oder sperre bestimmte Websites im Voraus.
+  blockedSitesDesc: Die hier aufgeführten Websites können den Picker nie verwenden.
+  allow: Zulassen
+  block: Sperren
+  unblock: Entsperren
+  reset: Zurücksetzen
+  allowed: Zugelassen
+  blocked: Gesperrt
+  loading: Wird geladen…
+  noBlocked: Noch keine Websites gesperrt.
+  noConfigured: Noch keine Websites konfiguriert.
+  invalidOrigin: Gib einen gültigen Ursprung ein, z. B. https://example.com
+  removeDecision: Diese Entscheidung entfernen
+  appearanceTitle: Darstellung
+  appearanceDesc: Design für die eigene Oberfläche von openpicker.
+
+picker:
+  hoverHint: Bewege die Maus und klicke auf ein Element, um es auszuwählen.
+  selectorLabel: Selektor
+  hoverPlaceholder: über ein Element fahren…
+  invalidSelector: Ungültiger Selektor
+  matchCount:
+    1: $1 Treffer
+    n: $1 Treffer
+  elementLabel: Element
+  attributesLabel: Attribute
+  filterAttrs: Attribute filtern…
+  noMatchingAttrs: Keine passenden Attribute.
+  showMore: Mehr anzeigen
+  showLess: Weniger anzeigen
+  empty: leer
+  paused: Die Auswahl ist pausiert. Gehe zur Seite mit deinem Element und setze dann fort.
+  resume: Auswahl fortsetzen
+  ok: OK
+  copy: Kopieren
+  copied: Kopiert
+  noContent: Kein Inhalt
+  swapSide: Seite wechseln
+  navigateAway: Zu einer anderen Seite wechseln
+  selectorSettings: Selektor-Einstellungen
+  close: Schließen
+  pickAnother: Anderes Element auswählen
+  prevSibling: Vorheriges Geschwisterelement
+  nextSibling: Nächstes Geschwisterelement
+  scrollIntoView: In den sichtbaren Bereich scrollen
+  selectParent: Übergeordnetes Element auswählen
+  selectFirstChild: Erstes Kindelement auswählen
+
+settings:
+  allowSelectorTypes: Erlaubte Selektortypen
+  enableId: ID aktivieren
+  enableClass: Class aktivieren
+  enableAttribute: Attribut aktivieren
+  idHint: Verwendet die id des Elements. Das Feld ist eine Regex der zu ignorierenden id-Namen (z. B. ^ember|^radix- für automatisch erzeugte ids).
+  classHint: Verwendet die Klassennamen. Das Feld ist eine Regex der zu ignorierenden Klassennamen (z. B. css-|sc-|jsx- für gehashte Klassen).
+  attrHintEmpty: 'Zu verwendende Attributnamen, z. B. "data-testid, name". Leer = automatisch: $1 (nur stabile Werte).'
+  attrHintFilled: Es werden nur diese Attributnamen verwendet (beliebiger Wert).

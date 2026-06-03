@@ -1,0 +1,86 @@
+# Simplified Chinese (简体中文) — machine-translated, review welcome. Mirrors en.yml.
+# Brand names (openpicker, Usertour) and example/regex values stay in English.
+
+extDescription: 开源的 CSS 元素选择器。
+
+brandTagline: 选中一个元素，得到它的选择器
+maintainedBy: 由 Usertour 维护
+
+popup:
+  pickThisPage: 在此页面选取元素
+  manageSites: 管理已授权的网站
+  docs: 文档
+
+theme:
+  light: 浅色
+  dark: 深色
+  system: 跟随系统
+
+options:
+  authTitle: 授权
+  authDesc: 选择哪些网站可以使用元素选择器。
+  allowAll: 允许全部
+  allowAllNote: 任何网站都可以使用选择器。只有在你选取并确认后才会捕获内容。
+  ask: 每个网站都询问
+  askNote: 每个网站首次使用时都会询问；你的选择会记录在下方列表中。
+  blocklist: 黑名单
+  blocklistNote: 除你在下方屏蔽的网站外，所有网站都被允许。
+  sitePermsTitle: 网站权限
+  blockedSitesTitle: 已屏蔽的网站
+  sitePermsDesc: 提前允许或屏蔽特定网站。
+  blockedSitesDesc: 此处列出的网站永远无法使用选择器。
+  allow: 允许
+  block: 屏蔽
+  unblock: 取消屏蔽
+  reset: 重置
+  allowed: 已允许
+  blocked: 已屏蔽
+  loading: 加载中…
+  noBlocked: 暂无已屏蔽的网站。
+  noConfigured: 暂无已配置的网站。
+  invalidOrigin: 请输入有效的来源，例如 https://example.com
+  removeDecision: 移除此项设置
+  appearanceTitle: 外观
+  appearanceDesc: openpicker 自身界面的主题。
+
+picker:
+  hoverHint: 移动鼠标并点击一个元素以选中它。
+  selectorLabel: 选择器
+  hoverPlaceholder: 悬停在某个元素上…
+  invalidSelector: 选择器无效
+  matchCount:
+    1: 匹配 $1 个
+    n: 匹配 $1 个
+  elementLabel: 元素
+  attributesLabel: 属性
+  filterAttrs: 筛选属性…
+  noMatchingAttrs: 没有匹配的属性。
+  showMore: 显示更多
+  showLess: 收起
+  empty: 空
+  paused: 选取已暂停。请前往包含目标元素的页面，然后恢复。
+  resume: 恢复选取
+  ok: 确定
+  copy: 复制
+  copied: 已复制
+  noContent: 无内容
+  swapSide: 切换位置
+  navigateAway: 前往其他页面
+  selectorSettings: 选择器设置
+  close: 关闭
+  pickAnother: 重新选取元素
+  prevSibling: 上一个同级元素
+  nextSibling: 下一个同级元素
+  scrollIntoView: 滚动到视图中
+  selectParent: 选择父元素
+  selectFirstChild: 选择第一个子元素
+
+settings:
+  allowSelectorTypes: 允许的选择器类型
+  enableId: 启用 ID
+  enableClass: 启用 Class
+  enableAttribute: 启用属性
+  idHint: 使用元素的 id。文本框是要忽略的 id 名称的正则（例如 ^ember|^radix- 用于自动生成的 id）。
+  classHint: 使用类名。文本框是要忽略的类名的正则（例如 css-|sc-|jsx- 用于哈希类名）。
+  attrHintEmpty: '要使用的属性名，例如 "data-testid, name"。留空 = 自动：$1（仅限稳定值）。'
+  attrHintFilled: 只使用这些属性名（任意值）。

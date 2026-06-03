@@ -3,7 +3,7 @@ import { defineConfig } from "wxt"
 
 // See https://wxt.dev/api/config.html
 export default defineConfig({
-  modules: ["@wxt-dev/module-react"],
+  modules: ["@wxt-dev/module-react", "@wxt-dev/i18n/module"],
   // WXT and @tailwindcss/vite resolve different bundled vite versions, so their
   // config types conflict. The values are correct at runtime; annotate the return
   // as `any` to bypass the cross-version type mismatch.
@@ -16,7 +16,12 @@ export default defineConfig({
   }),
   manifest: {
     name: "openpicker",
-    description: "Open-source CSS element picker.",
+    // Localized via _locales (generated from locales/*.yml). The name stays
+    // "openpicker" (brand); only the description is translated per locale.
+    description: "__MSG_extDescription__",
+    // Locale to fall back to; per-locale UI strings live in locales/*.yml and are
+    // generated into _locales by @wxt-dev/i18n. The language follows the browser.
+    default_locale: "en",
     permissions: ["storage", "activeTab", "tabs"],
     // captureVisibleTab needs host access (or an activeTab gesture). Cross-tab and
     // SDK-triggered picks have no per-tab gesture, so grant host access for the

@@ -1,0 +1,86 @@
+# Russian (Русский) — machine-translated, review welcome. Mirrors en.yml.
+# Brand names (openpicker, Usertour) and example/regex values stay in English.
+
+extDescription: Открытый инструмент выбора CSS-элементов.
+
+brandTagline: Выберите элемент и получите его селектор
+maintainedBy: Поддерживается Usertour
+
+popup:
+  pickThisPage: Выбрать элемент на этой странице
+  manageSites: Управление разрешёнными сайтами
+  docs: Документация
+
+theme:
+  light: Светлая
+  dark: Тёмная
+  system: Системная
+
+options:
+  authTitle: Авторизация
+  authDesc: Выберите, какие сайты могут использовать инструмент выбора элементов.
+  allowAll: Разрешить все
+  allowAllNote: Любой сайт может использовать инструмент. Ничего не сохраняется, пока вы не выберете и не подтвердите.
+  ask: Спрашивать на каждом сайте
+  askNote: На каждом сайте спрашивается в первый раз; ваш выбор запоминается в списке ниже.
+  blocklist: Чёрный список
+  blocklistNote: Разрешены все сайты, кроме тех, которые вы заблокируете ниже.
+  sitePermsTitle: Разрешения сайтов
+  blockedSitesTitle: Заблокированные сайты
+  sitePermsDesc: Заранее разрешите или заблокируйте определённые сайты.
+  blockedSitesDesc: Сайты из этого списка никогда не смогут использовать инструмент.
+  allow: Разрешить
+  block: Заблокировать
+  unblock: Разблокировать
+  reset: Сбросить
+  allowed: Разрешён
+  blocked: Заблокирован
+  loading: Загрузка…
+  noBlocked: Пока нет заблокированных сайтов.
+  noConfigured: Пока нет настроенных сайтов.
+  invalidOrigin: Введите корректный источник, например https://example.com
+  removeDecision: Удалить это решение
+  appearanceTitle: Оформление
+  appearanceDesc: Тема собственного интерфейса openpicker.
+
+picker:
+  hoverHint: Переместите курсор и щёлкните по элементу, чтобы выбрать его.
+  selectorLabel: Селектор
+  hoverPlaceholder: наведите курсор на элемент…
+  invalidSelector: Недопустимый селектор
+  matchCount:
+    1: $1 совпадение
+    n: $1 совпадений
+  elementLabel: Элемент
+  attributesLabel: Атрибуты
+  filterAttrs: Фильтр атрибутов…
+  noMatchingAttrs: Нет подходящих атрибутов.
+  showMore: Показать больше
+  showLess: Свернуть
+  empty: пусто
+  paused: Выбор приостановлен. Перейдите на страницу с нужным элементом и продолжите.
+  resume: Продолжить выбор
+  ok: ОК
+  copy: Копировать
+  copied: Скопировано
+  noContent: Нет содержимого
+  swapSide: Сменить сторону
+  navigateAway: Перейти на другую страницу
+  selectorSettings: Настройки селектора
+  close: Закрыть
+  pickAnother: Выбрать другой элемент
+  prevSibling: Предыдущий соседний элемент
+  nextSibling: Следующий соседний элемент
+  scrollIntoView: Прокрутить до элемента
+  selectParent: Выбрать родительский элемент
+  selectFirstChild: Выбрать первый дочерний элемент
+
+settings:
+  allowSelectorTypes: Разрешённые типы селекторов
+  enableId: Включить ID
+  enableClass: Включить Class
+  enableAttribute: Включить атрибут
+  idHint: Использует id элемента. В поле — регулярное выражение для имён id, которые нужно игнорировать (например, ^ember|^radix- для автогенерируемых id).
+  classHint: Использует имена классов. В поле — регулярное выражение для имён классов, которые нужно игнорировать (например, css-|sc-|jsx- для хешированных классов).
+  attrHintEmpty: 'Имена атрибутов для использования, например "data-testid, name". Пусто = автоматически: $1 (только стабильные значения).'
+  attrHintFilled: Используются только эти имена атрибутов (любое значение).

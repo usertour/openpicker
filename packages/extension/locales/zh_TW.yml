@@ -1,0 +1,86 @@
+# Traditional Chinese (繁體中文) — machine-translated, review welcome. Mirrors en.yml.
+# Brand names (openpicker, Usertour) and example/regex values stay in English.
+
+extDescription: 開源的 CSS 元素選擇器。
+
+brandTagline: 選取一個元素，取得它的選擇器
+maintainedBy: 由 Usertour 維護
+
+popup:
+  pickThisPage: 在此頁面選取元素
+  manageSites: 管理已授權的網站
+  docs: 文件
+
+theme:
+  light: 淺色
+  dark: 深色
+  system: 跟隨系統
+
+options:
+  authTitle: 授權
+  authDesc: 選擇哪些網站可以使用元素選擇器。
+  allowAll: 允許全部
+  allowAllNote: 任何網站都可以使用選擇器。只有在你選取並確認後才會擷取內容。
+  ask: 每個網站都詢問
+  askNote: 每個網站首次使用時都會詢問；你的選擇會記錄在下方清單中。
+  blocklist: 黑名單
+  blocklistNote: 除你在下方封鎖的網站外，所有網站都被允許。
+  sitePermsTitle: 網站權限
+  blockedSitesTitle: 已封鎖的網站
+  sitePermsDesc: 提前允許或封鎖特定網站。
+  blockedSitesDesc: 此處列出的網站永遠無法使用選擇器。
+  allow: 允許
+  block: 封鎖
+  unblock: 解除封鎖
+  reset: 重設
+  allowed: 已允許
+  blocked: 已封鎖
+  loading: 載入中…
+  noBlocked: 尚無已封鎖的網站。
+  noConfigured: 尚無已設定的網站。
+  invalidOrigin: 請輸入有效的來源，例如 https://example.com
+  removeDecision: 移除此項設定
+  appearanceTitle: 外觀
+  appearanceDesc: openpicker 自身介面的主題。
+
+picker:
+  hoverHint: 移動滑鼠並點擊一個元素以選取它。
+  selectorLabel: 選擇器
+  hoverPlaceholder: 將游標停在某個元素上…
+  invalidSelector: 選擇器無效
+  matchCount:
+    1: 符合 $1 個
+    n: 符合 $1 個
+  elementLabel: 元素
+  attributesLabel: 屬性
+  filterAttrs: 篩選屬性…
+  noMatchingAttrs: 沒有符合的屬性。
+  showMore: 顯示更多
+  showLess: 收合
+  empty: 空
+  paused: 選取已暫停。請前往包含目標元素的頁面，然後繼續。
+  resume: 繼續選取
+  ok: 確定
+  copy: 複製
+  copied: 已複製
+  noContent: 無內容
+  swapSide: 切換位置
+  navigateAway: 前往其他頁面
+  selectorSettings: 選擇器設定
+  close: 關閉
+  pickAnother: 重新選取元素
+  prevSibling: 上一個同層元素
+  nextSibling: 下一個同層元素
+  scrollIntoView: 捲動到可視範圍
+  selectParent: 選擇父元素
+  selectFirstChild: 選擇第一個子元素
+
+settings:
+  allowSelectorTypes: 允許的選擇器類型
+  enableId: 啟用 ID
+  enableClass: 啟用 Class
+  enableAttribute: 啟用屬性
+  idHint: 使用元素的 id。文字方塊是要忽略的 id 名稱的正規表達式（例如 ^ember|^radix- 用於自動產生的 id）。
+  classHint: 使用類別名稱。文字方塊是要忽略的類別名稱的正規表達式（例如 css-|sc-|jsx- 用於雜湊類別名稱）。
+  attrHintEmpty: '要使用的屬性名稱，例如 "data-testid, name"。留空 = 自動：$1（僅限穩定值）。'
+  attrHintFilled: 只使用這些屬性名稱（任意值）。
