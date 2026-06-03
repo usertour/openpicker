@@ -48,3 +48,32 @@ export function BrandMark({ className = "h-7 w-7" }: { className?: string }) {
 export function Wordmark({ className = "" }: { className?: string }) {
   return <span className={`font-semibold text-slate-900 tracking-tight ${className}`}>openpicker</span>
 }
+
+/** One-line description shown under the wordmark; reused across the logo lockups. */
+export const BRAND_TAGLINE = "Pick an element, get its selector"
+
+/**
+ * The full logo lockup (mark + wordmark, with an optional tagline beneath). Used by
+ * the popup and options header so the brand area stays consistent and well-filled.
+ */
+export function BrandLockup({
+  markClass = "h-8 w-8",
+  nameClass = "text-base",
+  tagline = false,
+  className = "",
+}: {
+  markClass?: string
+  nameClass?: string
+  tagline?: boolean
+  className?: string
+}) {
+  return (
+    <div className={`flex items-center gap-2.5 ${className}`}>
+      <BrandMark className={markClass} />
+      <div className="leading-tight">
+        <Wordmark className={nameClass} />
+        {tagline && <div className="text-[11px] text-slate-400 leading-tight">{BRAND_TAGLINE}</div>}
+      </div>
+    </div>
+  )
+}

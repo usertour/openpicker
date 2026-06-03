@@ -1,5 +1,5 @@
 import { RiCrosshair2Line, RiSettings3Line } from "@remixicon/react"
-import { BrandMark, Wordmark } from "@/components/Brand"
+import { BrandLockup } from "@/components/Brand"
 
 /**
  * Toolbar popup — the picker's home. Start a pick on the current page, or open the
@@ -28,13 +28,7 @@ export function App() {
   const version = browser.runtime.getManifest().version
   return (
     <div className="w-72 p-4 font-sans text-slate-800">
-      <div className="flex items-center gap-2.5">
-        <BrandMark />
-        <div className="leading-tight">
-          <Wordmark className="text-lg" />
-          <div className="text-[11px] text-slate-400">Pick an element, get its selector</div>
-        </div>
-      </div>
+      <BrandLockup tagline />
 
       <button
         type="button"
