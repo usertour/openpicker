@@ -1,7 +1,7 @@
 /**
- * "Powered by Usertour" attribution, styled after Usertour's own "made with" badge:
- * a small, muted icon + text link. The mark is Usertour's brand glyph, reproduced
- * here purely for attribution; everything else in openpicker is our own.
+ * "Maintained by Usertour" attribution, styled after Usertour's own "made with"
+ * badge: a small, muted icon + text link. The mark is Usertour's brand glyph,
+ * reproduced here purely for attribution; everything else in openpicker is our own.
  */
 
 function UsertourMark({ size = 14 }: { size?: number }) {
@@ -20,16 +20,16 @@ function UsertourMark({ size = 14 }: { size?: number }) {
   )
 }
 
-export function PoweredByUsertour({ className = "" }: { className?: string }) {
+export function MaintainedByUsertour({ className = "" }: { className?: string }) {
   return (
     <a
-      href="https://www.usertour.io?utm_source=openpicker&utm_medium=link&utm_campaign=powered-by-usertour"
+      href="https://www.usertour.io?utm_source=openpicker&utm_medium=link&utm_campaign=maintained-by-usertour"
       target="_blank"
       rel="noopener noreferrer"
       className={`inline-flex items-center gap-1 text-slate-400 text-xs no-underline transition-colors hover:text-slate-600 ${className}`}
     >
       <UsertourMark />
-      <span>Powered by Usertour</span>
+      <span>Maintained by Usertour</span>
     </a>
   )
 }

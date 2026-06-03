@@ -10,7 +10,7 @@ import {
 } from "@remixicon/react"
 import { useState } from "react"
 import { BrandMark, Wordmark } from "@/components/Brand"
-import { PoweredByUsertour } from "@/components/PoweredBy"
+import { MaintainedByUsertour } from "@/components/MaintainedBy"
 import { AttributeList } from "./AttributeList"
 import type { AttrEntry } from "./dom"
 import { type SelectorSettings, SettingsPopover } from "./SettingsPopover"
@@ -256,7 +256,7 @@ export function Sidebar(props: SidebarProps) {
           on the right once an element is locked. The bar is always shown so the
           credit stays pinned to the bottom-left in every phase. */}
       <div className="flex items-center justify-between gap-2 border-slate-200 border-t px-3 py-2">
-        <PoweredByUsertour />
+        <MaintainedByUsertour />
         {locked && (
           <div className="flex items-center gap-2">
             <button
