@@ -4,7 +4,7 @@
   "description": "Open-source CSS element picker — SDK for invoking the openpicker browser extension.",
   "license": "MIT",
   "author": "Usertour (https://www.usertour.io)",
-  "homepage": "https://github.com/usertour/openpicker#readme",
+  "homepage": "https://openpicker.dev",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/usertour/openpicker.git",

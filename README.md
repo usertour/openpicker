@@ -12,6 +12,13 @@
   <a href="https://www.usertour.io"><img src="https://img.shields.io/badge/maintained%20by-Usertour-867DB3.svg" alt="Maintained by Usertour" /></a>
 </p>
 
+<p align="center">
+  <a href="https://openpicker.dev"><strong>Website</strong></a> ·
+  <a href="https://demo.openpicker.dev">Live demo</a> ·
+  <a href="./PROTOCOL.md">Protocol</a> ·
+  <a href="https://www.npmjs.com/package/@openpicker/sdk">npm</a>
+</p>
+
 > An open-source CSS **element picker** for the web — a browser extension plus a tiny npm SDK,
 > connected by one open protocol. Any page can ask the user to point at an element (even on a
 > different tab/site) and get back a stable CSS selector.

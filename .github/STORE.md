@@ -54,8 +54,11 @@ https://github.com/usertour/openpicker/blob/main/PRIVACY.md
 
 **Homepage / support**
 
-- Website: https://github.com/usertour/openpicker
+- Website: https://openpicker.dev
 - Support: https://github.com/usertour/openpicker/issues
+
+> If the listing is still in review, don't edit the live listing's Homepage URL yet — update it to
+> https://openpicker.dev after it's approved (editing mid-review can reset the queue).
 
 ---
 

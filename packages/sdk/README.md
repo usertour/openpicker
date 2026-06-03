@@ -1,7 +1,8 @@
 # @openpicker/sdk
 
-SDK for invoking the [openpicker](https://github.com/usertour/openpicker) browser extension to
-pick a CSS selector on any page.
+SDK for invoking the [openpicker](https://openpicker.dev) browser extension to pick a CSS selector
+on any page. Website: [openpicker.dev](https://openpicker.dev) · Live demo:
+[demo.openpicker.dev](https://demo.openpicker.dev)
 
 ```bash
 npm install @openpicker/sdk
