@@ -25,6 +25,8 @@ You'll see the openpicker icon in the toolbar.
 
 ## Pick from the toolbar
 
+![The openpicker toolbar popup](/popup.png)
+
 1. Open any page.
 2. Click the openpicker toolbar icon → **Pick an element on this page**.
 3. Hover to highlight, click to select, refine in the sidebar if needed.

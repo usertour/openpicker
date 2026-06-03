@@ -7,6 +7,8 @@ it.
 
 Open the options page from the popup → **Manage authorized sites**.
 
+![The options page: choosing the authorization mode](/options.png)
+
 ## Modes
 
 | Mode | Behavior |

@@ -14,6 +14,9 @@ overlay. Here's the full flow.
 
 After you select an element, the sidebar becomes an inspector:
 
+![The picker sidebar: editable selector, match count, DOM-tree navigator, and attributes](/picker.png)
+
+
 - **Selector** — the generated CSS selector. It's editable: type your own and the highlight, tree,
   and attributes follow what it matches. A pill below shows the **match count** (green when it
   matches exactly one element) or flags an **invalid selector**.
