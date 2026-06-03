@@ -1,40 +1,47 @@
+import { useId } from "react"
+
 /**
  * Brand lockup, shared by the popup, options page, and picker sidebar so the mark
  * and wordmark stay identical everywhere.
  *
- * The mark is a purpose-drawn "target / picker" glyph (outer ring + four ticks +
- * a solid center dot) whose stroke weight matches the wordmark, so it reads as a
- * designed logo rather than a stock line-icon dropped into a box. It sits in a
- * rounded squircle with a subtle gradient and inset bezel for a crafted, app-icon
- * feel. The wordmark is a solid, slightly larger logotype set in semibold.
+ * BrandMark renders the full app icon inline (the same artwork as assets/icon.svg
+ * and public/icon/*.png): a crosshair-target "picker" glyph on a dark squircle with
+ * a gradient and inset bezel. Baking the tile into the SVG — rather than styling a
+ * <span> with Tailwind — keeps it pixel-identical to the toolbar icon and makes it
+ * robust inside the picker's shadow DOM, where Tailwind v4 gradient/ring custom-props
+ * can fail to resolve. The wordmark is a solid logotype set in semibold.
  */
 
-export function BrandMark({
-  className = "h-7 w-7",
-  glyph = 16,
-}: {
-  className?: string
-  glyph?: number
-}) {
+export function BrandMark({ className = "h-7 w-7" }: { className?: string }) {
+  // Unique gradient id per instance so multiple marks on one page don't collide.
+  const fill = useId()
   return (
-    <span
-      // bg-slate-900 is a solid fallback under the gradient: inside the picker's
-      // shadow DOM, Tailwind v4 gradient/ring custom-props can fail to resolve, and
-      // without it the white glyph would sit on a transparent (invisible) square.
-      className={`grid shrink-0 place-items-center rounded-xl bg-slate-900 bg-gradient-to-b from-slate-700 to-slate-900 text-white shadow-sm ring-1 ring-white/10 ring-inset ${className}`}
-    >
-      <svg width={glyph} height={glyph} viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <title>openpicker</title>
-        <circle cx="12" cy="12" r="6.5" stroke="currentColor" strokeWidth="2" />
-        <path
-          d="M12 2v3.5M12 18.5V22M2 12h3.5M18.5 12H22"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
-        <circle cx="12" cy="12" r="2" fill="currentColor" />
-      </svg>
-    </span>
+    <svg viewBox="0 0 128 128" className={`shrink-0 ${className}`} aria-hidden="true">
+      <title>openpicker</title>
+      <defs>
+        <linearGradient id={fill} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stopColor="#334155" />
+          <stop offset="1" stopColor="#0f172a" />
+        </linearGradient>
+      </defs>
+      <rect x="6" y="6" width="116" height="116" rx="30" fill={`url(#${fill})`} />
+      <rect
+        x="7"
+        y="7"
+        width="114"
+        height="114"
+        rx="29"
+        fill="none"
+        stroke="#ffffff"
+        strokeOpacity="0.1"
+        strokeWidth="2"
+      />
+      <g fill="none" stroke="#ffffff" strokeWidth="11" strokeLinecap="round">
+        <circle cx="64" cy="64" r="34" />
+        <path d="M64 12 V30 M64 98 V116 M12 64 H30 M98 64 H116" />
+      </g>
+      <circle cx="64" cy="64" r="11" fill="#ffffff" />
+    </svg>
   )
 }
 

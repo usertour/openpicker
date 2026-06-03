@@ -116,7 +116,7 @@ export function Sidebar(props: SidebarProps) {
       {/* Header */}
       <div className="flex items-center justify-between border-slate-200 border-b px-3 py-2.5">
         <div className="flex items-center gap-2">
-          <BrandMark className="h-6 w-6" glyph={14} />
+          <BrandMark className="h-6 w-6" />
           <Wordmark className="text-base" />
         </div>
         <div className="flex items-center gap-0.5">
