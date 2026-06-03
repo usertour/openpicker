@@ -27,6 +27,22 @@ const HASHED_CLASS_PATTERNS: RegExp[] = [
 // Attributes worth preferring as selector anchors (test hooks).
 const PREFERRED_ATTR = /^data-(testid|test|test-id|cy|qa)$/i
 
+/**
+ * The default attribute names used when the allow-list is empty ("auto"), for
+ * display in the settings UI. Mirrors PREFERRED_ATTR + finder's accepted set
+ * (role/name/aria-label/rel/href + data-*); auto also requires non-random values.
+ */
+export const AUTO_ATTRS = [
+  "name",
+  "aria-label",
+  "role",
+  "rel",
+  "href",
+  "data-testid",
+  "data-cy",
+  "data-*",
+]
+
 export interface SelectorConfig {
   /** Whether the selector may use the element's id. */
   useIds: boolean

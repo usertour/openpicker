@@ -1,4 +1,5 @@
 import { RiCloseLine } from "@remixicon/react"
+import { AUTO_ATTRS } from "./selector"
 
 export interface SelectorSettings {
   /** Whether the selector may use the element's id. */
@@ -35,6 +36,7 @@ interface SettingsPopoverProps {
 
 const fieldClass =
   "w-full rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 font-mono text-[11px] outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200 disabled:cursor-not-allowed disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-400 disabled:placeholder:text-slate-300"
+const hintClass = "px-0.5 text-[10px] text-slate-400 leading-snug"
 
 /**
  * Popover from the ⚙️ gear: which parts of the element the generated selector may
@@ -78,6 +80,10 @@ export function SettingsPopover({ settings, onChange, onClose }: SettingsPopover
             onChange={(e) => onChange({ ignoreId: e.target.value })}
             className={fieldClass}
           />
+          <p className={hintClass}>
+            Use the element's id. Optionally ignore ids matching this regex (e.g. auto-generated
+            ones).
+          </p>
         </div>
 
         {/* Class */}
@@ -99,6 +105,10 @@ export function SettingsPopover({ settings, onChange, onClose }: SettingsPopover
             onChange={(e) => onChange({ ignoreClass: e.target.value })}
             className={fieldClass}
           />
+          <p className={hintClass}>
+            Use class names. Optionally ignore classes matching this regex (e.g. <code>css-|sc-</code>
+            ).
+          </p>
         </div>
 
         {/* Attribute */}
@@ -120,6 +130,11 @@ export function SettingsPopover({ settings, onChange, onClose }: SettingsPopover
             onChange={(e) => onChange({ attrAllow: e.target.value })}
             className={fieldClass}
           />
+          <p className={hintClass}>
+            {settings.attrAllow.trim()
+              ? "Only these attribute names are used (any value)."
+              : `Empty = auto: ${AUTO_ATTRS.join(", ")} (with stable, non-random values).`}
+          </p>
         </div>
       </div>
     </div>
