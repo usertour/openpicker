@@ -27,11 +27,14 @@ export function App() {
   const version = browser.runtime.getManifest().version
   return (
     <div className="w-72 p-4 font-sans text-slate-800">
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2.5">
         <span className="grid h-7 w-7 place-items-center rounded-md bg-slate-900 text-white">
           <RiCrosshair2Line size={16} />
         </span>
-        <span className="font-semibold tracking-tight">openpicker</span>
+        <div className="leading-tight">
+          <div className="font-semibold tracking-tight">openpicker</div>
+          <div className="text-[11px] text-slate-400">Pick an element, get its selector</div>
+        </div>
       </div>
 
       <button
