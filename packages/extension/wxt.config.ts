@@ -22,7 +22,18 @@ export default defineConfig({
     // SDK-triggered picks have no per-tab gesture, so grant host access for the
     // screenshot capability to work on any page.
     host_permissions: ["<all_urls>"],
-    // The toolbar action + its popup are wired automatically from entrypoints/popup.
+    // The toolbar action's popup is wired automatically from entrypoints/popup; we
+    // only add the toolbar-button icon here (WXT sets manifest.icons from
+    // public/icon/* but not action.default_icon). This deep-merges with the
+    // generated action, keeping default_popup intact.
     // (The options page opens as a full tab — see the meta tag in options/index.html.)
+    action: {
+      default_icon: {
+        "16": "icon/16.png",
+        "32": "icon/32.png",
+        "48": "icon/48.png",
+        "128": "icon/128.png",
+      },
+    },
   },
 })
