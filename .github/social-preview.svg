@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640">
+  <!-- Source for .github/social-preview.png (GitHub repo "Social preview").
+       Regenerate: rsvg-convert -w 1280 -h 640 .github/social-preview.svg -o .github/social-preview.png -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" />
+      <stop offset="1" stop-color="#f1f5f9" />
+    </linearGradient>
+    <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#334155" />
+      <stop offset="1" stop-color="#0f172a" />
+    </linearGradient>
+  </defs>
+
+  <rect width="1280" height="640" fill="url(#bg)" />
+
+  <!-- App icon (128-unit artwork scaled to 168px, centered horizontally at x=640) -->
+  <g transform="translate(556,150) scale(1.3125)">
+    <rect x="6" y="6" width="116" height="116" rx="30" fill="url(#tile)" />
+    <rect x="7" y="7" width="114" height="114" rx="29" fill="none" stroke="#ffffff" stroke-opacity="0.10" stroke-width="2" />
+    <g fill="none" stroke="#ffffff" stroke-width="11" stroke-linecap="round">
+      <circle cx="64" cy="64" r="34" />
+      <path d="M64 12 V30 M64 98 V116 M12 64 H30 M98 64 H116" />
+    </g>
+    <circle cx="64" cy="64" r="11" fill="#ffffff" />
+  </g>
+
+  <text x="640" y="430" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="92" font-weight="700" fill="#0f172a" letter-spacing="-2">openpicker</text>
+  <text x="640" y="488" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="32" fill="#64748b">An open-source CSS element picker for the web</text>
+  <text x="640" y="586" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="24" fill="#cbd5e1">github.com/usertour/openpicker</text>
+</svg>

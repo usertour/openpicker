@@ -1,8 +1,16 @@
-# openpicker
+<p align="center">
+  <img src="./.github/openpicker.svg" alt="openpicker" width="88" height="88" />
+</p>
 
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE)
-[![PRs welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](#contributing)
-[![Maintained by Usertour](https://img.shields.io/badge/maintained%20by-Usertour-867DB3.svg)](https://www.usertour.io)
+<h1 align="center">openpicker</h1>
+
+<p align="center">An open-source CSS element picker for the web.</p>
+
+<p align="center">
+  <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT" /></a>
+  <a href="#contributing"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs welcome" /></a>
+  <a href="https://www.usertour.io"><img src="https://img.shields.io/badge/maintained%20by-Usertour-867DB3.svg" alt="Maintained by Usertour" /></a>
+</p>
 
 > An open-source CSS **element picker** for the web — a browser extension plus a tiny npm SDK,
 > connected by one open protocol. Any page can ask the user to point at an element (even on a
