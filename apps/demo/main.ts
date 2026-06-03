@@ -20,15 +20,32 @@ const copyBtn = byId<HTMLButtonElement>("copy")
 const metaEl = byId("meta")
 const shotImg = byId<HTMLImageElement>("shotImg")
 
+const STATUS_COLORS = {
+  checking: ["bg-slate-100", "text-slate-500"],
+  ok: ["bg-emerald-50", "text-emerald-700"],
+  warn: ["bg-amber-50", "text-amber-700"],
+} as const
+
+function setStatus(text: string, kind: keyof typeof STATUS_COLORS): void {
+  statusEl.textContent = text
+  statusEl.classList.remove(
+    "bg-slate-100",
+    "text-slate-500",
+    "bg-emerald-50",
+    "text-emerald-700",
+    "bg-amber-50",
+    "text-amber-700",
+  )
+  statusEl.classList.add(...STATUS_COLORS[kind])
+}
+
 /**
- * Detect the extension and toggle the install prompt vs the demo. The content
- * script attaches its message listener at document_idle, which can be after this
- * page's first ping — a single ping would be lost in that race. So poll a few times
- * before concluding the extension is absent.
+ * Detect the extension and toggle the install prompt vs the demo. The content script
+ * attaches its listener at document_idle, which can be after this page's first ping —
+ * a single ping would be lost in that race, so poll a few times.
  */
 async function detect(): Promise<void> {
-  statusEl.textContent = "Checking for the extension…"
-  statusEl.className = "status"
+  setStatus("Checking for the extension…", "checking")
   let ok = false
   for (let attempt = 0; attempt < 4 && !ok; attempt++) {
     ok = await op.isAvailable()
@@ -36,8 +53,7 @@ async function detect(): Promise<void> {
   }
   installEl.hidden = ok
   demoEl.hidden = !ok
-  statusEl.textContent = ok ? "✓ Extension detected" : "✗ Extension not detected"
-  statusEl.className = ok ? "status ok" : "status warn"
+  setStatus(ok ? "✓ Extension detected" : "✗ Extension not detected", ok ? "ok" : "warn")
 }
 
 async function pick(): Promise<void> {
