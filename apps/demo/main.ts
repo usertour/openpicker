@@ -1,5 +1,4 @@
 import { createOpenpicker, OpenpickerError, type ScreenshotMode } from "@openpicker/sdk"
-import "./style.css"
 
 const op = createOpenpicker({ appName: "openpicker demo", pingTimeout: 700 })
 
