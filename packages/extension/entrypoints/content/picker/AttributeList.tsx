@@ -14,17 +14,17 @@ function AttributeCard({ entry }: { entry: AttrEntry }) {
   const shown = expanded || !long ? entry.value : `${entry.value.slice(0, TRUNCATE)}…`
   return (
     <div className="px-0.5 py-1">
-      <span className="block truncate font-mono font-semibold text-slate-700 text-xs">
+      <span className="block truncate font-mono font-semibold text-slate-700 text-xs dark:text-slate-200">
         {entry.name}
       </span>
-      <div className="mt-1 break-all font-mono text-[11px] text-slate-500 leading-relaxed">
-        {shown || <span className="text-slate-300 italic">empty</span>}
+      <div className="mt-1 break-all font-mono text-[11px] text-slate-500 leading-relaxed dark:text-slate-400">
+        {shown || <span className="text-slate-300 italic dark:text-slate-600">empty</span>}
       </div>
       {long && (
         <button
           type="button"
           onClick={() => setExpanded((v) => !v)}
-          className="mt-1 font-medium text-[11px] text-slate-500 hover:text-slate-700 hover:underline"
+          className="mt-1 font-medium text-[11px] text-slate-500 hover:text-slate-700 hover:underline dark:text-slate-400 dark:hover:text-slate-200"
         >
           {expanded ? "Show less" : "Show more"}
         </button>
@@ -48,8 +48,8 @@ export function AttributeList({ attributes }: AttributeListProps) {
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-2">
       {showFilter && (
-        <div className="flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-2.5 transition focus-within:border-slate-500 focus-within:ring-2 focus-within:ring-slate-200">
-          <RiSearchLine size={14} className="shrink-0 text-slate-400" />
+        <div className="flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-2.5 transition focus-within:border-slate-500 focus-within:ring-2 focus-within:ring-slate-200 dark:border-slate-700 dark:bg-slate-950 dark:focus-within:ring-slate-700">
+          <RiSearchLine size={14} className="shrink-0 text-slate-400 dark:text-slate-500" />
           <input
             type="text"
             value={filter}
@@ -61,7 +61,7 @@ export function AttributeList({ attributes }: AttributeListProps) {
       )}
       <div className="flex min-h-0 flex-1 flex-col gap-1.5 overflow-y-auto pr-0.5">
         {visible.length === 0 ? (
-          <p className="px-1 py-3 text-center text-[11px] text-slate-400">
+          <p className="px-1 py-3 text-center text-[11px] text-slate-400 dark:text-slate-500">
             No matching attributes.
           </p>
         ) : (

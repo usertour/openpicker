@@ -1,5 +1,6 @@
 import type { PickParams, PickResult } from "@openpicker/protocol"
 import ReactDOM from "react-dom/client"
+import { watchTheme } from "@/lib/theme"
 import { mountShadow } from "./mount"
 import { Picker } from "./Picker"
 import { defaultSelectorSettings } from "./SettingsPopover"
@@ -42,6 +43,9 @@ export async function runPicker(
     : saved
 
   const mount = await mountShadow()
+  // Theme the picker UI to match the user's choice; `.dark` lands on the shadow
+  // container so the panel's dark: utilities apply inside the isolated root.
+  const stopTheme = watchTheme(mount.container)
   const root = ReactDOM.createRoot(mount.container)
 
   return new Promise<PickOutcome>((resolve) => {
@@ -51,6 +55,7 @@ export async function runPicker(
       settled = true
       active = false
       cancelActive = null
+      stopTheme()
       root.unmount()
       mount.remove()
       resolve(outcome)

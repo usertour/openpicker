@@ -39,26 +39,30 @@ export function TagTooltip({ el, rect }: TagTooltipProps) {
   return (
     <div style={style}>
       <div
-        className="overflow-hidden rounded-lg border border-slate-200 bg-white px-3 py-2 font-mono text-[11px] leading-relaxed shadow-lg"
+        className="overflow-hidden rounded-lg border border-slate-200 bg-white px-3 py-2 font-mono text-[11px] leading-relaxed shadow-lg dark:border-slate-800 dark:bg-slate-900"
         style={{ maxHeight: "50vh" }}
       >
-        <div className="text-slate-400">
-          &lt;<span className="text-rose-600">{tag}</span>
+        <div className="text-slate-400 dark:text-slate-500">
+          &lt;<span className="text-rose-600 dark:text-rose-400">{tag}</span>
           {attrs.length === 0 && <span>&gt;</span>}
         </div>
         {attrs.map((a, i) => (
           <div key={a.name} className="pl-3">
-            <span className="text-sky-700">{a.name}</span>
-            <span className="text-slate-400">=</span>
-            <span className="break-all text-amber-700">"{truncate(a.value, MAX_VALUE)}"</span>
-            {i === attrs.length - 1 && <span className="text-slate-400">&gt;</span>}
+            <span className="text-sky-700 dark:text-sky-400">{a.name}</span>
+            <span className="text-slate-400 dark:text-slate-500">=</span>
+            <span className="break-all text-amber-700 dark:text-amber-400">
+              "{truncate(a.value, MAX_VALUE)}"
+            </span>
+            {i === attrs.length - 1 && (
+              <span className="text-slate-400 dark:text-slate-500">&gt;</span>
+            )}
           </div>
         ))}
-        <div className="mt-1.5 border-slate-100 border-t pt-1.5 text-slate-500">
+        <div className="mt-1.5 border-slate-100 border-t pt-1.5 text-slate-500 dark:border-slate-800 dark:text-slate-400">
           {content ? (
             truncate(content, MAX_CONTENT)
           ) : (
-            <span className="text-slate-400 italic">No Content</span>
+            <span className="text-slate-400 italic dark:text-slate-500">No Content</span>
           )}
         </div>
       </div>

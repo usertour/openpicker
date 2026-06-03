@@ -1,1 +1,4 @@
 @import "tailwindcss";
+
+/* Dark mode is class-based (a `.dark` ancestor), driven by lib/theme.ts. */
+@custom-variant dark (&:where(.dark, .dark *));

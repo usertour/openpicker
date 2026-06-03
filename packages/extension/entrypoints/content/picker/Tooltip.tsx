@@ -23,7 +23,7 @@ export function Tooltip({ label, side = "bottom", align = "center", children }: 
       {children}
       <span
         role="tooltip"
-        className={`pointer-events-none absolute z-50 whitespace-nowrap rounded-md bg-slate-900 px-2 py-1 font-medium text-[11px] text-white opacity-0 shadow-md transition-opacity duration-100 group-hover/tt:opacity-100 ${vertical} ${horizontal}`}
+        className={`pointer-events-none absolute z-50 whitespace-nowrap rounded-md bg-slate-900 px-2 py-1 font-medium text-[11px] text-white opacity-0 shadow-md transition-opacity duration-100 group-hover/tt:opacity-100 dark:bg-slate-100 dark:text-slate-900 ${vertical} ${horizontal}`}
       >
         {label}
       </span>
