@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/openpicker.svg" />
+    <title>openpicker — live demo</title>
+    <meta
+      name="description"
+      content="Live demo of openpicker: pick an element on any page and get a stable CSS selector back, via @openpicker/sdk."
+    />
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="https://github.com/usertour/openpicker">
+        <img src="/openpicker.svg" width="28" height="28" alt="" />
+        <span>openpicker</span>
+      </a>
+      <nav>
+        <a href="https://www.npmjs.com/package/@openpicker/sdk">npm</a>
+        <a href="https://github.com/usertour/openpicker">GitHub</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <h1>Pick an element, get its selector</h1>
+        <p>
+          openpicker opens a page, lets you point at any element, and hands a stable CSS selector
+          back to the calling app — this page is a live caller of
+          <code>@openpicker/sdk</code>.
+        </p>
+        <p id="status" class="status">Checking for the extension…</p>
+      </section>
+
+      <!-- Shown when the extension is not detected -->
+      <section id="install" class="card install" hidden>
+        <h2>Install the extension first</h2>
+        <p>
+          The demo needs the openpicker browser extension. It isn't on the Chrome Web Store yet —
+          load it unpacked from the repo:
+        </p>
+        <ol>
+          <li>Clone the repo and run <code>pnpm i &amp;&amp; pnpm --filter @openpicker/extension build</code>.</li>
+          <li>Open <code>chrome://extensions</code> → enable <strong>Developer mode</strong>.</li>
+          <li><strong>Load unpacked</strong> → pick <code>packages/extension/.output/chrome-mv3</code>.</li>
+        </ol>
+        <div class="row">
+          <a class="btn primary" href="https://github.com/usertour/openpicker#install">Setup guide</a>
+          <button type="button" class="btn" id="recheck">Re-check</button>
+        </div>
+      </section>
+
+      <!-- Shown when the extension is detected -->
+      <section id="demo" class="card" hidden>
+        <h2>Try it</h2>
+        <p class="muted">
+          Enter a URL. openpicker opens it in a new tab, you click an element there, and the
+          selector comes back here.
+        </p>
+
+        <div class="field">
+          <label for="url">URL to pick in</label>
+          <input id="url" type="text" value="https://www.google.com" spellcheck="false" />
+        </div>
+
+        <div class="field">
+          <label for="shot">Screenshot</label>
+          <select id="shot">
+            <option value="none">none</option>
+            <option value="element" selected>element</option>
+            <option value="viewport">viewport</option>
+          </select>
+        </div>
+
+        <button type="button" class="btn primary" id="pick">Pick an element</button>
+
+        <p id="error" class="error" hidden></p>
+
+        <div id="result" class="result" hidden>
+          <div class="field">
+            <label>Selector</label>
+            <div class="selector-row">
+              <code id="selector" class="selector"></code>
+              <button type="button" class="btn" id="copy">Copy</button>
+            </div>
+          </div>
+          <p id="meta" class="muted"></p>
+          <img id="shotImg" class="shot" alt="screenshot of the picked element" hidden />
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>
+        Built with <a href="https://www.npmjs.com/package/@openpicker/sdk"><code>@openpicker/sdk</code></a>
+      </span>
+      <a class="madeby" href="https://www.usertour.io">Maintained by Usertour</a>
+    </footer>
+
+    <script type="module" src="/main.ts"></script>
+  </body>
+</html>
