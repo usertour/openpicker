@@ -1,0 +1,11 @@
+{
+  // Cloudflare Workers static-assets deploy for the docs site (docs.openpicker.dev).
+  // Deploy with: npx wrangler deploy --config apps/docs/wrangler.jsonc
+  // (`assets.directory` is relative to this file → apps/docs/.vitepress/dist). Assets-only.
+  // `name` must match the Worker created in the Cloudflare dashboard.
+  "name": "openpicker-docs",
+  "compatibility_date": "2025-06-01",
+  "assets": {
+    "directory": "./.vitepress/dist"
+  }
+}

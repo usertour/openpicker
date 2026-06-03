@@ -1,0 +1,60 @@
+import { defineConfig } from "vitepress"
+
+const GITHUB = "https://github.com/usertour/openpicker"
+
+export default defineConfig({
+  title: "openpicker",
+  description:
+    "Documentation for openpicker — an open-source CSS element picker for the web (browser extension + SDK).",
+  cleanUrls: true,
+  lastUpdated: true,
+  srcExclude: ["**/README.md"],
+  head: [
+    ["link", { rel: "icon", href: "/openpicker.svg" }],
+    ["meta", { name: "theme-color", content: "#0f172a" }],
+  ],
+  themeConfig: {
+    logo: "/openpicker.svg",
+    nav: [
+      { text: "Guide", link: "/guide/getting-started" },
+      { text: "Developers", link: "/developers/sdk" },
+      { text: "Live demo", link: "https://demo.openpicker.dev" },
+      { text: "openpicker.dev", link: "https://openpicker.dev" },
+    ],
+    sidebar: {
+      "/guide/": [
+        {
+          text: "Guide",
+          items: [
+            { text: "Getting started", link: "/guide/getting-started" },
+            { text: "Using the picker", link: "/guide/using-the-picker" },
+            { text: "Configuring selectors", link: "/guide/configuring-selectors" },
+            { text: "Authorization", link: "/guide/authorization" },
+            { text: "Appearance", link: "/guide/appearance" },
+          ],
+        },
+      ],
+      "/developers/": [
+        {
+          text: "Developers",
+          items: [
+            { text: "SDK", link: "/developers/sdk" },
+            { text: "Cross-tab picking", link: "/developers/cross-tab" },
+            { text: "Protocol", link: "/developers/protocol" },
+            { text: "Errors", link: "/developers/errors" },
+          ],
+        },
+      ],
+    },
+    socialLinks: [{ icon: "github", link: GITHUB }],
+    search: { provider: "local" },
+    editLink: {
+      pattern: `${GITHUB}/edit/main/apps/docs/:path`,
+      text: "Edit this page on GitHub",
+    },
+    footer: {
+      message: "Released under the MIT License.",
+      copyright: "Maintained by Usertour",
+    },
+  },
+})

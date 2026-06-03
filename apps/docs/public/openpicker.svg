@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <!-- openpicker app icon: a crosshair-target "picker" mark on a dark squircle tile.
+       Matches the in-app brand mark (components/Brand.tsx). Source of the PNGs in
+       public/icon/ — regenerate with: rsvg-convert -w N -h N assets/icon.svg -o public/icon/N.png -->
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#334155" />
+      <stop offset="1" stop-color="#0f172a" />
+    </linearGradient>
+  </defs>
+  <rect x="6" y="6" width="116" height="116" rx="30" fill="url(#tile)" />
+  <rect x="7" y="7" width="114" height="114" rx="29" fill="none" stroke="#ffffff" stroke-opacity="0.10" stroke-width="2" />
+  <g fill="none" stroke="#ffffff" stroke-width="11" stroke-linecap="round">
+    <circle cx="64" cy="64" r="34" />
+    <path d="M64 12 V30 M64 98 V116 M12 64 H30 M98 64 H116" />
+  </g>
+  <circle cx="64" cy="64" r="11" fill="#ffffff" />
+</svg>
