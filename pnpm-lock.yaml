@@ -22,8 +22,8 @@ importers:
   apps/demo:
     devDependencies:
       '@openpicker/sdk':
-        specifier: workspace:*
-        version: link:../../packages/sdk
+        specifier: npm:@openpicker/sdk@^0.1.0
+        version: 0.1.0
       vite:
         specifier: ^6.0.0
         version: 6.4.2(@types/node@25.9.1)(jiti@2.7.0)(lightningcss@1.32.0)
@@ -555,6 +555,9 @@ packages:
     peerDependencies:
       '@emnapi/core': ^1.7.1
       '@emnapi/runtime': ^1.7.1
+
+  '@openpicker/sdk@0.1.0':
+    resolution: {integrity: sha512-nxiCb81cRGUmqvDG4kTEg+oSMdOjkb158tnZ7ZCPnJUVUfT7eu7wpKQio/LJEig9l+d+ogAOoXGG7+7lowW4Yw==}
 
   '@oxc-project/types@0.132.0':
     resolution: {integrity: sha512-FESMOxil5Se014ui/Eq8fT5uHJo6nIRwH0PfJrZJXs6Gek3ZVFOrpUv3YIZT20m+extU98Hg1Ym72U58rlsxUQ==}
@@ -2696,6 +2699,8 @@ snapshots:
       '@emnapi/runtime': 1.10.0
       '@tybys/wasm-util': 0.10.2
     optional: true
+
+  '@openpicker/sdk@0.1.0': {}
 
   '@oxc-project/types@0.132.0': {}
 

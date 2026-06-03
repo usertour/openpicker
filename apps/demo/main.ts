@@ -1,9 +1,10 @@
 import { createOpenpicker, OpenpickerError, type ScreenshotMode } from "@openpicker/sdk"
 import "./style.css"
 
-const op = createOpenpicker({ appName: "openpicker demo" })
+const op = createOpenpicker({ appName: "openpicker demo", pingTimeout: 700 })
 
 const byId = <T extends HTMLElement>(id: string) => document.getElementById(id) as T
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
 
 const statusEl = byId("status")
 const installEl = byId("install")
@@ -19,11 +20,20 @@ const copyBtn = byId<HTMLButtonElement>("copy")
 const metaEl = byId("meta")
 const shotImg = byId<HTMLImageElement>("shotImg")
 
-/** Detect the extension and toggle the install prompt vs the demo. */
+/**
+ * Detect the extension and toggle the install prompt vs the demo. The content
+ * script attaches its message listener at document_idle, which can be after this
+ * page's first ping — a single ping would be lost in that race. So poll a few times
+ * before concluding the extension is absent.
+ */
 async function detect(): Promise<void> {
   statusEl.textContent = "Checking for the extension…"
   statusEl.className = "status"
-  const ok = await op.isAvailable()
+  let ok = false
+  for (let attempt = 0; attempt < 4 && !ok; attempt++) {
+    ok = await op.isAvailable()
+    if (!ok) await sleep(200)
+  }
   installEl.hidden = ok
   demoEl.hidden = !ok
   statusEl.textContent = ok ? "✓ Extension detected" : "✗ Extension not detected"
