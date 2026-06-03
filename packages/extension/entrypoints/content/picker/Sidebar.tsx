@@ -57,6 +57,10 @@ interface SidebarProps {
   onResume: () => void
   onConfirm: () => void
   onCancel: () => void
+  /** Label for the confirm button (e.g. "OK" for SDK picks, "Copy" for toolbar picks). */
+  confirmLabel?: string
+  /** When true, the confirm button shows a transient "Copied" success state. */
+  confirmDone?: boolean
 }
 
 /**
@@ -261,9 +265,19 @@ export function Sidebar(props: SidebarProps) {
           <button
             type="button"
             onClick={props.onConfirm}
-            className="rounded-lg bg-slate-900 px-5 py-2 font-medium text-sm text-white shadow-sm transition-colors hover:bg-slate-700"
+            disabled={props.confirmDone}
+            className={`inline-flex items-center gap-1.5 rounded-lg px-5 py-2 font-medium text-sm text-white shadow-sm transition-colors ${
+              props.confirmDone ? "bg-emerald-600" : "bg-slate-900 hover:bg-slate-700"
+            }`}
           >
-            OK
+            {props.confirmDone ? (
+              <>
+                <RiCheckLine size={16} />
+                Copied
+              </>
+            ) : (
+              (props.confirmLabel ?? "OK")
+            )}
           </button>
         </div>
       )}

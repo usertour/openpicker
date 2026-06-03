@@ -37,12 +37,24 @@ interface PickerProps {
    * the requester, so this stays off.
    */
   canNavigate?: boolean
+  /**
+   * Toolbar (same-tab, human) pick: there is no SDK caller to receive the result,
+   * so confirming copies the selector to the clipboard instead of returning it.
+   */
+  copyOnConfirm?: boolean
   /** Initial selector settings (loaded per-origin, with the SDK `exclude` applied). */
   initialSettings: SelectorSettings
   onResolve: (outcome: PickOutcome) => void
 }
 
-export function Picker({ params, host, canNavigate, initialSettings, onResolve }: PickerProps) {
+export function Picker({
+  params,
+  host,
+  canNavigate,
+  copyOnConfirm,
+  initialSettings,
+  onResolve,
+}: PickerProps) {
   // Resume straight into navigate mode if a navigation happened mid-pick while the
   // user was navigating (the flag rides the target tab's sessionStorage); otherwise
   // start hovering. Authorization is decided before the picker is launched (see the
@@ -56,6 +68,7 @@ export function Picker({ params, host, canNavigate, initialSettings, onResolve }
   const [settings, setSettings] = useState<SelectorSettings>(initialSettings)
   const [selector, setSelector] = useState("")
   const [selectorEdited, setSelectorEdited] = useState(false)
+  const [copied, setCopied] = useState(false)
 
   const hoverRect = useTrackedRect(phase === "hover" ? hovered : null)
   const lockedRect = useTrackedRect(phase === "locked" ? locked : null)
@@ -201,6 +214,30 @@ export function Picker({ params, host, canNavigate, initialSettings, onResolve }
 
   const confirm = useCallback(async () => {
     if (!locked) return onResolve({ type: "cancelled" })
+
+    // Toolbar pick: no caller to receive the result — hand the selector to the user
+    // via the clipboard, flash "Copied", then close. Write before any await so the
+    // clipboard call stays inside the click's user activation.
+    if (copyOnConfirm) {
+      try {
+        await navigator.clipboard.writeText(selector)
+      } catch {
+        // Clipboard blocked (rare) — still close so the picker doesn't get stuck.
+      }
+      setCopied(true)
+      window.setTimeout(() => {
+        onResolve({
+          type: "result",
+          result: {
+            selector,
+            matchCount: countMatches(selector),
+            element: describeElement(locked),
+          },
+        })
+      }, 900)
+      return
+    }
+
     const screenshot = await captureScreenshot(normalizeScreenshotMode(params.screenshot), locked, host)
     const result: PickResult = {
       selector,
@@ -209,7 +246,7 @@ export function Picker({ params, host, canNavigate, initialSettings, onResolve }
       screenshot,
     }
     onResolve({ type: "result", result })
-  }, [locked, selector, params.screenshot, onResolve, host])
+  }, [locked, selector, copyOnConfirm, params.screenshot, onResolve, host])
 
   // hover + locked share one persistent Sidebar; page overlays reflect the
   // current target (hovered while finding, locked once selected).
@@ -263,6 +300,8 @@ export function Picker({ params, host, canNavigate, initialSettings, onResolve }
         onResume={reselect}
         onConfirm={confirm}
         onCancel={cancel}
+        confirmLabel={copyOnConfirm ? "Copy" : "OK"}
+        confirmDone={copied}
       />
     </>
   )

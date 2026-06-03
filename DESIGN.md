@@ -366,7 +366,9 @@ const { selector, screenshot } = await op.pick({
 - `pick` is **cross-tab only**: `url` is required, and omitting it returns `invalid_params`. The
   rationale is the product's reason to exist — an extension earns its keep by crossing the tab/origin
   boundary, and a page can already script its own DOM, so same-tab picking is not an SDK capability.
-  (The toolbar icon offers a same-tab pick for humans inspecting a page; that is not the SDK path.)
+  (The toolbar icon offers a same-tab pick for humans inspecting a page; that is not the SDK path.
+  Since no caller is waiting for the result, confirming a toolbar pick copies the selector to the
+  clipboard — the confirm button reads "Copy" and flashes "Copied" — instead of returning it.)
 - The cross-tab dance is internal; the returned `PickResult` carries the selector (+ optional
   element screenshot). `ping` adds capability `"openUrl"` for feature detection.
 

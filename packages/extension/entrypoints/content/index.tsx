@@ -148,9 +148,11 @@ export default defineContentScript({
         pickId?: string
       }
 
-      // Toolbar icon → start a pick, so the picker works without the SDK.
+      // Toolbar icon → start a pick, so the picker works without the SDK. There is
+      // no caller waiting for a result, so confirming copies the selector to the
+      // clipboard for the user (see runPicker `copyOnConfirm`).
       if (msg?.kind === "startPick") {
-        void runPicker({})
+        void runPicker({}, { copyOnConfirm: true })
         return false
       }
 

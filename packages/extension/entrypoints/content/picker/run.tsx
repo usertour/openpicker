@@ -24,10 +24,12 @@ export function cancelActivePicker(): void {
  * (PickResult) or cancels. Only one picker runs at a time. `canNavigate` offers the
  * "navigate to another page" control — only safe in the cross-tab target tab, where
  * the pick resumes after navigation and the result is routed back via the background.
+ * `copyOnConfirm` is for the toolbar (same-tab, human) pick: there is no SDK caller
+ * to receive the result, so confirming copies the selector to the clipboard instead.
  */
 export async function runPicker(
   params: Partial<PickParams> = {},
-  options: { canNavigate?: boolean } = {},
+  options: { canNavigate?: boolean; copyOnConfirm?: boolean } = {},
 ): Promise<PickOutcome> {
   if (active) return { type: "cancelled" }
   active = true
@@ -59,6 +61,7 @@ export async function runPicker(
         params={params}
         host={mount.host}
         canNavigate={options.canNavigate}
+        copyOnConfirm={options.copyOnConfirm}
         initialSettings={initialSettings}
         onResolve={finish}
       />,
