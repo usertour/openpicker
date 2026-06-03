@@ -48,8 +48,8 @@ function randomId(length: number): string {
   const bytes = new Uint8Array(length)
   globalThis.crypto.getRandomValues(bytes)
   let out = ""
-  for (let i = 0; i < length; i++) {
-    out += ID_ALPHABET[bytes[i]! % ID_ALPHABET.length]
+  for (const byte of bytes) {
+    out += ID_ALPHABET[byte % ID_ALPHABET.length]
   }
   return out
 }
@@ -141,7 +141,11 @@ export class Openpicker {
   /** Probe the extension and negotiate version/capabilities. */
   async ping(): Promise<PingResult> {
     try {
-      return await this.request("ping", { appName: this.options.appName }, this.options.pingTimeout ?? 1500)
+      return await this.request(
+        "ping",
+        { appName: this.options.appName },
+        this.options.pingTimeout ?? 1500,
+      )
     } catch (error) {
       if (error instanceof OpenpickerError && error.code === "timeout") {
         throw new OpenpickerError({

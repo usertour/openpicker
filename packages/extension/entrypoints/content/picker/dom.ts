@@ -59,9 +59,7 @@ export function collectAttributes(el: Element): AttrEntry[] {
 /** Summarize an element for the protocol PickResult. */
 export function describeElement(el: Element): PickedElement {
   const classes =
-    typeof el.className === "string"
-      ? el.className.trim().split(/\s+/).filter(Boolean)
-      : []
+    typeof el.className === "string" ? el.className.trim().split(/\s+/).filter(Boolean) : []
   const attributes: Record<string, string> = {}
   for (const attr of Array.from(el.attributes)) attributes[attr.name] = attr.value
   const text = (el as HTMLElement).innerText?.trim().slice(0, 200)

@@ -29,7 +29,7 @@
       window.__opPick = (params) => post("pick", "op:e2e:pick", params)
       window.__opShadow = () => {
         const host = document.querySelector("openpicker-ui")
-        if (!host || !host.shadowRoot) return { host: false }
+        if (!host?.shadowRoot) return { host: false }
         return { host: true, text: host.shadowRoot.textContent.slice(0, 200) }
       }
     </script>

@@ -46,7 +46,9 @@ export function BrandMark({ className = "h-7 w-7" }: { className?: string }) {
 }
 
 export function Wordmark({ className = "" }: { className?: string }) {
-  return <span className={`font-semibold text-slate-900 tracking-tight ${className}`}>openpicker</span>
+  return (
+    <span className={`font-semibold text-slate-900 tracking-tight ${className}`}>openpicker</span>
+  )
 }
 
 /** One-line description shown under the wordmark; reused across the logo lockups. */

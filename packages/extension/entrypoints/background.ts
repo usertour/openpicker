@@ -6,10 +6,7 @@
 
 type ConsentStatus = "granted" | "denied" | "ask"
 
-type PickOutcome =
-  | { type: "result"; result: unknown }
-  | { type: "cancelled" }
-  | { type: "denied" }
+type PickOutcome = { type: "result"; result: unknown } | { type: "cancelled" } | { type: "denied" }
 
 interface CrossTabParams {
   url?: string
@@ -51,7 +48,11 @@ async function getTargetEntry(targetTabId: number): Promise<TargetEntry | undefi
   return (await browser.storage.session.get(k))[k] as TargetEntry | undefined
 }
 
-async function mapTabs(sourceTabId: number, targetTabId: number, entry: TargetEntry): Promise<void> {
+async function mapTabs(
+  sourceTabId: number,
+  targetTabId: number,
+  entry: TargetEntry,
+): Promise<void> {
   await browser.storage.session.set({
     [sourceToTargetKey(sourceTabId)]: targetTabId,
     [targetToSourceKey(targetTabId)]: entry,
@@ -203,7 +204,9 @@ async function startCrossTabPick(
   // Tell the target to run the picker (it also writes a sessionStorage marker so the
   // pick can resume after navigation). If it is not ready yet, it will say hello on
   // load and we start it then.
-  browser.tabs.sendMessage(targetId, { kind: "crossTab:run", sourceTabId, params, pickId }).catch(() => {})
+  browser.tabs
+    .sendMessage(targetId, { kind: "crossTab:run", sourceTabId, params, pickId })
+    .catch(() => {})
   return true
 }
 
@@ -282,11 +285,16 @@ export default defineBackground(() => {
     // this only acks whether the pick started. See DESIGN.md §5c.
     if (msg?.kind === "crossTab:open" && msg.url && msg.pickId) {
       ;(async () => {
-        const ok = await startCrossTabPick(msg.url as string, msg.params ?? {}, msg.pickId as string, {
-          tabId: senderTabId,
-          windowId: sender.tab?.windowId,
-          index: sender.tab?.index,
-        })
+        const ok = await startCrossTabPick(
+          msg.url as string,
+          msg.params ?? {},
+          msg.pickId as string,
+          {
+            tabId: senderTabId,
+            windowId: sender.tab?.windowId,
+            index: sender.tab?.index,
+          },
+        )
         sendResponse({ ok })
       })()
       return true

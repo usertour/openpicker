@@ -73,7 +73,7 @@ interface SidebarProps {
  */
 function isFocusable(target: EventTarget | null): boolean {
   const el = target as HTMLElement | null
-  if (!el || !el.tagName) return false
+  if (!el?.tagName) return false
   return (
     el.tagName === "INPUT" ||
     el.tagName === "TEXTAREA" ||
@@ -105,12 +105,19 @@ export function Sidebar(props: SidebarProps) {
   }
 
   return (
+    // These handlers only contain events within the panel (stop them reaching the
+    // host page); the div is not an interactive control, so the a11y rules below
+    // don't apply.
+    // biome-ignore lint/a11y/noStaticElementInteractions: event-containment wrapper, not a control
+    // biome-ignore lint/a11y/useKeyWithClickEvents: click handler only stops propagation
     <div
       onPointerDown={stop}
       onMouseDown={onMouseDown}
       onClick={stop}
       className={`fixed top-0 z-[2147483646] flex h-screen w-80 flex-col bg-white text-slate-800 antialiased shadow-2xl ${
-        props.side === "right" ? "right-0 border-slate-200 border-l" : "left-0 border-slate-200 border-r"
+        props.side === "right"
+          ? "right-0 border-slate-200 border-l"
+          : "left-0 border-slate-200 border-r"
       }`}
     >
       {/* Header */}
@@ -179,76 +186,76 @@ export function Sidebar(props: SidebarProps) {
         </div>
       ) : (
         <div className="flex min-h-0 flex-1 flex-col gap-4 p-3">
-        {!locked && (
-          <div className="flex items-center gap-2 rounded-lg bg-slate-50 px-3 py-2.5 text-slate-500 text-xs">
-            <RiCursorLine size={15} className="shrink-0 text-slate-400" />
-            Move your mouse and click an element to select it.
-          </div>
-        )}
+          {!locked && (
+            <div className="flex items-center gap-2 rounded-lg bg-slate-50 px-3 py-2.5 text-slate-500 text-xs">
+              <RiCursorLine size={15} className="shrink-0 text-slate-400" />
+              Move your mouse and click an element to select it.
+            </div>
+          )}
 
-        {/* Selector: read-only live preview while hovering, editable once locked */}
-        <div className="flex flex-col gap-1.5">
-          <span className={sectionLabel}>Selector</span>
-          <div className="relative flex items-center gap-1.5">
-            <input
-              type="text"
-              value={props.selector}
-              readOnly={!locked}
-              placeholder={locked ? "" : "hover an element…"}
-              onChange={(e) => props.onSelectorChange(e.target.value)}
-              className={`min-w-0 flex-1 rounded-lg border px-2.5 py-2 font-mono text-xs outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200 ${
-                locked
-                  ? "border-slate-300 bg-white text-slate-800"
-                  : "border-slate-300 bg-slate-50 text-slate-500"
-              }`}
-            />
-            {locked && (
-              <Tooltip label="Pick another element" align="end">
-                <button
-                  type="button"
-                  onClick={props.onReselect}
-                  className="grid h-[34px] w-[34px] shrink-0 place-items-center rounded-lg border border-slate-300 text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700"
-                >
-                  <RiCrosshair2Line size={16} />
-                </button>
-              </Tooltip>
-            )}
-          </div>
-
-          {/* Match count / validity */}
-          {props.selector &&
-            (!props.selectorValid ? (
-              <span className="mt-0.5 inline-flex w-fit items-center gap-1 rounded-full bg-rose-50 px-2 py-0.5 font-medium text-[11px] text-rose-600">
-                <RiErrorWarningLine size={12} />
-                Invalid selector
-              </span>
-            ) : (
-              <span
-                className={`mt-0.5 inline-flex w-fit items-center gap-1 rounded-full px-2 py-0.5 font-medium text-[11px] ${
-                  matchOk ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"
+          {/* Selector: read-only live preview while hovering, editable once locked */}
+          <div className="flex flex-col gap-1.5">
+            <span className={sectionLabel}>Selector</span>
+            <div className="relative flex items-center gap-1.5">
+              <input
+                type="text"
+                value={props.selector}
+                readOnly={!locked}
+                placeholder={locked ? "" : "hover an element…"}
+                onChange={(e) => props.onSelectorChange(e.target.value)}
+                className={`min-w-0 flex-1 rounded-lg border px-2.5 py-2 font-mono text-xs outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200 ${
+                  locked
+                    ? "border-slate-300 bg-white text-slate-800"
+                    : "border-slate-300 bg-slate-50 text-slate-500"
                 }`}
-              >
-                {matchOk ? <RiCheckLine size={12} /> : <RiErrorWarningLine size={12} />}
-                {props.matchCount} match{props.matchCount === 1 ? "" : "es"}
-              </span>
-            ))}
-        </div>
+              />
+              {locked && (
+                <Tooltip label="Pick another element" align="end">
+                  <button
+                    type="button"
+                    onClick={props.onReselect}
+                    className="grid h-[34px] w-[34px] shrink-0 place-items-center rounded-lg border border-slate-300 text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700"
+                  >
+                    <RiCrosshair2Line size={16} />
+                  </button>
+                </Tooltip>
+              )}
+            </div>
 
-        {/* Inspector tools (locked only) */}
-        {locked && (
-          <>
-            <div className="flex flex-col gap-1.5">
-              <span className={sectionLabel}>Element</span>
-              <div className="rounded-xl border border-slate-200 bg-slate-50">
-                <TreeNavigator {...props.tree} />
+            {/* Match count / validity */}
+            {props.selector &&
+              (!props.selectorValid ? (
+                <span className="mt-0.5 inline-flex w-fit items-center gap-1 rounded-full bg-rose-50 px-2 py-0.5 font-medium text-[11px] text-rose-600">
+                  <RiErrorWarningLine size={12} />
+                  Invalid selector
+                </span>
+              ) : (
+                <span
+                  className={`mt-0.5 inline-flex w-fit items-center gap-1 rounded-full px-2 py-0.5 font-medium text-[11px] ${
+                    matchOk ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"
+                  }`}
+                >
+                  {matchOk ? <RiCheckLine size={12} /> : <RiErrorWarningLine size={12} />}
+                  {props.matchCount} match{props.matchCount === 1 ? "" : "es"}
+                </span>
+              ))}
+          </div>
+
+          {/* Inspector tools (locked only) */}
+          {locked && (
+            <>
+              <div className="flex flex-col gap-1.5">
+                <span className={sectionLabel}>Element</span>
+                <div className="rounded-xl border border-slate-200 bg-slate-50">
+                  <TreeNavigator {...props.tree} />
+                </div>
               </div>
-            </div>
-            <div className="flex min-h-0 flex-1 flex-col gap-1.5">
-              <span className={sectionLabel}>Attributes</span>
-              <AttributeList attributes={props.attributes} />
-            </div>
-          </>
-        )}
+              <div className="flex min-h-0 flex-1 flex-col gap-1.5">
+                <span className={sectionLabel}>Attributes</span>
+                <AttributeList attributes={props.attributes} />
+              </div>
+            </>
+          )}
         </div>
       )}
 

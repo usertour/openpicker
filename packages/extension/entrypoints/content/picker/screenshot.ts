@@ -31,7 +31,9 @@ function hidePickerUi(host: Element | null | undefined): () => void {
 }
 
 /** Normalize the param (which also accepts booleans) to a ScreenshotMode. */
-export function normalizeScreenshotMode(value: ScreenshotMode | boolean | undefined): ScreenshotMode {
+export function normalizeScreenshotMode(
+  value: ScreenshotMode | boolean | undefined,
+): ScreenshotMode {
   if (value === true) return "element"
   if (value === false || value === undefined) return "none"
   return value

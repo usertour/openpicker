@@ -74,7 +74,10 @@ export default defineContentScript({
       else if (mode === "blocklist") denied = (await getConsent()) === "denied"
       // "allow-all": no gate.
       if (denied) {
-        replyErr(req.id, { code: "consent_denied", message: "openpicker: this origin is not allowed" })
+        replyErr(req.id, {
+          code: "consent_denied",
+          message: "openpicker: this origin is not allowed",
+        })
         return
       }
 
@@ -83,7 +86,10 @@ export default defineContentScript({
       if (outcome.type === "result") {
         replyOk(req.id, outcome.result)
       } else {
-        replyErr(req.id, { code: "cancelled", message: "openpicker: the user cancelled the picker" })
+        replyErr(req.id, {
+          code: "cancelled",
+          message: "openpicker: the user cancelled the picker",
+        })
       }
     }
 

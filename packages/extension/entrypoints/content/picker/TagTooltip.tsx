@@ -47,7 +47,7 @@ export function TagTooltip({ el, rect }: TagTooltipProps) {
           {attrs.length === 0 && <span>&gt;</span>}
         </div>
         {attrs.map((a, i) => (
-          <div key={`${a.name}-${i}`} className="pl-3">
+          <div key={a.name} className="pl-3">
             <span className="text-sky-700">{a.name}</span>
             <span className="text-slate-400">=</span>
             <span className="break-all text-amber-700">"{truncate(a.value, MAX_VALUE)}"</span>

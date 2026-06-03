@@ -233,7 +233,9 @@ export function App() {
                         <div className="flex min-w-0 items-center gap-2.5">
                           <span
                             className={`shrink-0 rounded-full px-2 py-0.5 font-medium text-[11px] ${
-                              granted ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-600"
+                              granted
+                                ? "bg-emerald-50 text-emerald-700"
+                                : "bg-rose-50 text-rose-600"
                             }`}
                           >
                             {granted ? "Allowed" : "Blocked"}

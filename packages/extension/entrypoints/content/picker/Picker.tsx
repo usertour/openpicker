@@ -1,5 +1,5 @@
 import type { PickParams, PickResult } from "@openpicker/protocol"
-import { useCallback, useEffect, useMemo, useRef, useState } from "react"
+import { useCallback, useEffect, useMemo, useState } from "react"
 import {
   collectAttributes,
   describeElement,
@@ -13,15 +13,14 @@ import { HighlightBox } from "./HighlightBox"
 import { applyHostCursor, clearHostCursor } from "./hostCursor"
 import { isNavigateMode, setNavigateMode } from "./navigateMode"
 import { RulerGuides } from "./RulerGuides"
-import { captureScreenshot, normalizeScreenshotMode } from "./screenshot"
-import { evalSelector, generateSelector, matchCount as countMatches } from "./selector"
+import type { PickOutcome } from "./run"
 import type { SelectorSettings } from "./SettingsPopover"
-import { saveSelectorSettings } from "./settingsStore"
 import { Sidebar } from "./Sidebar"
+import { captureScreenshot, normalizeScreenshotMode } from "./screenshot"
+import { matchCount as countMatches, evalSelector, generateSelector } from "./selector"
+import { saveSelectorSettings } from "./settingsStore"
 import { TagTooltip } from "./TagTooltip"
 import { useTrackedRect } from "./useTrackedRect"
-
-import type { PickOutcome } from "./run"
 
 type Phase = "hover" | "locked" | "navigate"
 
@@ -123,7 +122,15 @@ export function Picker({
     // Swallow the rest of the gesture at capture phase so the page can't move
     // focus, drag, submit, or run mousedown-driven widgets. preventDefault on
     // mousedown blocks the focus shift while still letting our click fire.
-    const SWALLOW = ["mousedown", "mouseup", "dblclick", "auxclick", "focusin", "submit", "dragstart"]
+    const SWALLOW = [
+      "mousedown",
+      "mouseup",
+      "dblclick",
+      "auxclick",
+      "focusin",
+      "submit",
+      "dragstart",
+    ]
 
     window.addEventListener("mousemove", onMove, true)
     window.addEventListener("click", onClick, true)
@@ -238,7 +245,11 @@ export function Picker({
       return
     }
 
-    const screenshot = await captureScreenshot(normalizeScreenshotMode(params.screenshot), locked, host)
+    const screenshot = await captureScreenshot(
+      normalizeScreenshotMode(params.screenshot),
+      locked,
+      host,
+    )
     const result: PickResult = {
       selector,
       matchCount: countMatches(selector),
@@ -255,17 +266,24 @@ export function Picker({
   const tree = {
     parentLabel: locked && getParent(locked) ? tagLabel(getParent(locked) as Element) : null,
     prevLabel:
-      locked && getPrevSibling(locked, host) ? tagLabel(getPrevSibling(locked, host) as Element) : null,
+      locked && getPrevSibling(locked, host)
+        ? tagLabel(getPrevSibling(locked, host) as Element)
+        : null,
     currentLabel: locked ? tagLabel(locked) : "",
     nextLabel:
-      locked && getNextSibling(locked, host) ? tagLabel(getNextSibling(locked, host) as Element) : null,
+      locked && getNextSibling(locked, host)
+        ? tagLabel(getNextSibling(locked, host) as Element)
+        : null,
     childLabel:
-      locked && getFirstChild(locked, host) ? tagLabel(getFirstChild(locked, host) as Element) : null,
+      locked && getFirstChild(locked, host)
+        ? tagLabel(getFirstChild(locked, host) as Element)
+        : null,
     onParent: () => locked && retarget(getParent(locked)),
     onPrev: () => locked && retarget(getPrevSibling(locked, host)),
     onNext: () => locked && retarget(getNextSibling(locked, host)),
     onChild: () => locked && retarget(getFirstChild(locked, host)),
-    onCenter: () => locked?.scrollIntoView({ block: "center", inline: "center", behavior: "smooth" }),
+    onCenter: () =>
+      locked?.scrollIntoView({ block: "center", inline: "center", behavior: "smooth" }),
   }
 
   return (

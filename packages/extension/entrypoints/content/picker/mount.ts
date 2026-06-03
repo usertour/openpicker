@@ -47,7 +47,7 @@ function withPropertyFallbacks(css: string): string {
   const re = /@property\s+(--[\w-]+)\s*\{([^}]*)\}/g
   for (let m = re.exec(css); m; m = re.exec(css)) {
     const initial = m[2].match(/initial-value:\s*([^;]*)/)
-    if (initial && initial[1].trim()) decls.push(`${m[1]}: ${initial[1].trim()};`)
+    if (initial?.[1].trim()) decls.push(`${m[1]}: ${initial[1].trim()};`)
   }
   if (decls.length === 0) return css
   return `*,::before,::after,::backdrop{${decls.join("")}}\n${css}`

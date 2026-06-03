@@ -163,7 +163,9 @@ try {
   for (let i = 0; i < 40 && !swReady; i++) {
     await sleep(500)
     const list = await (await fetch(`http://localhost:${DEBUG_PORT}/json`)).json()
-    swReady = list.some((t) => t.type === "service_worker" && t.url.startsWith("chrome-extension://"))
+    swReady = list.some(
+      (t) => t.type === "service_worker" && t.url.startsWith("chrome-extension://"),
+    )
   }
   log("extension service worker:", swReady ? "ready" : "NOT FOUND")
 

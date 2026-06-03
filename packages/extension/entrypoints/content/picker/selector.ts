@@ -108,7 +108,10 @@ function fallbackSelector(el: Element, useClasses: boolean, ignoreClassRe: RegEx
   if (!useClasses) return tag
   const classes =
     typeof el.className === "string"
-      ? el.className.trim().split(/\s+/).filter((c) => c && isStableClass(c, ignoreClassRe))
+      ? el.className
+          .trim()
+          .split(/\s+/)
+          .filter((c) => c && isStableClass(c, ignoreClassRe))
       : []
   if (classes.length === 0) return tag
   return `${tag}.${classes.map((c) => CSS.escape(c)).join(".")}`

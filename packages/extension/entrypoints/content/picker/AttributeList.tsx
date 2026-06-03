@@ -61,7 +61,9 @@ export function AttributeList({ attributes }: AttributeListProps) {
       )}
       <div className="flex min-h-0 flex-1 flex-col gap-1.5 overflow-y-auto pr-0.5">
         {visible.length === 0 ? (
-          <p className="px-1 py-3 text-center text-[11px] text-slate-400">No matching attributes.</p>
+          <p className="px-1 py-3 text-center text-[11px] text-slate-400">
+            No matching attributes.
+          </p>
         ) : (
           visible.map((entry) => <AttributeCard key={entry.name} entry={entry} />)
         )}
