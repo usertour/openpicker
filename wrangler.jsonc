@@ -1,0 +1,13 @@
+{
+  // Cloudflare Workers static-assets deploy for the demo (apps/demo). The project's
+  // deploy command `npx wrangler deploy` runs at the repo root and reads this file,
+  // serving the built static site from apps/demo/dist. No Worker script (assets-only).
+  //
+  // NOTE: `name` must match the Worker created in the Cloudflare dashboard, or the
+  // deploy will target a different Worker than the Git integration is attached to.
+  "name": "openpicker-demo",
+  "compatibility_date": "2025-06-01",
+  "assets": {
+    "directory": "./apps/demo/dist"
+  }
+}
