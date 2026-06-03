@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/openpicker.svg" />
+    <title>openpicker — pick an element, get its selector</title>
+    <meta
+      name="description"
+      content="openpicker is an open-source element picker for the web — a browser extension plus a tiny SDK. Point at any element on any page and get a stable CSS selector back."
+    />
+    <link rel="canonical" href="https://openpicker.dev/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://openpicker.dev/" />
+    <meta property="og:title" content="openpicker — pick an element, get its selector" />
+    <meta
+      property="og:description"
+      content="An open-source CSS element picker for the web: a browser extension plus a tiny SDK."
+    />
+    <meta property="og:image" content="https://openpicker.dev/og.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+  </head>
+  <body>
+    <!-- Nav -->
+    <header class="nav">
+      <a class="brand" href="/">
+        <img src="/openpicker.svg" width="30" height="30" alt="" />
+        <span>openpicker</span>
+      </a>
+      <nav class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#developers">Developers</a>
+        <a href="https://github.com/usertour/openpicker">GitHub</a>
+        <a class="btn btn-primary btn-sm" href="https://demo.openpicker.dev">Live demo</a>
+      </nav>
+    </header>
+
+    <main>
+      <!-- Hero -->
+      <section class="hero">
+        <div class="hero-copy">
+          <span class="eyebrow">Open source · MIT</span>
+          <h1>Pick an element,<br />get its selector.</h1>
+          <p class="lede">
+            openpicker is an element picker for the web — a browser extension plus a tiny SDK. Point
+            at any element on any page and get a <strong>stable CSS selector</strong> back. Built for
+            product tours, event tagging, no-code automation, and testing.
+          </p>
+          <div class="cta-row">
+            <a class="btn btn-primary" href="https://demo.openpicker.dev">Try the live demo</a>
+            <a class="btn" href="https://github.com/usertour/openpicker">View on GitHub</a>
+          </div>
+          <!-- Swap this note for an "Add to Chrome" button once the store listing is live. -->
+          <p class="hint">🧩 Browser extension — coming soon to the Chrome Web Store.</p>
+        </div>
+
+        <!-- Self-contained CSS/SVG mock of the picker (no screenshot to go stale) -->
+        <div class="mock" aria-hidden="true">
+          <div class="mock-bar">
+            <span></span><span></span><span></span>
+          </div>
+          <div class="mock-body">
+            <div class="mock-target">
+              Get started
+              <span class="mock-tag">button.cta</span>
+            </div>
+            <aside class="mock-panel">
+              <div class="mock-panel-head">
+                <img src="/openpicker.svg" width="18" height="18" alt="" />
+                <span>openpicker</span>
+              </div>
+              <div class="mock-field">
+                <span class="mock-label">Selector</span>
+                <code class="mock-selector">button.cta</code>
+              </div>
+              <span class="mock-pill">✓ 1 match</span>
+            </aside>
+          </div>
+        </div>
+      </section>
+
+      <!-- Features -->
+      <section id="features" class="section">
+        <h2 class="section-title">Everything the picker needs — nothing it doesn't</h2>
+        <div class="grid">
+          <div class="card">
+            <h3>Stable selectors</h3>
+            <p>
+              Built on a proven selector engine, with filters that skip auto-generated ids and hashed
+              CSS-in-JS / CSS-module class names.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Tunable per site</h3>
+            <p>
+              Choose whether selectors use id / class / attributes, set ignore patterns and an
+              attribute allow-list — remembered per website.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Inspector built in</h3>
+            <p>
+              An editable selector with a live match count, a DOM-tree navigator, and the element's
+              attributes — in an overlay that never clashes with the page.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Cross-tab picking</h3>
+            <p>
+              An app can open a URL, let the user pick there, and get the selector routed back — the
+              one thing a page can't do for itself.
+            </p>
+          </div>
+          <div class="card">
+            <h3>Optional screenshots</h3>
+            <p>Capture the selected element or the viewport alongside the selector.</p>
+          </div>
+          <div class="card">
+            <h3>Private by design</h3>
+            <p>No servers, no tracking, no data leaves your browser. You're always in control.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- Developers -->
+      <section id="developers" class="section section-alt">
+        <h2 class="section-title">A tiny SDK for your app</h2>
+        <p class="section-lede">
+          Install <code>@openpicker/sdk</code>, start a pick, and await the result. The SDK never
+          draws UI — the extension owns the picker overlay and the cross-tab routing.
+        </p>
+        <pre class="code"><code><span class="c-kw">import</span> { createOpenpicker } <span class="c-kw">from</span> <span class="c-str">"@openpicker/sdk"</span>
+
+<span class="c-kw">const</span> op = createOpenpicker({ appName: <span class="c-str">"My App"</span> })
+
+<span class="c-cm">// Opens the URL, the user picks there, the selector comes back.</span>
+<span class="c-kw">const</span> { selector, matchCount } = <span class="c-kw">await</span> op.pick({
+  url: <span class="c-str">"https://app.example.com"</span>,
+})
+<span class="c-cm">// → "button.cta", 1</span></code></pre>
+        <div class="cta-row">
+          <a class="btn" href="https://www.npmjs.com/package/@openpicker/sdk">npm: @openpicker/sdk</a>
+          <a class="btn" href="https://github.com/usertour/openpicker/blob/main/PROTOCOL.md">Protocol spec</a>
+        </div>
+      </section>
+
+      <!-- CTA band -->
+      <section class="cta-band">
+        <h2>Point. Click. Copy the selector.</h2>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="https://demo.openpicker.dev">Try the live demo</a>
+          <a class="btn btn-ghost" href="https://github.com/usertour/openpicker">Star on GitHub</a>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-brand">
+        <img src="/openpicker.svg" width="22" height="22" alt="" />
+        <span>openpicker</span>
+      </div>
+      <nav class="footer-links">
+        <a href="https://demo.openpicker.dev">Demo</a>
+        <a href="https://github.com/usertour/openpicker">GitHub</a>
+        <a href="https://www.npmjs.com/package/@openpicker/sdk">npm</a>
+        <a href="https://github.com/usertour/openpicker/blob/main/PRIVACY.md">Privacy</a>
+        <a href="https://www.usertour.io">Maintained by Usertour</a>
+      </nav>
+      <p class="footer-fine">MIT licensed · © <span id="year">2026</span> Usertour</p>
+    </footer>
+
+    <script type="module" src="/main.ts"></script>
+  </body>
+</html>

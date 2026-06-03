@@ -1,0 +1,11 @@
+{
+  // Cloudflare Workers static-assets deploy for the marketing site (openpicker.dev).
+  // Deploy with: npx wrangler deploy --config apps/site/wrangler.jsonc
+  // (`assets.directory` is relative to this file → apps/site/dist). Assets-only, no
+  // Worker script. `name` must match the Worker created in the Cloudflare dashboard.
+  "name": "openpicker-site",
+  "compatibility_date": "2025-06-01",
+  "assets": {
+    "directory": "./dist"
+  }
+}
