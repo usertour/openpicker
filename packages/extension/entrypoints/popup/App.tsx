@@ -40,18 +40,18 @@ export function App() {
       <button
         type="button"
         onClick={pickHere}
-        className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 py-2.5 font-medium text-sm text-white transition-colors hover:bg-slate-700"
+        className="mt-4 flex w-full items-center gap-2.5 rounded-lg bg-slate-900 px-3 py-2 font-medium text-sm text-white transition-colors hover:bg-slate-700"
       >
-        <RiCrosshair2Line size={16} />
+        <RiCrosshair2Line size={16} className="shrink-0" />
         Pick an element on this page
       </button>
 
       <button
         type="button"
         onClick={openOptions}
-        className="mt-2 flex w-full items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 text-slate-700 text-sm transition-colors hover:bg-slate-50"
+        className="mt-2 flex w-full items-center gap-2.5 rounded-lg border border-slate-200 px-3 py-2 font-medium text-slate-700 text-sm transition-colors hover:bg-slate-50"
       >
-        <RiSettings3Line size={16} />
+        <RiSettings3Line size={16} className="shrink-0" />
         Manage authorized sites
       </button>
 
