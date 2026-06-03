@@ -83,16 +83,16 @@ without writing code.
 ### SDK
 
 ```bash
-npm install openpicker   # or: pnpm add openpicker / yarn add openpicker
+npm install @openpicker/sdk   # or: pnpm add @openpicker/sdk / yarn add @openpicker/sdk
 ```
 
-> The SDK is published as `openpicker`. It only talks to the extension; it does no picking by
+> The SDK is published as `@openpicker/sdk`. It only talks to the extension; it does no picking by
 > itself, so the extension must be installed in the user's browser.
 
 ## Quick start
 
 ```ts
-import { createOpenpicker, OpenpickerError } from "openpicker"
+import { createOpenpicker, OpenpickerError } from "@openpicker/sdk"
 
 const op = createOpenpicker({ appName: "My App" })
 

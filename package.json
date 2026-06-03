@@ -10,7 +10,7 @@
   "scripts": {
     "build": "pnpm -r build",
     "dev:ext": "pnpm --filter @openpicker/extension dev",
-    "dev:sdk": "pnpm --filter openpicker dev",
+    "dev:sdk": "pnpm --filter @openpicker/sdk dev",
     "typecheck": "pnpm -r typecheck",
     "lint": "biome check .",
     "format": "biome format --write .",

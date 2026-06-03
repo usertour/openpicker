@@ -1,4 +1,4 @@
-import { createOpenpicker, OpenpickerError, type ScreenshotMode } from "openpicker"
+import { createOpenpicker, OpenpickerError, type ScreenshotMode } from "@openpicker/sdk"
 
 const out = document.getElementById("out") as HTMLPreElement
 const shot = document.getElementById("shot") as HTMLImageElement

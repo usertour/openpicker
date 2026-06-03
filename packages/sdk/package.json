@@ -1,8 +1,28 @@
 {
-  "name": "openpicker",
-  "version": "0.0.0",
+  "name": "@openpicker/sdk",
+  "version": "0.1.0",
   "description": "Open-source CSS element picker — SDK for invoking the openpicker browser extension.",
   "license": "MIT",
+  "author": "Usertour (https://www.usertour.io)",
+  "homepage": "https://github.com/usertour/openpicker#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/usertour/openpicker.git",
+    "directory": "packages/sdk"
+  },
+  "bugs": {
+    "url": "https://github.com/usertour/openpicker/issues"
+  },
+  "keywords": [
+    "openpicker",
+    "element-picker",
+    "css-selector",
+    "selector",
+    "picker",
+    "browser-extension",
+    "devtools",
+    "dom"
+  ],
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
@@ -18,10 +38,15 @@
     "dist"
   ],
   "sideEffects": false,
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "tsup"
   },
   "devDependencies": {
     "@openpicker/protocol": "workspace:*",

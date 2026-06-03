@@ -21,7 +21,7 @@ importers:
 
   apps/playground:
     devDependencies:
-      openpicker:
+      '@openpicker/sdk':
         specifier: workspace:*
         version: link:../../packages/sdk
       vite:

@@ -8,7 +8,7 @@
     "build": "echo \"@openpicker/playground: dev-only app, no build step\""
   },
   "devDependencies": {
-    "openpicker": "workspace:*",
+    "@openpicker/sdk": "workspace:*",
     "vite": "^6.0.0"
   }
 }
