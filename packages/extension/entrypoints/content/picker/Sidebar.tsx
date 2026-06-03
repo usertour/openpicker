@@ -10,6 +10,7 @@ import {
 } from "@remixicon/react"
 import { useState } from "react"
 import { BrandMark, Wordmark } from "@/components/Brand"
+import { PoweredByUsertour } from "@/components/PoweredBy"
 import { AttributeList } from "./AttributeList"
 import type { AttrEntry } from "./dom"
 import { type SelectorSettings, SettingsPopover } from "./SettingsPopover"
@@ -177,8 +178,7 @@ export function Sidebar(props: SidebarProps) {
           </button>
         </div>
       ) : (
-        <>
-      <div className="flex min-h-0 flex-1 flex-col gap-4 p-3">
+        <div className="flex min-h-0 flex-1 flex-col gap-4 p-3">
         {!locked && (
           <div className="flex items-center gap-2 rounded-lg bg-slate-50 px-3 py-2.5 text-slate-500 text-xs">
             <RiCursorLine size={15} className="shrink-0 text-slate-400" />
@@ -249,39 +249,43 @@ export function Sidebar(props: SidebarProps) {
             </div>
           </>
         )}
-      </div>
-
-      {/* Footer (locked only) */}
-      {locked && (
-        <div className="flex justify-end gap-2 border-slate-200 border-t px-3 py-2.5">
-          <button
-            type="button"
-            onClick={props.onCancel}
-            className="rounded-lg px-3.5 py-2 font-medium text-slate-600 text-sm transition-colors hover:bg-slate-100"
-          >
-            Close
-          </button>
-          <button
-            type="button"
-            onClick={props.onConfirm}
-            disabled={props.confirmDone}
-            className={`inline-flex items-center gap-1.5 rounded-lg px-5 py-2 font-medium text-sm text-white shadow-sm transition-colors ${
-              props.confirmDone ? "bg-emerald-600" : "bg-slate-900 hover:bg-slate-700"
-            }`}
-          >
-            {props.confirmDone ? (
-              <>
-                <RiCheckLine size={16} />
-                Copied
-              </>
-            ) : (
-              (props.confirmLabel ?? "OK")
-            )}
-          </button>
         </div>
       )}
-        </>
-      )}
+
+      {/* Footer: persistent Usertour attribution on the left; confirm actions appear
+          on the right once an element is locked. The bar is always shown so the
+          credit stays pinned to the bottom-left in every phase. */}
+      <div className="flex items-center justify-between gap-2 border-slate-200 border-t px-3 py-2">
+        <PoweredByUsertour />
+        {locked && (
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={props.onCancel}
+              className="rounded-lg px-3.5 py-2 font-medium text-slate-600 text-sm transition-colors hover:bg-slate-100"
+            >
+              Close
+            </button>
+            <button
+              type="button"
+              onClick={props.onConfirm}
+              disabled={props.confirmDone}
+              className={`inline-flex items-center gap-1.5 rounded-lg px-5 py-2 font-medium text-sm text-white shadow-sm transition-colors ${
+                props.confirmDone ? "bg-emerald-600" : "bg-slate-900 hover:bg-slate-700"
+              }`}
+            >
+              {props.confirmDone ? (
+                <>
+                  <RiCheckLine size={16} />
+                  Copied
+                </>
+              ) : (
+                (props.confirmLabel ?? "OK")
+              )}
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
