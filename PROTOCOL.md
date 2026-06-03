@@ -39,7 +39,7 @@ request/response plus a small set of notifications.
   - `envelope.channel === "openpicker"` (ignore unrelated messages)
 - Messages failing any check are ignored silently (no reply), to avoid leaking behavior to
   hostile frames.
-- The extension additionally gates sensitive methods behind **per-origin consent** (§7).
+- The extension gates `pick` by an **authorization mode** (default open; §7).
 
 ---
 
@@ -203,46 +203,30 @@ Reserved for future use: `hoverChange` (live element under the cursor), `consent
 
 ---
 
-## 7. Consent & security model
+## 7. Authorization & security model
 
-An open API means **any** origin can call `pick`. Consent is what separates openpicker from a
-hardcoded allowlist and what prevents abuse.
+An open API means **any** origin can call `pick`. The **real safeguard is user presence**: nothing
+is produced without the user actively hovering, clicking an element, and confirming in the target
+tab. On top of that, the user chooses an **authorization mode** (extension-wide, set on the options
+page — never by the calling site). See DESIGN.md §6.
 
-Consent has **two complementary surfaces** — they solve different problems and neither replaces
-the other:
+- **`allow-all` (default).** Any origin may launch the picker. Relies on user presence; no prompt.
+- **`ask`.** The first time an origin calls `pick`, a prompt naming the requesting **origin** (and
+  the untrusted `appName` if provided) lets the user allow or deny; the decision is remembered and
+  not asked again until changed on the options page.
+- **`blocklist`.** Every origin is allowed except ones the user has blocked.
 
-1. **Consent prompt** (just-in-time) — fires automatically the first time an origin uses a
-   sensitive method. Because openpicker is open, users cannot know in advance which sites will
-   use it, so an in-flow prompt is required; a config page alone cannot cover the first contact.
-2. **Options/config page** (the extension icon) — a place the user opens deliberately to review
-   and manage the stored decisions after the fact. It does not replace the prompt; it manages
-   what the prompt produced.
+A blocked/denied origin → `pick` rejects with `consent_denied`. Decisions are stored per origin
+(`granted`/`denied`) and managed on the options page (review, toggle, reset, add by hand).
 
-This mirrors how browsers handle camera/mic/notification permissions: ask once in-flow, then
-manage in settings — a mental model users already know.
-
-- **Per-origin consent (the prompt).** The first time an origin invokes a sensitive method
-  (`pick`, `highlight`), the extension shows a consent prompt naming the requesting **origin**
-  (and the untrusted `appName` if provided), explaining what openpicker will do. The user grants
-  or denies. Once decided, that origin is remembered and **not prompted again** (no per-call
-  prompts) until the user changes it on the config page.
-- **Config page (the extension icon).** Clicking the toolbar icon opens the options page, which:
-  - lists **granted** origins (each revocable) and **denied** origins (each removable, which
-    resets the origin to "ask again");
-  - is the only place to change a prior decision;
-  - (later) may host global controls — e.g. a master "pause openpicker" switch or a default
-    policy ("deny all by default").
-- **Persistence & revocation.** Granted/denied origins are stored by the extension and managed
-  from the config page above. Denied → `pick` rejects with `consent_denied` until the user
-  changes it.
+- **Toolbar picks are always allowed** — they are user-initiated (the popup's "Pick" button), not
+  site-initiated, so no mode applies.
 - **Trust boundary.** `appName`/`appId` from the page are display-only and never trusted for
   authorization; only the verified `event.origin` is authoritative.
 - **No silent capability.** The extension never auto-injects vendor SDKs or runs page code beyond
   what a method explicitly does (explicit non-goal of the project).
-- **Visible activity (recommended).** A badge / indicator while a pick is active, so users always
-  know the picker is running.
-- **API keys: not required in v1.** Origin + consent is the gate. A registry/API-key layer is a
-  possible later addition for analytics or allowlisting, not for security.
+- **API keys: not required.** Origin + the authorization mode is the gate. A registry/API-key layer
+  is a possible later addition for analytics, not for security.
 
 ---
 
@@ -254,7 +238,7 @@ manage in settings — a mental model users already know.
 |---|---|
 | `extension_not_installed` | SDK-synthesized when `ping` times out |
 | `unsupported_protocol` | No overlapping `protocolVersions` between SDK and extension |
-| `consent_denied` | The user denied this origin |
+| `consent_denied` | The origin is not allowed (denied in `ask`, or blocked in `blocklist`) |
 | `cancelled` | The user cancelled/closed the picker |
 | `invalid_params` | Malformed `params` for the method |
 | `unsupported` | Method/option not supported by this extension (e.g. `iframe` in v1) |
@@ -299,8 +283,8 @@ ext  → SDK : {channel:"openpicker", v:1, kind:"res", id:"op:7Hk2:1", ok:true,
 
 SDK  → ext : {channel:"openpicker", v:1, kind:"req", id:"op:7Hk2:2", method:"pick",
               params:{url:"https://app.example.com", appName:"Acme Onboarding"}}
-        (extension shows consent prompt for this origin → user grants;
-         user picks an element, refines in the sidebar, clicks OK)
+        (default allow-all mode → no prompt; in "ask" mode the origin is
+         prompted once. User picks an element, refines in the sidebar, clicks OK)
 ext  → SDK : {channel:"openpicker", v:1, kind:"res", id:"op:7Hk2:2", ok:true,
               result:{selector:"button.cta", matchCount:1,
                       element:{tag:"button", classes:["cta"], text:"Get started"},

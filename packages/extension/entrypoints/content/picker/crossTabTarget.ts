@@ -58,7 +58,7 @@ async function runAndReport(
   running = true
   writeMarker({ sourceTabId, params, pickId })
   try {
-    const outcome = await runPicker(params, { skipConsent: true, canNavigate: true })
+    const outcome = await runPicker(params, { canNavigate: true })
     clearMarker()
     // The pick is over (confirmed/cancelled); don't let a reused pick on this tab
     // start in navigate mode. (Navigation abandons runPicker, so this isn't reached

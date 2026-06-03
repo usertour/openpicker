@@ -1,19 +1,38 @@
 import { useCallback, useEffect, useState } from "react"
 
 /**
- * Options page (opened from the toolbar icon's context menu, or chrome://extensions).
- * Manage the per-origin authorization the just-in-time prompt produces: review,
- * toggle allow/block, reset (re-prompt next time), or add an origin by hand.
- * See PROTOCOL.md §7. The `consent:<origin>` keys match background.ts.
+ * Options page (opened from the popup or chrome://extensions). Sets the
+ * authorization mode and manages the per-origin allow/block decisions it uses.
+ * See DESIGN.md §6. Keys (`authMode`, `consent:<origin>`) match the content script.
  */
 
 const CONSENT_PREFIX = "consent:"
+const MODE_KEY = "authMode"
 
+type AuthMode = "allow-all" | "ask" | "blocklist"
 type Status = "granted" | "denied"
 interface Decision {
   origin: string
   status: Status
 }
+
+const MODES: { value: AuthMode; label: string; note: string }[] = [
+  {
+    value: "allow-all",
+    label: "Allow all",
+    note: "Any site can use the picker. Nothing is captured without you picking and confirming. (The list below is ignored in this mode.)",
+  },
+  {
+    value: "ask",
+    label: "Ask each site",
+    note: "Each site is asked the first time; your choice is remembered in the list below.",
+  },
+  {
+    value: "blocklist",
+    label: "Blocklist",
+    note: "Every site is allowed except the ones you block below.",
+  },
+]
 
 async function loadDecisions(): Promise<Decision[]> {
   const all = await browser.storage.local.get(null)
@@ -24,6 +43,11 @@ async function loadDecisions(): Promise<Decision[]> {
     out.push({ origin: key.slice(CONSENT_PREFIX.length), status: value })
   }
   return out.sort((a, b) => a.origin.localeCompare(b.origin))
+}
+
+async function loadMode(): Promise<AuthMode> {
+  const v = (await browser.storage.local.get(MODE_KEY))[MODE_KEY]
+  return v === "ask" || v === "blocklist" ? v : "allow-all"
 }
 
 /** Normalize free text to an origin, e.g. "example.com" → "https://example.com". */
@@ -38,13 +62,16 @@ function normalizeOrigin(input: string): string | null {
 }
 
 export function App() {
+  const [mode, setModeState] = useState<AuthMode>("allow-all")
   const [decisions, setDecisions] = useState<Decision[]>([])
   const [loading, setLoading] = useState(true)
   const [newOrigin, setNewOrigin] = useState("")
   const [error, setError] = useState("")
 
   const refresh = useCallback(async () => {
-    setDecisions(await loadDecisions())
+    const [d, m] = await Promise.all([loadDecisions(), loadMode()])
+    setDecisions(d)
+    setModeState(m)
     setLoading(false)
   }, [])
 
@@ -56,6 +83,10 @@ export function App() {
     browser.storage.onChanged.addListener(onChange)
     return () => browser.storage.onChanged.removeListener(onChange)
   }, [refresh])
+
+  const setMode = useCallback(async (m: AuthMode) => {
+    await browser.storage.local.set({ [MODE_KEY]: m })
+  }, [])
 
   const setStatus = useCallback(async (origin: string, status: Status) => {
     await browser.storage.local.set({ [`${CONSENT_PREFIX}${origin}`]: status })
@@ -79,13 +110,36 @@ export function App() {
     [newOrigin, setStatus],
   )
 
+  const activeNote = MODES.find((m) => m.value === mode)?.note ?? ""
+
   return (
     <main className="mx-auto max-w-2xl p-6 font-sans text-slate-800">
       <h1 className="font-semibold text-xl">openpicker</h1>
-      <p className="mt-1 text-slate-500 text-sm">
-        Manage which sites may use the element picker. Sites are asked the first time;
-        your choice is remembered here and can be changed anytime.
-      </p>
+      <p className="mt-1 text-slate-500 text-sm">Control which sites may use the element picker.</p>
+
+      {/* Authorization mode */}
+      <div className="mt-5">
+        <span className="font-semibold text-[11px] text-slate-500 uppercase tracking-wider">
+          Authorization
+        </span>
+        <div className="mt-2 grid grid-cols-3 gap-1 rounded-lg bg-slate-100 p-1 text-sm">
+          {MODES.map((m) => (
+            <button
+              key={m.value}
+              type="button"
+              onClick={() => setMode(m.value)}
+              className={`rounded-md py-1.5 font-medium transition-colors ${
+                mode === m.value
+                  ? "bg-white text-slate-800 shadow-sm"
+                  : "text-slate-500 hover:text-slate-700"
+              }`}
+            >
+              {m.label}
+            </button>
+          ))}
+        </div>
+        <p className="mt-2 text-slate-500 text-xs">{activeNote}</p>
+      </div>
 
       {/* Add by hand */}
       <div className="mt-5 rounded-xl border border-slate-200 p-3">
@@ -99,7 +153,7 @@ export function App() {
             value={newOrigin}
             placeholder="https://example.com"
             onChange={(e) => setNewOrigin(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && add("granted")}
+            onKeyDown={(e) => e.key === "Enter" && add(mode === "blocklist" ? "denied" : "granted")}
             className="min-w-0 flex-1 rounded-lg border border-slate-300 px-2.5 py-1.5 font-mono text-sm outline-none focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
           />
           <button

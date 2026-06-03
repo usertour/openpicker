@@ -1,6 +1,5 @@
 import type { PickParams, PickResult } from "@openpicker/protocol"
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { ConsentPrompt } from "./ConsentPrompt"
 import {
   collectAttributes,
   describeElement,
@@ -12,7 +11,6 @@ import {
 } from "./dom"
 import { HighlightBox } from "./HighlightBox"
 import { applyHostCursor, clearHostCursor } from "./hostCursor"
-import { getConsent, setConsent } from "./messaging"
 import { isNavigateMode, setNavigateMode } from "./navigateMode"
 import { RulerGuides } from "./RulerGuides"
 import { captureScreenshot, normalizeScreenshotMode } from "./screenshot"
@@ -25,18 +23,13 @@ import { useTrackedRect } from "./useTrackedRect"
 
 import type { PickOutcome } from "./run"
 
-type Phase = "consent" | "hover" | "locked" | "navigate"
+type Phase = "hover" | "locked" | "navigate"
 
 interface PickerProps {
   /** Picker-side options (mode/exclude/screenshot/appName); `url` is not used here. */
   params: Partial<PickParams>
   /** Our shadow host element, excluded from targeting. */
   host: Element
-  /**
-   * Skip the consent prompt and go straight to hovering. Used in the cross-tab
-   * target tab, where consent was already resolved in the source tab.
-   */
-  skipConsent?: boolean
   /**
    * Allow suspending the pick to navigate the page (Alt+S). Only safe in the
    * cross-tab target tab: the pick resumes after navigation and the result is
@@ -49,19 +42,13 @@ interface PickerProps {
   onResolve: (outcome: PickOutcome) => void
 }
 
-export function Picker({
-  params,
-  host,
-  skipConsent,
-  canNavigate,
-  initialSettings,
-  onResolve,
-}: PickerProps) {
+export function Picker({ params, host, canNavigate, initialSettings, onResolve }: PickerProps) {
   // Resume straight into navigate mode if a navigation happened mid-pick while the
-  // user was navigating (the flag rides the target tab's sessionStorage). Otherwise
-  // a cross-tab target resumes in hover; a fresh same-tab pick asks consent first.
+  // user was navigating (the flag rides the target tab's sessionStorage); otherwise
+  // start hovering. Authorization is decided before the picker is launched (see the
+  // content connector); the picker itself does not gate.
   const [phase, setPhase] = useState<Phase>(() =>
-    canNavigate && isNavigateMode() ? "navigate" : skipConsent ? "hover" : "consent",
+    canNavigate && isNavigateMode() ? "navigate" : "hover",
   )
   const [hovered, setHovered] = useState<Element | null>(null)
   const [locked, setLocked] = useState<Element | null>(null)
@@ -72,22 +59,6 @@ export function Picker({
 
   const hoverRect = useTrackedRect(phase === "hover" ? hovered : null)
   const lockedRect = useTrackedRect(phase === "locked" ? locked : null)
-
-  // Decide whether to show the consent prompt on mount (unless already resolved
-  // upstream, e.g. in the cross-tab source tab).
-  useEffect(() => {
-    if (skipConsent) return
-    let cancelled = false
-    getConsent().then((status) => {
-      if (cancelled) return
-      if (status === "granted") setPhase("hover")
-      else if (status === "denied") onResolve({ type: "denied" })
-      else setPhase("consent")
-    })
-    return () => {
-      cancelled = true
-    }
-  }, [onResolve, skipConsent])
 
   const cancel = useCallback(() => onResolve({ type: "cancelled" }), [onResolve])
 
@@ -239,23 +210,6 @@ export function Picker({
     }
     onResolve({ type: "result", result })
   }, [locked, selector, params.screenshot, onResolve, host])
-
-  if (phase === "consent") {
-    return (
-      <ConsentPrompt
-        origin={window.origin}
-        appName={params.appName}
-        onAllow={() => {
-          setConsent(true)
-          setPhase("hover")
-        }}
-        onDeny={() => {
-          setConsent(false)
-          onResolve({ type: "denied" })
-        }}
-      />
-    )
-  }
 
   // hover + locked share one persistent Sidebar; page overlays reflect the
   // current target (hovered while finding, locked once selected).

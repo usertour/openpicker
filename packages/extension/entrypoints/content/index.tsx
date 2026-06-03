@@ -12,6 +12,7 @@ import { ensureConsent } from "./picker/consentGate"
 import { runCrossTabPick } from "./picker/crossTab"
 import { resumeCrossTabTargetOnLoad, startCrossTabTarget } from "./picker/crossTabTarget"
 import { clearHighlight, runHighlight } from "./picker/highlight"
+import { getAuthMode, getConsent } from "./picker/messaging"
 import { cancelActivePicker, runPicker } from "./picker/run"
 import "./style.css"
 
@@ -64,16 +65,23 @@ export default defineContentScript({
         return
       }
 
-      // Resolve consent for THIS (source) origin, then open the URL, pick there,
-      // and route the result back (DESIGN.md §5c).
-      const outcome = (await ensureConsent(req.params.appName))
-        ? await runCrossTabPick(req.params)
-        : ({ type: "denied" } as const)
+      // Authorize the calling (source) origin per the configured mode (DESIGN.md §6).
+      // The real safeguard is the user picking + confirming; this only gates which
+      // sites may drive the picker at all.
+      const mode = await getAuthMode()
+      let denied = false
+      if (mode === "ask") denied = !(await ensureConsent(req.params.appName))
+      else if (mode === "blocklist") denied = (await getConsent()) === "denied"
+      // "allow-all": no gate.
+      if (denied) {
+        replyErr(req.id, { code: "consent_denied", message: "openpicker: this origin is not allowed" })
+        return
+      }
 
+      // Open the URL, pick there, and route the result back (DESIGN.md §5c).
+      const outcome = await runCrossTabPick(req.params)
       if (outcome.type === "result") {
         replyOk(req.id, outcome.result)
-      } else if (outcome.type === "denied") {
-        replyErr(req.id, { code: "consent_denied", message: "openpicker: the user denied this origin" })
       } else {
         replyErr(req.id, { code: "cancelled", message: "openpicker: the user cancelled the picker" })
       }

@@ -395,8 +395,9 @@ dashboard tab (source)                         target tab (the url)
   cross-tab pattern this follows never closes tabs; it only creates/focuses them.)
 - **Reuse the target tab when appropriate** (§5e): a second pick may reuse the already-open target
   tab instead of opening another, decided by host/URL (+ optional caller `key`).
-- **Consent:** bound to the **source origin** (the dashboard), prompted once (PROTOCOL §7); the URL
-  is user-entered and the picker is visible in the foreground tab the whole time.
+- **Authorization:** decided for the **source origin** (the dashboard) by the current mode (§6);
+  default `allow-all` (no prompt). The URL is user-entered and the picker is visible in the
+  foreground tab the whole time, and no result is produced without the user confirming.
 - **Open as:** a new **tab** (placed next to / after the source tab), not a new window.
 
 ### Engineering points
@@ -409,10 +410,12 @@ dashboard tab (source)                         target tab (the url)
   `<all_urls>` (so `captureVisibleTab` works on the target without a per-tab gesture).
 
 ### Security (the part that needs care)
-Cross-tab amplifies power: a source origin can open an arbitrary URL and read its DOM — close to
-"arbitrary cross-origin read." Mitigations: per-source-origin consent (§6 / PROTOCOL §7); the URL
-is user-entered; the picker is visible in a foreground tab; and (recommended) a banner in the
-target tab — e.g. "openpicker is selecting an element for dashboard.example.com" — for transparency.
+Cross-tab amplifies power: a source origin can open an arbitrary URL — but it gets back only what
+the user actively picks (a selector / optional screenshot), never a silent DOM read. Mitigations:
+**the user is present and must confirm**; the URL is user-entered; the picker is visible in a
+foreground tab; the authorization mode (§6 / PROTOCOL §7) can gate or block the source origin; and
+(recommended) a banner in the target tab — e.g. "openpicker is selecting an element for
+dashboard.example.com" — for transparency.
 
 ---
 
@@ -507,17 +510,28 @@ injected SDK carried its own connection; openpicker has no resident SDK, so it r
 
 ---
 
-## 6. Security Model (key open topic)
+## 6. Security Model
 
-> This is where an "open API" differs from a hardcoded origin allowlist, and it is the core
-> value of the project.
+> An "open API" differs from a hardcoded origin allowlist, and how we gate it is core to the
+> project.
 
-Open decisions:
-- Any site can postMessage to launch the picker → need **per-origin first-use consent UI**
-  (anti-phishing)
-- Do we need an API key / origin registration?
-- Do we need a visible indicator of "which sites are currently using the picker"?
-- How is consent persisted and revoked?
+**The real safeguard is user presence.** Any site can postMessage to launch the picker, but nothing
+is produced without the user actively hovering, clicking an element, and confirming in the target
+tab. A site can make the extension open a (visible) tab, but it cannot harvest a selector or
+screenshot on its own. This is the same reality as any screenshot/picker tool: you cannot make the
+decision for a present user, so user presence — not a consent dialog — is the load-bearing control.
+
+**Authorization mode** (chosen by the user on the options page; never by the calling site) decides
+which sites may launch the picker at all — defense-in-depth on top of user presence:
+
+- **`allow-all` (default)** — open; any origin may launch the picker.
+- **`ask`** — prompt once per origin (naming the origin), remember allow/deny.
+- **`blocklist`** — open except origins the user blocks.
+
+Decisions are stored per origin (`consent:<origin>` = `granted`/`denied`); the mode is `authMode`.
+Both are managed on the options page. Toolbar picks are user-initiated, so no mode applies.
+`appName` is display-only and never trusted; only `event.origin` is authoritative. The extension
+never auto-injects SDKs or runs page code beyond what a method does. See PROTOCOL.md §7.
 
 ---
 
@@ -527,7 +541,7 @@ Open decisions:
 |---|---|---|
 | 1 | Tech stack | ✅ Decided (WXT + React + TS + Tailwind) |
 | 2 | Protocol envelope & naming | ✅ Drafted in PROTOCOL.md (v1) |
-| 3 | Security / consent model | ✅ Drafted in PROTOCOL.md §7 (per-origin consent); details may evolve |
+| 3 | Security / authorization model | ✅ User presence is the safeguard + an authorization mode (allow-all default / ask / blocklist), §6 and PROTOCOL §7 |
 | 4 | Selector generation details | ⏳ |
 | 5 | Support elements inside iframes | ⏳ UI toggle in v1; cross-origin resolution deferred to v2 (§5.1f) |
 | 6 | Pierce into Shadow DOM elements (v1?) | ⏳ |
