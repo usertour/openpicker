@@ -47,7 +47,11 @@ export function BrandMark({ className = "h-7 w-7" }: { className?: string }) {
 
 export function Wordmark({ className = "" }: { className?: string }) {
   return (
-    <span className={`font-semibold text-slate-900 tracking-tight ${className}`}>openpicker</span>
+    <span
+      className={`font-semibold text-slate-900 tracking-tight dark:text-slate-100 ${className}`}
+    >
+      openpicker
+    </span>
   )
 }
 
@@ -74,7 +78,11 @@ export function BrandLockup({
       <BrandMark className={markClass} />
       <div className="leading-tight">
         <Wordmark className={nameClass} />
-        {tagline && <div className="text-[11px] text-slate-400 leading-tight">{BRAND_TAGLINE}</div>}
+        {tagline && (
+          <div className="text-[11px] text-slate-400 leading-tight dark:text-slate-500">
+            {BRAND_TAGLINE}
+          </div>
+        )}
       </div>
     </div>
   )

@@ -84,8 +84,9 @@ function isFocusable(target: EventTarget | null): boolean {
 
 // Shared styles for a consistent, refined look.
 const iconBtn =
-  "grid h-7 w-7 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700"
-const sectionLabel = "px-0.5 font-semibold text-[10px] text-slate-500 uppercase tracking-wider"
+  "grid h-7 w-7 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+const sectionLabel =
+  "px-0.5 font-semibold text-[10px] text-slate-500 uppercase tracking-wider dark:text-slate-400"
 
 export function Sidebar(props: SidebarProps) {
   const [settingsOpen, setSettingsOpen] = useState(false)
@@ -114,14 +115,14 @@ export function Sidebar(props: SidebarProps) {
       onPointerDown={stop}
       onMouseDown={onMouseDown}
       onClick={stop}
-      className={`fixed top-0 z-[2147483646] flex h-screen w-80 flex-col bg-white text-slate-800 antialiased shadow-2xl ${
+      className={`fixed top-0 z-[2147483646] flex h-screen w-80 flex-col bg-white text-slate-800 antialiased shadow-2xl dark:bg-slate-900 dark:text-slate-200 ${
         props.side === "right"
-          ? "right-0 border-slate-200 border-l"
-          : "left-0 border-slate-200 border-r"
+          ? "right-0 border-slate-200 border-l dark:border-slate-800"
+          : "left-0 border-slate-200 border-r dark:border-slate-800"
       }`}
     >
       {/* Header */}
-      <div className="flex items-center justify-between border-slate-200 border-b px-3 py-2.5">
+      <div className="flex items-center justify-between border-slate-200 border-b px-3 py-2.5 dark:border-slate-800">
         <div className="flex items-center gap-2">
           <BrandMark className="h-6 w-6" />
           <Wordmark className="text-base" />
@@ -144,7 +145,11 @@ export function Sidebar(props: SidebarProps) {
               <button
                 type="button"
                 onClick={() => setSettingsOpen((v) => !v)}
-                className={settingsOpen ? `${iconBtn} bg-slate-100 text-slate-700` : iconBtn}
+                className={
+                  settingsOpen
+                    ? `${iconBtn} bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200`
+                    : iconBtn
+                }
               >
                 <RiSettings3Line size={16} />
               </button>
@@ -169,16 +174,16 @@ export function Sidebar(props: SidebarProps) {
 
       {navigating ? (
         <div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-4 p-6 text-center">
-          <span className="grid h-12 w-12 place-items-center rounded-full bg-slate-100 text-slate-400">
+          <span className="grid h-12 w-12 place-items-center rounded-full bg-slate-100 text-slate-400 dark:bg-slate-800 dark:text-slate-500">
             <RiCompass3Line size={24} />
           </span>
-          <p className="max-w-[15rem] text-slate-600 text-sm leading-relaxed">
+          <p className="max-w-[15rem] text-slate-600 text-sm leading-relaxed dark:text-slate-300">
             Picking is paused. Go to the page that has your element, then resume.
           </p>
           <button
             type="button"
             onClick={props.onResume}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-4 py-2 font-medium text-sm text-white shadow-sm transition-colors hover:bg-slate-700"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-4 py-2 font-medium text-sm text-white shadow-sm transition-colors hover:bg-slate-700 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200"
           >
             <RiCrosshair2Line size={16} />
             Resume picking
@@ -187,8 +192,8 @@ export function Sidebar(props: SidebarProps) {
       ) : (
         <div className="flex min-h-0 flex-1 flex-col gap-4 p-3">
           {!locked && (
-            <div className="flex items-center gap-2 rounded-lg bg-slate-50 px-3 py-2.5 text-slate-500 text-xs">
-              <RiCursorLine size={15} className="shrink-0 text-slate-400" />
+            <div className="flex items-center gap-2 rounded-lg bg-slate-50 px-3 py-2.5 text-slate-500 text-xs dark:bg-slate-800 dark:text-slate-400">
+              <RiCursorLine size={15} className="shrink-0 text-slate-400 dark:text-slate-500" />
               Move your mouse and click an element to select it.
             </div>
           )}
@@ -203,10 +208,10 @@ export function Sidebar(props: SidebarProps) {
                 readOnly={!locked}
                 placeholder={locked ? "" : "hover an element…"}
                 onChange={(e) => props.onSelectorChange(e.target.value)}
-                className={`min-w-0 flex-1 rounded-lg border px-2.5 py-2 font-mono text-xs outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200 ${
+                className={`min-w-0 flex-1 rounded-lg border px-2.5 py-2 font-mono text-xs outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200 dark:focus:ring-slate-700 ${
                   locked
-                    ? "border-slate-300 bg-white text-slate-800"
-                    : "border-slate-300 bg-slate-50 text-slate-500"
+                    ? "border-slate-300 bg-white text-slate-800 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+                    : "border-slate-300 bg-slate-50 text-slate-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400"
                 }`}
               />
               {locked && (
@@ -214,7 +219,7 @@ export function Sidebar(props: SidebarProps) {
                   <button
                     type="button"
                     onClick={props.onReselect}
-                    className="grid h-[34px] w-[34px] shrink-0 place-items-center rounded-lg border border-slate-300 text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700"
+                    className="grid h-[34px] w-[34px] shrink-0 place-items-center rounded-lg border border-slate-300 text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
                   >
                     <RiCrosshair2Line size={16} />
                   </button>
@@ -225,14 +230,16 @@ export function Sidebar(props: SidebarProps) {
             {/* Match count / validity */}
             {props.selector &&
               (!props.selectorValid ? (
-                <span className="mt-0.5 inline-flex w-fit items-center gap-1 rounded-full bg-rose-50 px-2 py-0.5 font-medium text-[11px] text-rose-600">
+                <span className="mt-0.5 inline-flex w-fit items-center gap-1 rounded-full bg-rose-50 px-2 py-0.5 font-medium text-[11px] text-rose-600 dark:bg-rose-500/15 dark:text-rose-400">
                   <RiErrorWarningLine size={12} />
                   Invalid selector
                 </span>
               ) : (
                 <span
                   className={`mt-0.5 inline-flex w-fit items-center gap-1 rounded-full px-2 py-0.5 font-medium text-[11px] ${
-                    matchOk ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"
+                    matchOk
+                      ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400"
+                      : "bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400"
                   }`}
                 >
                   {matchOk ? <RiCheckLine size={12} /> : <RiErrorWarningLine size={12} />}
@@ -246,7 +253,7 @@ export function Sidebar(props: SidebarProps) {
             <>
               <div className="flex flex-col gap-1.5">
                 <span className={sectionLabel}>Element</span>
-                <div className="rounded-xl border border-slate-200 bg-slate-50">
+                <div className="rounded-xl border border-slate-200 bg-slate-50 dark:border-slate-800 dark:bg-slate-800/50">
                   <TreeNavigator {...props.tree} />
                 </div>
               </div>
@@ -262,14 +269,14 @@ export function Sidebar(props: SidebarProps) {
       {/* Footer: persistent Usertour attribution on the left; confirm actions appear
           on the right once an element is locked. The bar is always shown so the
           credit stays pinned to the bottom-left in every phase. */}
-      <div className="flex items-center justify-between gap-2 border-slate-200 border-t px-3 py-2">
+      <div className="flex items-center justify-between gap-2 border-slate-200 border-t px-3 py-2 dark:border-slate-800">
         <MaintainedByUsertour />
         {locked && (
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={props.onCancel}
-              className="rounded-lg px-3.5 py-2 font-medium text-slate-600 text-sm transition-colors hover:bg-slate-100"
+              className="rounded-lg px-3.5 py-2 font-medium text-slate-600 text-sm transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
             >
               Close
             </button>
@@ -278,7 +285,9 @@ export function Sidebar(props: SidebarProps) {
               onClick={props.onConfirm}
               disabled={props.confirmDone}
               className={`inline-flex items-center gap-1.5 rounded-lg px-5 py-2 font-medium text-sm text-white shadow-sm transition-colors ${
-                props.confirmDone ? "bg-emerald-600" : "bg-slate-900 hover:bg-slate-700"
+                props.confirmDone
+                  ? "bg-emerald-600"
+                  : "bg-slate-900 hover:bg-slate-700 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200"
               }`}
             >
               {props.confirmDone ? (

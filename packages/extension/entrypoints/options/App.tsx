@@ -1,6 +1,7 @@
 import { RiCheckLine } from "@remixicon/react"
 import { useCallback, useEffect, useState } from "react"
 import { BrandLockup } from "@/components/Brand"
+import { ThemeToggle } from "@/components/ThemeToggle"
 
 /**
  * Options page (opened from the popup or chrome://extensions). Sets the
@@ -117,8 +118,8 @@ export function App() {
     mode === "blocklist" ? decisions.filter((d) => d.status === "denied") : decisions
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans text-slate-800">
-      <header className="border-slate-200 border-b bg-white">
+    <div className="min-h-screen bg-slate-50 font-sans text-slate-800 dark:bg-slate-950 dark:text-slate-200">
+      <header className="border-slate-200 border-b bg-white dark:border-slate-800 dark:bg-slate-900">
         <div className="mx-auto max-w-2xl px-6 py-3.5">
           <BrandLockup tagline />
         </div>
@@ -128,7 +129,7 @@ export function App() {
         {/* Authorization mode */}
         <section>
           <h2 className="font-semibold text-base">Authorization</h2>
-          <p className="mt-0.5 text-slate-500 text-sm">
+          <p className="mt-0.5 text-slate-500 text-sm dark:text-slate-400">
             Choose which sites may use the element picker.
           </p>
 
@@ -142,22 +143,22 @@ export function App() {
                   onClick={() => setMode(m.value)}
                   className={`flex w-full items-start gap-3 rounded-xl border p-4 text-left transition ${
                     selected
-                      ? "border-slate-900 bg-white shadow-sm"
-                      : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
+                      ? "border-slate-900 bg-white shadow-sm dark:border-slate-100 dark:bg-slate-900"
+                      : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700 dark:hover:bg-slate-800"
                   }`}
                 >
                   <span
                     className={`mt-px grid h-4 w-4 shrink-0 place-items-center rounded-full border transition ${
                       selected
-                        ? "border-slate-900 bg-slate-900 text-white"
-                        : "border-slate-300 bg-white"
+                        ? "border-slate-900 bg-slate-900 text-white dark:border-slate-100 dark:bg-slate-100 dark:text-slate-900"
+                        : "border-slate-300 bg-white dark:border-slate-600 dark:bg-slate-900"
                     }`}
                   >
                     {selected && <RiCheckLine size={11} />}
                   </span>
                   <span className="min-w-0">
                     <span className="block font-medium text-sm">{m.label}</span>
-                    <span className="mt-0.5 block text-slate-500 text-xs leading-relaxed">
+                    <span className="mt-0.5 block text-slate-500 text-xs leading-relaxed dark:text-slate-400">
                       {m.note}
                     </span>
                   </span>
@@ -173,15 +174,15 @@ export function App() {
             <h2 className="font-semibold text-base">
               {mode === "blocklist" ? "Blocked sites" : "Site permissions"}
             </h2>
-            <p className="mt-0.5 text-slate-500 text-sm">
+            <p className="mt-0.5 text-slate-500 text-sm dark:text-slate-400">
               {mode === "blocklist"
                 ? "Sites listed here can never use the picker."
                 : "Allow or block specific sites ahead of time."}
             </p>
 
-            <div className="mt-4 overflow-hidden rounded-xl border border-slate-200 bg-white">
+            <div className="mt-4 overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
               {/* Add row */}
-              <div className="border-slate-100 border-b p-3">
+              <div className="border-slate-100 border-b p-3 dark:border-slate-800">
                 <div className="flex flex-wrap items-center gap-2">
                   <input
                     id="op-origin"
@@ -192,13 +193,13 @@ export function App() {
                     onKeyDown={(e) =>
                       e.key === "Enter" && add(mode === "blocklist" ? "denied" : "granted")
                     }
-                    className="min-w-0 flex-1 rounded-lg border border-slate-300 px-3 py-1.5 font-mono text-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+                    className="min-w-0 flex-1 rounded-lg border border-slate-300 px-3 py-1.5 font-mono text-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:ring-slate-700"
                   />
                   {mode === "ask" && (
                     <button
                       type="button"
                       onClick={() => add("granted")}
-                      className="rounded-lg bg-slate-900 px-3 py-1.5 font-medium text-sm text-white transition-colors hover:bg-slate-700"
+                      className="rounded-lg bg-slate-900 px-3 py-1.5 font-medium text-sm text-white transition-colors hover:bg-slate-700 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200"
                     >
                       Allow
                     </button>
@@ -206,23 +207,25 @@ export function App() {
                   <button
                     type="button"
                     onClick={() => add("denied")}
-                    className="rounded-lg border border-slate-300 px-3 py-1.5 font-medium text-slate-600 text-sm transition-colors hover:bg-slate-50"
+                    className="rounded-lg border border-slate-300 px-3 py-1.5 font-medium text-slate-600 text-sm transition-colors hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
                   >
                     Block
                   </button>
                 </div>
-                {error && <p className="mt-2 text-rose-600 text-xs">{error}</p>}
+                {error && <p className="mt-2 text-rose-600 text-xs dark:text-rose-400">{error}</p>}
               </div>
 
               {/* List */}
               {loading ? (
-                <p className="px-4 py-8 text-center text-slate-400 text-sm">Loading…</p>
+                <p className="px-4 py-8 text-center text-slate-400 text-sm dark:text-slate-500">
+                  Loading…
+                </p>
               ) : visibleDecisions.length === 0 ? (
-                <p className="px-4 py-8 text-center text-slate-400 text-sm">
+                <p className="px-4 py-8 text-center text-slate-400 text-sm dark:text-slate-500">
                   {mode === "blocklist" ? "No sites blocked yet." : "No sites configured yet."}
                 </p>
               ) : (
-                <ul className="divide-y divide-slate-100">
+                <ul className="divide-y divide-slate-100 dark:divide-slate-800">
                   {visibleDecisions.map((d) => {
                     const granted = d.status === "granted"
                     return (
@@ -234,8 +237,8 @@ export function App() {
                           <span
                             className={`shrink-0 rounded-full px-2 py-0.5 font-medium text-[11px] ${
                               granted
-                                ? "bg-emerald-50 text-emerald-700"
-                                : "bg-rose-50 text-rose-600"
+                                ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400"
+                                : "bg-rose-50 text-rose-600 dark:bg-rose-500/15 dark:text-rose-400"
                             }`}
                           >
                             {granted ? "Allowed" : "Blocked"}
@@ -247,7 +250,7 @@ export function App() {
                             <button
                               type="button"
                               onClick={() => setStatus(d.origin, granted ? "denied" : "granted")}
-                              className="rounded-md px-2 py-1 font-medium text-slate-600 text-xs transition-colors hover:bg-slate-100"
+                              className="rounded-md px-2 py-1 font-medium text-slate-600 text-xs transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
                             >
                               {granted ? "Block" : "Allow"}
                             </button>
@@ -256,7 +259,7 @@ export function App() {
                             type="button"
                             onClick={() => reset(d.origin)}
                             title="Remove this decision"
-                            className="rounded-md px-2 py-1 font-medium text-slate-500 text-xs transition-colors hover:bg-slate-100"
+                            className="rounded-md px-2 py-1 font-medium text-slate-500 text-xs transition-colors hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
                           >
                             {mode === "blocklist" ? "Unblock" : "Reset"}
                           </button>
@@ -269,6 +272,17 @@ export function App() {
             </div>
           </section>
         )}
+
+        {/* Appearance — theme for openpicker's own UI */}
+        <section className="mt-8">
+          <h2 className="font-semibold text-base">Appearance</h2>
+          <p className="mt-0.5 text-slate-500 text-sm dark:text-slate-400">
+            Theme for openpicker's own UI.
+          </p>
+          <div className="mt-4">
+            <ThemeToggle labels />
+          </div>
+        </section>
       </main>
     </div>
   )
