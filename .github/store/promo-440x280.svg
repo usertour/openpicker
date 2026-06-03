@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="280" viewBox="0 0 440 280">
+  <!-- Chrome Web Store small promo tile. Regenerate:
+       rsvg-convert -w 440 -h 280 .github/store/promo-440x280.svg -o .github/store/promo-440x280.png -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" />
+      <stop offset="1" stop-color="#f1f5f9" />
+    </linearGradient>
+    <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#334155" />
+      <stop offset="1" stop-color="#0f172a" />
+    </linearGradient>
+  </defs>
+
+  <rect width="440" height="280" fill="url(#bg)" />
+
+  <!-- icon (128 artwork scaled to 96, centered horizontally) -->
+  <g transform="translate(172,52) scale(0.75)">
+    <rect x="6" y="6" width="116" height="116" rx="30" fill="url(#tile)" />
+    <rect x="7" y="7" width="114" height="114" rx="29" fill="none" stroke="#ffffff" stroke-opacity="0.10" stroke-width="2" />
+    <g fill="none" stroke="#ffffff" stroke-width="11" stroke-linecap="round">
+      <circle cx="64" cy="64" r="34" />
+      <path d="M64 12 V30 M64 98 V116 M12 64 H30 M98 64 H116" />
+    </g>
+    <circle cx="64" cy="64" r="11" fill="#ffffff" />
+  </g>
+
+  <text x="220" y="190" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="34" font-weight="700" fill="#0f172a" letter-spacing="-0.5">openpicker</text>
+  <text x="220" y="222" text-anchor="middle" font-family="Helvetica, Arial, sans-serif" font-size="15" fill="#64748b">Pick an element, get its selector</text>
+</svg>

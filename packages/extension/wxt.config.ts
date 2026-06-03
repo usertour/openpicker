@@ -17,7 +17,7 @@ export default defineConfig({
   manifest: {
     name: "openpicker",
     description: "Open-source CSS element picker.",
-    permissions: ["storage", "activeTab", "scripting", "tabs"],
+    permissions: ["storage", "activeTab", "tabs"],
     // captureVisibleTab needs host access (or an activeTab gesture). Cross-tab and
     // SDK-triggered picks have no per-tab gesture, so grant host access for the
     // screenshot capability to work on any page.
