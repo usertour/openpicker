@@ -76,13 +76,13 @@ export function SettingsPopover({ settings, onChange, onClose }: SettingsPopover
             type="text"
             value={settings.ignoreId}
             disabled={!settings.useIds}
-            placeholder="Ignore id pattern"
+            placeholder="e.g. ^ember|^radix-"
             onChange={(e) => onChange({ ignoreId: e.target.value })}
             className={fieldClass}
           />
           <p className={hintClass}>
-            Use the element's id. Optionally ignore ids matching this regex (e.g. auto-generated
-            ones).
+            Use the element's id. The box is a regex of id names to ignore (e.g.{" "}
+            <code>^ember|^radix-</code> for auto-generated ids).
           </p>
         </div>
 
@@ -101,13 +101,13 @@ export function SettingsPopover({ settings, onChange, onClose }: SettingsPopover
             type="text"
             value={settings.ignoreClass}
             disabled={!settings.useClasses}
-            placeholder="Ignore class pattern"
+            placeholder="e.g. css-|sc-|jsx-"
             onChange={(e) => onChange({ ignoreClass: e.target.value })}
             className={fieldClass}
           />
           <p className={hintClass}>
-            Use class names. Optionally ignore classes matching this regex (e.g. <code>css-|sc-</code>
-            ).
+            Use class names. The box is a regex of class names to ignore (e.g.{" "}
+            <code>css-|sc-|jsx-</code> for hashed classes).
           </p>
         </div>
 
@@ -126,14 +126,14 @@ export function SettingsPopover({ settings, onChange, onClose }: SettingsPopover
             type="text"
             value={settings.attrAllow}
             disabled={!settings.useAttrs}
-            placeholder="Attributes to use — empty = auto"
+            placeholder="e.g. data-testid, name"
             onChange={(e) => onChange({ attrAllow: e.target.value })}
             className={fieldClass}
           />
           <p className={hintClass}>
             {settings.attrAllow.trim()
               ? "Only these attribute names are used (any value)."
-              : `Empty = auto: ${AUTO_ATTRS.join(", ")} (with stable, non-random values).`}
+              : `Attribute names to use, e.g. "data-testid, name". Empty = auto: ${AUTO_ATTRS.join(", ")} (stable values only).`}
           </p>
         </div>
       </div>
