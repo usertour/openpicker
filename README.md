@@ -10,6 +10,7 @@
   <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT" /></a>
   <a href="#contributing"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs welcome" /></a>
   <a href="https://www.usertour.io"><img src="https://img.shields.io/badge/maintained%20by-Usertour-867DB3.svg" alt="Maintained by Usertour" /></a>
+  <a href="https://discord.gg/cmvYZVpEKH"><img src="https://img.shields.io/badge/Discord-join-5865F2.svg?logo=discord&logoColor=white" alt="Join our Discord" /></a>
 </p>
 
 <p align="center">
@@ -17,7 +18,8 @@
   <a href="https://demo.openpicker.dev">Live demo</a> ·
   <a href="https://docs.openpicker.dev">Docs</a> ·
   <a href="./PROTOCOL.md">Protocol</a> ·
-  <a href="https://www.npmjs.com/package/@openpicker/sdk">npm</a>
+  <a href="https://www.npmjs.com/package/@openpicker/sdk">npm</a> ·
+  <a href="https://discord.gg/cmvYZVpEKH">Discord</a>
 </p>
 
 > An open-source CSS **element picker** for the web — a browser extension plus a tiny npm SDK,
