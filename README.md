@@ -211,6 +211,7 @@ pnpm build              # build all packages
 pnpm typecheck          # type-check all packages
 pnpm lint               # Biome lint/format check
 pnpm format             # Biome format --write
+pnpm test               # run unit tests (Vitest)
 pnpm e2e                # end-to-end pick in headless Chrome (see caveat below)
 ```
 
@@ -234,6 +235,10 @@ Chrome / Chromium / Edge (Manifest V3). Firefox is experimental via the `-b fire
 `PickResult`) with screenshots, per-origin selector settings, the authorization modes, a toolbar
 popup, and an options page. `pnpm -r typecheck`, the extension build, and the SDK build all pass.
 
+A [Vitest](https://vitest.dev) unit suite (`pnpm test`) covers the SDK protocol client, the
+`@openpicker/protocol` guards, selector generation and DOM helpers (jsdom), and locale-key
+alignment across all translations. It runs in CI alongside lint, type-check, and build.
+
 The full in-browser flow is verified by loading the unpacked extension and running a pick end to
 end. An automated harness (`pnpm e2e`) is included but does not pass in every headless setup — in
 some environments Chrome won't inject the content script into the test tab (not a picker bug).
@@ -246,7 +251,7 @@ builds · a docs site. See [DESIGN.md](./DESIGN.md) §10 and [PROTOCOL.md](./PRO
 Issues and PRs are welcome. Before opening a PR:
 
 ```bash
-pnpm typecheck && pnpm lint && pnpm build
+pnpm typecheck && pnpm lint && pnpm test && pnpm build
 ```
 
 Keep the codebase original (no copied code), and write all docs and commit messages in English.

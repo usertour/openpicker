@@ -15,11 +15,16 @@
     "lint": "biome check .",
     "format": "biome format --write .",
     "e2e": "node e2e/run.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "test:page": "pnpm --filter @openpicker/test dev"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.2.5",
-    "typescript": "^5.9.3"
+    "jsdom": "^29.1.1",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.8",
+    "yaml": "^2.9.0"
   },
   "pnpm": {
     "overrides": {
