@@ -15,10 +15,16 @@ function AttributeCard({ entry }: { entry: AttrEntry }) {
   const shown = expanded || !long ? entry.value : `${entry.value.slice(0, TRUNCATE)}…`
   return (
     <div className="px-0.5 py-1">
-      <span className="block truncate font-mono font-semibold text-slate-700 text-xs dark:text-slate-200">
+      <span
+        data-op-selectable
+        className="block select-text truncate font-mono font-semibold text-slate-700 text-xs dark:text-slate-200"
+      >
         {entry.name}
       </span>
-      <div className="mt-1 break-all font-mono text-[11px] text-slate-500 leading-relaxed dark:text-slate-400">
+      <div
+        data-op-selectable
+        className="mt-1 select-text break-all font-mono text-[11px] text-slate-500 leading-relaxed dark:text-slate-400"
+      >
         {shown || (
           <span className="text-slate-300 italic dark:text-slate-600">
             {i18n.t("picker.empty")}
