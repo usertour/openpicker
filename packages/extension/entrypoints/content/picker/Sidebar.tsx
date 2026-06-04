@@ -83,6 +83,16 @@ function isFocusable(target: EventTarget | null): boolean {
   )
 }
 
+/**
+ * Read-only text the user may legitimately want to select & copy (attribute
+ * names/values), tagged with data-op-selectable. mousedown on these is left
+ * alone so a text selection can begin; every other target stays focus-contained.
+ */
+function isSelectableText(target: EventTarget | null): boolean {
+  const el = target as HTMLElement | null
+  return !!el?.closest?.("[data-op-selectable]")
+}
+
 // Shared styles for a consistent, refined look.
 const iconBtn =
   "grid h-7 w-7 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-200"
@@ -103,7 +113,10 @@ export function Sidebar(props: SidebarProps) {
   const stop = (e: React.SyntheticEvent) => e.stopPropagation()
   const onMouseDown = (e: React.MouseEvent) => {
     e.stopPropagation()
-    if (!isFocusable(e.target)) e.preventDefault() // don't steal focus from the host page
+    // Don't steal focus from the host page (a focus shift dismisses its focus-managed
+    // popovers) — except over inputs, and over read-only text the user may want to
+    // select & copy, where letting the selection start is worth the focus shift.
+    if (!isFocusable(e.target) && !isSelectableText(e.target)) e.preventDefault()
   }
 
   return (
