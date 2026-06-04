@@ -1,5 +1,6 @@
 import { RiCheckLine } from "@remixicon/react"
 import { useCallback, useEffect, useState } from "react"
+import { i18n } from "#i18n"
 import { BrandLockup } from "@/components/Brand"
 import { ThemeToggle } from "@/components/ThemeToggle"
 
@@ -20,21 +21,9 @@ interface Decision {
 }
 
 const MODES: { value: AuthMode; label: string; note: string }[] = [
-  {
-    value: "allow-all",
-    label: "Allow all",
-    note: "Any site can use the picker. Nothing is captured without you picking and confirming.",
-  },
-  {
-    value: "ask",
-    label: "Ask each site",
-    note: "Each site is asked the first time; your choice is remembered in the list below.",
-  },
-  {
-    value: "blocklist",
-    label: "Blocklist",
-    note: "Every site is allowed except the ones you block below.",
-  },
+  { value: "allow-all", label: i18n.t("options.allowAll"), note: i18n.t("options.allowAllNote") },
+  { value: "ask", label: i18n.t("options.ask"), note: i18n.t("options.askNote") },
+  { value: "blocklist", label: i18n.t("options.blocklist"), note: i18n.t("options.blocklistNote") },
 ]
 
 async function loadDecisions(): Promise<Decision[]> {
@@ -103,7 +92,7 @@ export function App() {
     async (status: Status) => {
       const origin = normalizeOrigin(newOrigin)
       if (!origin) {
-        setError("Enter a valid origin, e.g. https://example.com")
+        setError(i18n.t("options.invalidOrigin"))
         return
       }
       setError("")
@@ -128,9 +117,9 @@ export function App() {
       <main className="mx-auto max-w-2xl px-6 py-8">
         {/* Authorization mode */}
         <section>
-          <h2 className="font-semibold text-base">Authorization</h2>
+          <h2 className="font-semibold text-base">{i18n.t("options.authTitle")}</h2>
           <p className="mt-0.5 text-slate-500 text-sm dark:text-slate-400">
-            Choose which sites may use the element picker.
+            {i18n.t("options.authDesc")}
           </p>
 
           <div className="mt-4 space-y-2">
@@ -172,12 +161,14 @@ export function App() {
         {mode === "allow-all" ? null : (
           <section className="mt-8">
             <h2 className="font-semibold text-base">
-              {mode === "blocklist" ? "Blocked sites" : "Site permissions"}
+              {mode === "blocklist"
+                ? i18n.t("options.blockedSitesTitle")
+                : i18n.t("options.sitePermsTitle")}
             </h2>
             <p className="mt-0.5 text-slate-500 text-sm dark:text-slate-400">
               {mode === "blocklist"
-                ? "Sites listed here can never use the picker."
-                : "Allow or block specific sites ahead of time."}
+                ? i18n.t("options.blockedSitesDesc")
+                : i18n.t("options.sitePermsDesc")}
             </p>
 
             <div className="mt-4 overflow-hidden rounded-xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900">
@@ -201,7 +192,7 @@ export function App() {
                       onClick={() => add("granted")}
                       className="rounded-lg bg-slate-900 px-3 py-1.5 font-medium text-sm text-white transition-colors hover:bg-slate-700 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200"
                     >
-                      Allow
+                      {i18n.t("options.allow")}
                     </button>
                   )}
                   <button
@@ -209,7 +200,7 @@ export function App() {
                     onClick={() => add("denied")}
                     className="rounded-lg border border-slate-300 px-3 py-1.5 font-medium text-slate-600 text-sm transition-colors hover:bg-slate-50 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
                   >
-                    Block
+                    {i18n.t("options.block")}
                   </button>
                 </div>
                 {error && <p className="mt-2 text-rose-600 text-xs dark:text-rose-400">{error}</p>}
@@ -218,11 +209,13 @@ export function App() {
               {/* List */}
               {loading ? (
                 <p className="px-4 py-8 text-center text-slate-400 text-sm dark:text-slate-500">
-                  Loading…
+                  {i18n.t("options.loading")}
                 </p>
               ) : visibleDecisions.length === 0 ? (
                 <p className="px-4 py-8 text-center text-slate-400 text-sm dark:text-slate-500">
-                  {mode === "blocklist" ? "No sites blocked yet." : "No sites configured yet."}
+                  {mode === "blocklist"
+                    ? i18n.t("options.noBlocked")
+                    : i18n.t("options.noConfigured")}
                 </p>
               ) : (
                 <ul className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -241,7 +234,7 @@ export function App() {
                                 : "bg-rose-50 text-rose-600 dark:bg-rose-500/15 dark:text-rose-400"
                             }`}
                           >
-                            {granted ? "Allowed" : "Blocked"}
+                            {granted ? i18n.t("options.allowed") : i18n.t("options.blocked")}
                           </span>
                           <span className="truncate font-mono text-sm">{d.origin}</span>
                         </div>
@@ -252,16 +245,18 @@ export function App() {
                               onClick={() => setStatus(d.origin, granted ? "denied" : "granted")}
                               className="rounded-md px-2 py-1 font-medium text-slate-600 text-xs transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
                             >
-                              {granted ? "Block" : "Allow"}
+                              {granted ? i18n.t("options.block") : i18n.t("options.allow")}
                             </button>
                           )}
                           <button
                             type="button"
                             onClick={() => reset(d.origin)}
-                            title="Remove this decision"
+                            title={i18n.t("options.removeDecision")}
                             className="rounded-md px-2 py-1 font-medium text-slate-500 text-xs transition-colors hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800"
                           >
-                            {mode === "blocklist" ? "Unblock" : "Reset"}
+                            {mode === "blocklist"
+                              ? i18n.t("options.unblock")
+                              : i18n.t("options.reset")}
                           </button>
                         </div>
                       </li>
@@ -275,9 +270,9 @@ export function App() {
 
         {/* Appearance — theme for openpicker's own UI */}
         <section className="mt-8">
-          <h2 className="font-semibold text-base">Appearance</h2>
+          <h2 className="font-semibold text-base">{i18n.t("options.appearanceTitle")}</h2>
           <p className="mt-0.5 text-slate-500 text-sm dark:text-slate-400">
-            Theme for openpicker's own UI.
+            {i18n.t("options.appearanceDesc")}
           </p>
           <div className="mt-4">
             <ThemeToggle labels />

@@ -1,0 +1,85 @@
+# Japanese (日本語) — machine-translated, review welcome. Mirrors en.yml.
+# Brand names (openpicker, Usertour) and example/regex values stay in English.
+
+extDescription: オープンソースの CSS 要素ピッカー。
+
+brandTagline: 要素を選んで、そのセレクターを取得
+
+popup:
+  pickThisPage: このページで要素を選択
+  manageSites: 許可したサイトを管理
+  docs: ドキュメント
+
+theme:
+  light: ライト
+  dark: ダーク
+  system: システム
+
+options:
+  authTitle: 認可
+  authDesc: 要素ピッカーを使用できるサイトを選択します。
+  allowAll: すべて許可
+  allowAllNote: どのサイトでもピッカーを使用できます。選択して確定するまで何も取得されません。
+  ask: サイトごとに確認
+  askNote: 各サイトで初回に確認します。選択内容は下のリストに記憶されます。
+  blocklist: ブロックリスト
+  blocklistNote: 下でブロックしたサイトを除き、すべてのサイトが許可されます。
+  sitePermsTitle: サイトの権限
+  blockedSitesTitle: ブロックしたサイト
+  sitePermsDesc: 特定のサイトを事前に許可またはブロックします。
+  blockedSitesDesc: ここに表示されたサイトはピッカーを使用できません。
+  allow: 許可
+  block: ブロック
+  unblock: ブロック解除
+  reset: リセット
+  allowed: 許可済み
+  blocked: ブロック済み
+  loading: 読み込み中…
+  noBlocked: ブロックしたサイトはまだありません。
+  noConfigured: 設定済みのサイトはまだありません。
+  invalidOrigin: '有効なオリジンを入力してください（例: https://example.com）'
+  removeDecision: この設定を削除
+  appearanceTitle: 外観
+  appearanceDesc: openpicker 自体の UI のテーマ。
+
+picker:
+  hoverHint: マウスを動かして要素をクリックすると選択できます。
+  selectorLabel: セレクター
+  hoverPlaceholder: 要素にカーソルを合わせてください…
+  invalidSelector: 無効なセレクター
+  matchCount:
+    1: $1 件一致
+    n: $1 件一致
+  elementLabel: 要素
+  attributesLabel: 属性
+  filterAttrs: 属性を絞り込み…
+  noMatchingAttrs: 一致する属性がありません。
+  showMore: もっと見る
+  showLess: 折りたたむ
+  empty: 空
+  paused: 選択を一時停止しました。目的の要素があるページに移動してから再開してください。
+  resume: 選択を再開
+  ok: OK
+  copy: コピー
+  copied: コピーしました
+  noContent: コンテンツなし
+  swapSide: 位置を切り替え
+  navigateAway: 別のページへ移動
+  selectorSettings: セレクター設定
+  close: 閉じる
+  pickAnother: 別の要素を選択
+  prevSibling: 前の兄弟要素
+  nextSibling: 次の兄弟要素
+  scrollIntoView: 表示領域にスクロール
+  selectParent: 親要素を選択
+  selectFirstChild: 最初の子要素を選択
+
+settings:
+  allowSelectorTypes: 許可するセレクターの種類
+  enableId: ID を有効化
+  enableClass: Class を有効化
+  enableAttribute: 属性を有効化
+  idHint: '要素の id を使用します。ボックスは無視する id 名の正規表現です（自動生成の id には例: ^ember|^radix-）。'
+  classHint: 'クラス名を使用します。ボックスは無視するクラス名の正規表現です（ハッシュ化クラスには例: css-|sc-|jsx-）。'
+  attrHintEmpty: '使用する属性名（例: "data-testid, name"）。空 = 自動: $1（安定した値のみ）。'
+  attrHintFilled: これらの属性名のみを使用します（値は任意）。

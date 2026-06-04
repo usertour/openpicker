@@ -1,5 +1,6 @@
 import type { PickParams, PickResult } from "@openpicker/protocol"
 import { useCallback, useEffect, useMemo, useState } from "react"
+import { i18n } from "#i18n"
 import {
   collectAttributes,
   describeElement,
@@ -318,7 +319,7 @@ export function Picker({
         onResume={reselect}
         onConfirm={confirm}
         onCancel={cancel}
-        confirmLabel={copyOnConfirm ? "Copy" : "OK"}
+        confirmLabel={copyOnConfirm ? i18n.t("picker.copy") : i18n.t("picker.ok")}
         confirmDone={copied}
       />
     </>

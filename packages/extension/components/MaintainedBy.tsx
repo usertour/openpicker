@@ -2,6 +2,9 @@
  * "Maintained by Usertour" attribution, styled after Usertour's own "made with"
  * badge: a small, muted icon + text link. The mark is Usertour's brand glyph,
  * reproduced here purely for attribution; everything else in openpicker is our own.
+ *
+ * The text is an intentional brand signature, so it stays English in every locale
+ * (not run through i18n) — like the attribution line many open-source projects keep.
  */
 
 function UsertourMark({ size = 14 }: { size?: number }) {

@@ -1,4 +1,5 @@
 import { RiCloseLine } from "@remixicon/react"
+import { i18n } from "#i18n"
 import { AUTO_ATTRS } from "./selector"
 
 export interface SelectorSettings {
@@ -48,13 +49,13 @@ export function SettingsPopover({ settings, onChange, onClose }: SettingsPopover
     <div className="absolute top-11 right-0 left-0 z-20 border-slate-200 border-b bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
       <div className="mb-3 flex items-center justify-between">
         <span className="font-semibold text-[10px] text-slate-500 uppercase tracking-wider dark:text-slate-400">
-          Allow selector types
+          {i18n.t("settings.allowSelectorTypes")}
         </span>
         <button
           type="button"
           onClick={onClose}
           className="grid h-6 w-6 place-items-center rounded-md text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-200"
-          title="Close"
+          title={i18n.t("picker.close")}
         >
           <RiCloseLine size={15} />
         </button>
@@ -70,7 +71,7 @@ export function SettingsPopover({ settings, onChange, onClose }: SettingsPopover
               onChange={(e) => onChange({ useIds: e.target.checked })}
               className="h-3.5 w-3.5 accent-slate-900 dark:accent-slate-300"
             />
-            Enable ID
+            {i18n.t("settings.enableId")}
           </label>
           <input
             type="text"
@@ -80,10 +81,7 @@ export function SettingsPopover({ settings, onChange, onClose }: SettingsPopover
             onChange={(e) => onChange({ ignoreId: e.target.value })}
             className={fieldClass}
           />
-          <p className={hintClass}>
-            Use the element's id. The box is a regex of id names to ignore (e.g.{" "}
-            <code>^ember|^radix-</code> for auto-generated ids).
-          </p>
+          <p className={hintClass}>{i18n.t("settings.idHint")}</p>
         </div>
 
         {/* Class */}
@@ -95,7 +93,7 @@ export function SettingsPopover({ settings, onChange, onClose }: SettingsPopover
               onChange={(e) => onChange({ useClasses: e.target.checked })}
               className="h-3.5 w-3.5 accent-slate-900 dark:accent-slate-300"
             />
-            Enable Class
+            {i18n.t("settings.enableClass")}
           </label>
           <input
             type="text"
@@ -105,10 +103,7 @@ export function SettingsPopover({ settings, onChange, onClose }: SettingsPopover
             onChange={(e) => onChange({ ignoreClass: e.target.value })}
             className={fieldClass}
           />
-          <p className={hintClass}>
-            Use class names. The box is a regex of class names to ignore (e.g.{" "}
-            <code>css-|sc-|jsx-</code> for hashed classes).
-          </p>
+          <p className={hintClass}>{i18n.t("settings.classHint")}</p>
         </div>
 
         {/* Attribute */}
@@ -120,7 +115,7 @@ export function SettingsPopover({ settings, onChange, onClose }: SettingsPopover
               onChange={(e) => onChange({ useAttrs: e.target.checked })}
               className="h-3.5 w-3.5 accent-slate-900 dark:accent-slate-300"
             />
-            Enable Attribute
+            {i18n.t("settings.enableAttribute")}
           </label>
           <input
             type="text"
@@ -132,8 +127,8 @@ export function SettingsPopover({ settings, onChange, onClose }: SettingsPopover
           />
           <p className={hintClass}>
             {settings.attrAllow.trim()
-              ? "Only these attribute names are used (any value)."
-              : `Attribute names to use, e.g. "data-testid, name". Empty = auto: ${AUTO_ATTRS.join(", ")} (stable values only).`}
+              ? i18n.t("settings.attrHintFilled")
+              : i18n.t("settings.attrHintEmpty", [AUTO_ATTRS.join(", ")])}
           </p>
         </div>
       </div>

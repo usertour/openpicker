@@ -1,4 +1,5 @@
 import { RiCrosshair2Line, RiSettings3Line } from "@remixicon/react"
+import { i18n } from "#i18n"
 import { BrandLockup } from "@/components/Brand"
 import { ThemeToggle } from "@/components/ThemeToggle"
 
@@ -37,7 +38,7 @@ export function App() {
         className="mt-4 flex w-full items-center gap-2.5 rounded-lg bg-slate-900 px-3 py-2 font-medium text-sm text-white transition-colors hover:bg-slate-700 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200"
       >
         <RiCrosshair2Line size={16} className="shrink-0" />
-        Pick an element on this page
+        {i18n.t("popup.pickThisPage")}
       </button>
 
       <button
@@ -46,7 +47,7 @@ export function App() {
         className="mt-2 flex w-full items-center gap-2.5 rounded-lg border border-slate-200 px-3 py-2 font-medium text-slate-700 text-sm transition-colors hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
       >
         <RiSettings3Line size={16} className="shrink-0" />
-        Manage authorized sites
+        {i18n.t("popup.manageSites")}
       </button>
 
       <div className="mt-3 flex items-center justify-between">
@@ -54,12 +55,12 @@ export function App() {
         <div className="flex items-center gap-3 text-[11px] text-slate-400 dark:text-slate-500">
           <span>v{version}</span>
           <a
-            href="https://github.com/usertour/openpicker"
+            href="https://docs.openpicker.dev"
             target="_blank"
             rel="noreferrer"
             className="hover:text-slate-600 hover:underline dark:hover:text-slate-300"
           >
-            Docs
+            {i18n.t("popup.docs")}
           </a>
         </div>
       </div>

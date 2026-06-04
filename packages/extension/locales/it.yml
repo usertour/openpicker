@@ -1,0 +1,85 @@
+# Italian (Italiano) — machine-translated, review welcome. Mirrors en.yml.
+# Brand names (openpicker, Usertour) and example/regex values stay in English.
+
+extDescription: Selettore di elementi CSS open source.
+
+brandTagline: Scegli un elemento e ottieni il suo selettore
+
+popup:
+  pickThisPage: Scegli un elemento in questa pagina
+  manageSites: Gestisci i siti autorizzati
+  docs: Docs
+
+theme:
+  light: Chiaro
+  dark: Scuro
+  system: Sistema
+
+options:
+  authTitle: Autorizzazione
+  authDesc: Scegli quali siti possono usare il selettore di elementi.
+  allowAll: Consenti tutti
+  allowAllNote: Qualsiasi sito può usare il selettore. Niente viene catturato finché non scegli e confermi.
+  ask: Chiedi per ogni sito
+  askNote: A ogni sito viene chiesto la prima volta; la tua scelta è ricordata nell'elenco qui sotto.
+  blocklist: Elenco di blocco
+  blocklistNote: Tutti i siti sono consentiti tranne quelli che blocchi qui sotto.
+  sitePermsTitle: Autorizzazioni dei siti
+  blockedSitesTitle: Siti bloccati
+  sitePermsDesc: Consenti o blocca siti specifici in anticipo.
+  blockedSitesDesc: I siti elencati qui non possono mai usare il selettore.
+  allow: Consenti
+  block: Blocca
+  unblock: Sblocca
+  reset: Reimposta
+  allowed: Consentito
+  blocked: Bloccato
+  loading: Caricamento…
+  noBlocked: Nessun sito bloccato per ora.
+  noConfigured: Nessun sito configurato per ora.
+  invalidOrigin: Inserisci un'origine valida, ad es. https://example.com
+  removeDecision: Rimuovi questa decisione
+  appearanceTitle: Aspetto
+  appearanceDesc: Tema dell'interfaccia di openpicker.
+
+picker:
+  hoverHint: Muovi il mouse e fai clic su un elemento per selezionarlo.
+  selectorLabel: Selettore
+  hoverPlaceholder: passa il cursore su un elemento…
+  invalidSelector: Selettore non valido
+  matchCount:
+    1: $1 corrispondenza
+    n: $1 corrispondenze
+  elementLabel: Elemento
+  attributesLabel: Attributi
+  filterAttrs: Filtra gli attributi…
+  noMatchingAttrs: Nessun attributo corrispondente.
+  showMore: Mostra altro
+  showLess: Mostra meno
+  empty: vuoto
+  paused: La selezione è in pausa. Vai alla pagina che contiene il tuo elemento, poi riprendi.
+  resume: Riprendi la selezione
+  ok: OK
+  copy: Copia
+  copied: Copiato
+  noContent: Nessun contenuto
+  swapSide: Cambia lato
+  navigateAway: Vai a un'altra pagina
+  selectorSettings: Impostazioni del selettore
+  close: Chiudi
+  pickAnother: Scegli un altro elemento
+  prevSibling: Fratello precedente
+  nextSibling: Fratello successivo
+  scrollIntoView: Scorri fino a renderlo visibile
+  selectParent: Seleziona l'elemento padre
+  selectFirstChild: Seleziona il primo figlio
+
+settings:
+  allowSelectorTypes: Tipi di selettore consentiti
+  enableId: Abilita ID
+  enableClass: Abilita Class
+  enableAttribute: Abilita attributo
+  idHint: Usa l'id dell'elemento. Il campo è una regex dei nomi di id da ignorare (ad es. ^ember|^radix- per gli id generati automaticamente).
+  classHint: Usa i nomi delle classi. Il campo è una regex dei nomi di classe da ignorare (ad es. css-|sc-|jsx- per le classi con hash).
+  attrHintEmpty: 'Nomi di attributi da usare, ad es. "data-testid, name". Vuoto = automatico: $1 (solo valori stabili).'
+  attrHintFilled: Vengono usati solo questi nomi di attributi (qualsiasi valore).

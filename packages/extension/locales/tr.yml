@@ -1,0 +1,85 @@
+# Turkish (Türkçe) — machine-translated, review welcome. Mirrors en.yml.
+# Brand names (openpicker, Usertour) and example/regex values stay in English.
+
+extDescription: Açık kaynaklı CSS öğe seçici.
+
+brandTagline: Bir öğe seç, seçicisini al
+
+popup:
+  pickThisPage: Bu sayfada bir öğe seç
+  manageSites: Yetkili siteleri yönet
+  docs: Belgeler
+
+theme:
+  light: Açık
+  dark: Koyu
+  system: Sistem
+
+options:
+  authTitle: Yetkilendirme
+  authDesc: Öğe seçiciyi hangi sitelerin kullanabileceğini seçin.
+  allowAll: Tümüne izin ver
+  allowAllNote: Her site seçiciyi kullanabilir. Siz seçip onaylamadan hiçbir şey yakalanmaz.
+  ask: Her siteye sor
+  askNote: Her siteye ilk seferde sorulur; seçiminiz aşağıdaki listede hatırlanır.
+  blocklist: Engelleme listesi
+  blocklistNote: Aşağıda engellediğiniz siteler dışında tüm sitelere izin verilir.
+  sitePermsTitle: Site izinleri
+  blockedSitesTitle: Engellenen siteler
+  sitePermsDesc: Belirli sitelere önceden izin verin veya bunları engelleyin.
+  blockedSitesDesc: Burada listelenen siteler seçiciyi asla kullanamaz.
+  allow: İzin ver
+  block: Engelle
+  unblock: Engeli kaldır
+  reset: Sıfırla
+  allowed: İzin verildi
+  blocked: Engellendi
+  loading: Yükleniyor…
+  noBlocked: Henüz engellenen site yok.
+  noConfigured: Henüz yapılandırılmış site yok.
+  invalidOrigin: Geçerli bir kaynak girin, örn. https://example.com
+  removeDecision: Bu kararı kaldır
+  appearanceTitle: Görünüm
+  appearanceDesc: openpicker'ın kendi arayüzünün teması.
+
+picker:
+  hoverHint: Fareyi hareket ettirin ve seçmek için bir öğeye tıklayın.
+  selectorLabel: Seçici
+  hoverPlaceholder: bir öğenin üzerine gelin…
+  invalidSelector: Geçersiz seçici
+  matchCount:
+    1: $1 eşleşme
+    n: $1 eşleşme
+  elementLabel: Öğe
+  attributesLabel: Öznitelikler
+  filterAttrs: Öznitelikleri filtrele…
+  noMatchingAttrs: Eşleşen öznitelik yok.
+  showMore: Daha fazla göster
+  showLess: Daha az göster
+  empty: boş
+  paused: Seçim duraklatıldı. Öğenizin bulunduğu sayfaya gidin, sonra devam edin.
+  resume: Seçime devam et
+  ok: Tamam
+  copy: Kopyala
+  copied: Kopyalandı
+  noContent: İçerik yok
+  swapSide: Tarafı değiştir
+  navigateAway: Başka bir sayfaya git
+  selectorSettings: Seçici ayarları
+  close: Kapat
+  pickAnother: Başka bir öğe seç
+  prevSibling: Önceki kardeş öğe
+  nextSibling: Sonraki kardeş öğe
+  scrollIntoView: Görünüme kaydır
+  selectParent: Üst öğeyi seç
+  selectFirstChild: İlk alt öğeyi seç
+
+settings:
+  allowSelectorTypes: İzin verilen seçici türleri
+  enableId: ID'yi etkinleştir
+  enableClass: Class'ı etkinleştir
+  enableAttribute: Özniteliği etkinleştir
+  idHint: Öğenin id'sini kullanır. Kutu, yok sayılacak id adlarının regex'idir (örn. otomatik oluşturulan id'ler için ^ember|^radix-).
+  classHint: Sınıf adlarını kullanır. Kutu, yok sayılacak sınıf adlarının regex'idir (örn. karma sınıflar için css-|sc-|jsx-).
+  attrHintEmpty: 'Kullanılacak öznitelik adları, örn. "data-testid, name". Boş = otomatik: $1 (yalnızca kararlı değerler).'
+  attrHintFilled: Yalnızca bu öznitelik adları kullanılır (herhangi bir değer).
