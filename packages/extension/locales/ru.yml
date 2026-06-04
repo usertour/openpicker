@@ -4,7 +4,6 @@
 extDescription: Открытый инструмент выбора CSS-элементов.
 
 brandTagline: Выберите элемент и получите его селектор
-maintainedBy: Поддерживается Usertour
 
 popup:
   pickThisPage: Выбрать элемент на этой странице

@@ -4,7 +4,6 @@
 extDescription: オープンソースの CSS 要素ピッカー。
 
 brandTagline: 要素を選んで、そのセレクターを取得
-maintainedBy: Usertour が管理
 
 popup:
   pickThisPage: このページで要素を選択

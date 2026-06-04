@@ -5,7 +5,6 @@
 extDescription: Open-source CSS element picker.
 
 brandTagline: Pick an element, get its selector
-maintainedBy: Maintained by Usertour
 
 popup:
   pickThisPage: Pick an element on this page
