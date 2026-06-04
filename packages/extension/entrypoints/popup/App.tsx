@@ -55,7 +55,7 @@ export function App() {
         <div className="flex items-center gap-3 text-[11px] text-slate-400 dark:text-slate-500">
           <span>v{version}</span>
           <a
-            href="https://github.com/usertour/openpicker"
+            href="https://docs.openpicker.dev"
             target="_blank"
             rel="noreferrer"
             className="hover:text-slate-600 hover:underline dark:hover:text-slate-300"
