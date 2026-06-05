@@ -11,7 +11,11 @@ You can pick in two ways: straight from the **toolbar** (no code), or programmat
 
 ## Install the extension
 
-> The extension isn't on the Chrome Web Store yet. Until then, load it unpacked from source.
+Install **openpicker** from the [Chrome Web Store](https://chromewebstore.google.com/detail/openpicker/iflipcihgpkellfpebibkmlklembmjph) — it works in Chrome, Edge, and other Chromium browsers. You'll see the openpicker icon in the toolbar.
+
+### Build from source (for development)
+
+Prefer to build it yourself, or working on openpicker?
 
 1. Clone the repo and build the extension:
    ```bash
@@ -20,8 +24,6 @@ You can pick in two ways: straight from the **toolbar** (no code), or programmat
    ```
 2. Open `chrome://extensions` and enable **Developer mode** (top right).
 3. Click **Load unpacked** and select `packages/extension/.output/chrome-mv3`.
-
-You'll see the openpicker icon in the toolbar.
 
 ## Pick from the toolbar
 
