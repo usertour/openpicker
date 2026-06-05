@@ -6,6 +6,8 @@ class names. openpicker lets you control **how selectors are built**, and rememb
 Open the settings from the **gear** button in the sidebar header (visible once an element is
 selected).
 
+![The selector settings popover: enable or disable ID / class / attribute anchors, each with its own ignore/allow filter](/selector-settings.png)
+
 ## What you can control
 
 Each part of an element can be enabled or disabled as a selector anchor:
