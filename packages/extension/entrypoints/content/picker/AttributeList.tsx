@@ -35,7 +35,7 @@ function AttributeCard({ entry }: { entry: AttrEntry }) {
         <button
           type="button"
           onClick={() => setExpanded((v) => !v)}
-          className="mt-1 font-medium text-[11px] text-slate-500 hover:text-slate-700 hover:underline dark:text-slate-400 dark:hover:text-slate-200"
+          className="mt-1 font-medium text-[11px] text-slate-500 transition-colors hover:text-accent-600 hover:underline dark:text-slate-400 dark:hover:text-accent-300"
         >
           {expanded ? i18n.t("picker.showLess") : i18n.t("picker.showMore")}
         </button>
@@ -59,7 +59,7 @@ export function AttributeList({ attributes }: AttributeListProps) {
   return (
     <div className="flex min-h-0 flex-1 flex-col gap-2">
       {showFilter && (
-        <div className="flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-2.5 transition focus-within:border-slate-500 focus-within:ring-2 focus-within:ring-slate-200 dark:border-slate-700 dark:bg-slate-950 dark:focus-within:ring-slate-700">
+        <div className="flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-2.5 transition focus-within:border-accent-500 focus-within:ring-2 focus-within:ring-accent-500/30 dark:border-slate-700 dark:bg-slate-950 dark:focus-within:border-accent-500 dark:focus-within:ring-accent-500/30">
           <RiSearchLine size={14} className="shrink-0 text-slate-400 dark:text-slate-500" />
           <input
             type="text"

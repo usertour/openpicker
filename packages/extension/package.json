@@ -19,6 +19,8 @@
     "react-dom": "^19.1.0"
   },
   "devDependencies": {
+    "@fontsource-variable/hanken-grotesk": "^5.2.8",
+    "@fontsource-variable/jetbrains-mono": "^5.2.8",
     "@openpicker/protocol": "workspace:*",
     "@tailwindcss/vite": "^4.3.0",
     "@types/chrome": "^0.1.12",

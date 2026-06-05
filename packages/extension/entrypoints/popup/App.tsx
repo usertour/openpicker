@@ -29,24 +29,28 @@ function openOptions(): void {
 export function App() {
   const version = browser.runtime.getManifest().version
   return (
-    <div className="w-72 bg-white p-4 font-sans text-slate-800 dark:bg-slate-900 dark:text-slate-200">
+    <div
+      style={{ background: "var(--op-panel)" }}
+      className="w-72 p-4 font-sans text-slate-800 dark:text-slate-200"
+    >
       <BrandLockup tagline />
 
       <button
         type="button"
         onClick={pickHere}
-        className="mt-4 flex w-full items-center gap-2.5 rounded-lg bg-slate-900 px-3 py-2 font-medium text-sm text-white transition-colors hover:bg-slate-700 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200"
+        style={{ background: "var(--op-accent-grad)" }}
+        className="mt-4 flex w-full items-center gap-2 rounded-lg px-3 py-2 font-medium text-[13px] text-white shadow-md shadow-accent-600/30 outline-none transition hover:brightness-105 focus-visible:ring-2 focus-visible:ring-accent-400"
       >
-        <RiCrosshair2Line size={16} className="shrink-0" />
+        <RiCrosshair2Line size={15} className="shrink-0" />
         {i18n.t("popup.pickThisPage")}
       </button>
 
       <button
         type="button"
         onClick={openOptions}
-        className="mt-2 flex w-full items-center gap-2.5 rounded-lg border border-slate-200 px-3 py-2 font-medium text-slate-700 text-sm transition-colors hover:bg-slate-50 dark:border-slate-700 dark:text-slate-200 dark:hover:bg-slate-800"
+        className="mt-2 flex w-full items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 font-medium text-[13px] text-slate-700 outline-none transition hover:border-accent-300 hover:bg-accent-50 hover:text-accent-700 focus-visible:ring-2 focus-visible:ring-accent-400/40 dark:border-slate-700 dark:text-slate-200 dark:hover:border-accent-700 dark:hover:bg-accent-950/40 dark:hover:text-accent-200"
       >
-        <RiSettings3Line size={16} className="shrink-0" />
+        <RiSettings3Line size={15} className="shrink-0" />
         {i18n.t("popup.manageSites")}
       </button>
 
@@ -58,7 +62,7 @@ export function App() {
             href="https://docs.openpicker.dev"
             target="_blank"
             rel="noreferrer"
-            className="hover:text-slate-600 hover:underline dark:hover:text-slate-300"
+            className="transition-colors hover:text-accent-600 hover:underline dark:hover:text-accent-300"
           >
             {i18n.t("popup.docs")}
           </a>

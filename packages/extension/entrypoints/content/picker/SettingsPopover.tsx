@@ -36,7 +36,7 @@ interface SettingsPopoverProps {
 }
 
 const fieldClass =
-  "w-full rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 font-mono text-[11px] outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200 disabled:cursor-not-allowed disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-400 disabled:placeholder:text-slate-300 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:ring-slate-700 dark:disabled:border-slate-800 dark:disabled:bg-slate-900 dark:disabled:text-slate-500"
+  "w-full rounded-lg border border-slate-300 bg-white px-2.5 py-1.5 font-mono text-[11px] outline-none transition focus:border-accent-500 focus:ring-2 focus:ring-accent-500/30 disabled:cursor-not-allowed disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-400 disabled:placeholder:text-slate-300 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-accent-500 dark:focus:ring-accent-500/30 dark:disabled:border-slate-800 dark:disabled:bg-slate-900 dark:disabled:text-slate-500"
 const hintClass = "px-0.5 text-[10px] text-slate-400 leading-snug dark:text-slate-500"
 
 /**
@@ -54,7 +54,7 @@ export function SettingsPopover({ settings, onChange, onClose }: SettingsPopover
         <button
           type="button"
           onClick={onClose}
-          className="grid h-6 w-6 place-items-center rounded-md text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-600 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+          className="grid h-6 w-6 place-items-center rounded-md text-slate-400 transition-colors hover:bg-accent-50 hover:text-accent-600 dark:text-slate-500 dark:hover:bg-accent-950/40 dark:hover:text-accent-300"
           title={i18n.t("picker.close")}
         >
           <RiCloseLine size={15} />
@@ -69,7 +69,7 @@ export function SettingsPopover({ settings, onChange, onClose }: SettingsPopover
               type="checkbox"
               checked={settings.useIds}
               onChange={(e) => onChange({ useIds: e.target.checked })}
-              className="h-3.5 w-3.5 accent-slate-900 dark:accent-slate-300"
+              className="h-3.5 w-3.5 accent-accent-600 dark:accent-accent-500"
             />
             {i18n.t("settings.enableId")}
           </label>
@@ -91,7 +91,7 @@ export function SettingsPopover({ settings, onChange, onClose }: SettingsPopover
               type="checkbox"
               checked={settings.useClasses}
               onChange={(e) => onChange({ useClasses: e.target.checked })}
-              className="h-3.5 w-3.5 accent-slate-900 dark:accent-slate-300"
+              className="h-3.5 w-3.5 accent-accent-600 dark:accent-accent-500"
             />
             {i18n.t("settings.enableClass")}
           </label>
@@ -113,7 +113,7 @@ export function SettingsPopover({ settings, onChange, onClose }: SettingsPopover
               type="checkbox"
               checked={settings.useAttrs}
               onChange={(e) => onChange({ useAttrs: e.target.checked })}
-              className="h-3.5 w-3.5 accent-slate-900 dark:accent-slate-300"
+              className="h-3.5 w-3.5 accent-accent-600 dark:accent-accent-500"
             />
             {i18n.t("settings.enableAttribute")}
           </label>

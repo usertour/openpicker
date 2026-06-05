@@ -5,7 +5,6 @@ import {
   RiCompass3Line,
   RiCrosshair2Line,
   RiCursorLine,
-  RiErrorWarningLine,
   RiSettings3Line,
 } from "@remixicon/react"
 import { useState } from "react"
@@ -14,6 +13,7 @@ import { BrandMark, Wordmark } from "@/components/Brand"
 import { MaintainedByUsertour } from "@/components/MaintainedBy"
 import { AttributeList } from "./AttributeList"
 import type { AttrEntry } from "./dom"
+import { SelectorField } from "./SelectorField"
 import { type SelectorSettings, SettingsPopover } from "./SettingsPopover"
 import { Tooltip } from "./Tooltip"
 import { TreeNavigator } from "./TreeNavigator"
@@ -95,7 +95,7 @@ function isSelectableText(target: EventTarget | null): boolean {
 
 // Shared styles for a consistent, refined look.
 const iconBtn =
-  "grid h-7 w-7 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 dark:text-slate-500 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+  "grid h-7 w-7 place-items-center rounded-lg text-slate-400 transition-colors hover:bg-accent-50 hover:text-accent-600 dark:text-slate-500 dark:hover:bg-accent-950/40 dark:hover:text-accent-300"
 const sectionLabel =
   "px-0.5 font-semibold text-[10px] text-slate-500 uppercase tracking-wider dark:text-slate-400"
 
@@ -103,7 +103,6 @@ export function Sidebar(props: SidebarProps) {
   const [settingsOpen, setSettingsOpen] = useState(false)
   const locked = props.phase === "locked"
   const navigating = props.phase === "navigate"
-  const matchOk = props.matchCount === 1
 
   // Keep our interactions inside the panel: a click in the picker must not reach the
   // host page's "close on outside click" or focus handlers (e.g. an open Google menu
@@ -129,10 +128,9 @@ export function Sidebar(props: SidebarProps) {
       onPointerDown={stop}
       onMouseDown={onMouseDown}
       onClick={stop}
-      className={`fixed top-0 z-[2147483646] flex h-screen w-80 flex-col bg-white text-slate-800 antialiased shadow-2xl dark:bg-slate-900 dark:text-slate-200 ${
-        props.side === "right"
-          ? "right-0 border-slate-200 border-l dark:border-slate-800"
-          : "left-0 border-slate-200 border-r dark:border-slate-800"
+      style={{ background: "var(--op-panel)" }}
+      className={`fixed top-3 bottom-3 z-[2147483646] flex w-80 flex-col overflow-hidden rounded-2xl border border-slate-200 font-sans text-slate-800 antialiased shadow-[0_20px_60px_-15px_rgba(15,15,40,0.5)] dark:border-slate-800 dark:text-slate-200 ${
+        props.side === "right" ? "right-3" : "left-3"
       }`}
     >
       {/* Header */}
@@ -161,7 +159,7 @@ export function Sidebar(props: SidebarProps) {
                 onClick={() => setSettingsOpen((v) => !v)}
                 className={
                   settingsOpen
-                    ? `${iconBtn} bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-200`
+                    ? `${iconBtn} bg-accent-100 text-accent-700 dark:bg-accent-950/60 dark:text-accent-200`
                     : iconBtn
                 }
               >
@@ -197,7 +195,8 @@ export function Sidebar(props: SidebarProps) {
           <button
             type="button"
             onClick={props.onResume}
-            className="inline-flex items-center gap-1.5 rounded-lg bg-slate-900 px-4 py-2 font-medium text-sm text-white shadow-sm transition-colors hover:bg-slate-700 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200"
+            style={{ background: "var(--op-accent-grad)" }}
+            className="inline-flex items-center gap-1.5 rounded-lg px-4 py-2 font-medium text-sm text-white shadow-lg shadow-accent-600/30 outline-none transition hover:brightness-105 focus-visible:ring-2 focus-visible:ring-accent-400"
           >
             <RiCrosshair2Line size={16} />
             {i18n.t("picker.resume")}
@@ -215,51 +214,27 @@ export function Sidebar(props: SidebarProps) {
           {/* Selector: read-only live preview while hovering, editable once locked */}
           <div className="flex flex-col gap-1.5">
             <span className={sectionLabel}>{i18n.t("picker.selectorLabel")}</span>
-            <div className="relative flex items-center gap-1.5">
-              <input
-                type="text"
+            <div className="relative flex items-start gap-1.5">
+              <SelectorField
                 value={props.selector}
-                readOnly={!locked}
+                editable={locked}
                 placeholder={locked ? "" : i18n.t("picker.hoverPlaceholder")}
-                onChange={(e) => props.onSelectorChange(e.target.value)}
-                className={`min-w-0 flex-1 rounded-lg border px-2.5 py-2 font-mono text-xs outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200 dark:focus:ring-slate-700 ${
-                  locked
-                    ? "border-slate-300 bg-white text-slate-800 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
-                    : "border-slate-300 bg-slate-50 text-slate-500 dark:border-slate-700 dark:bg-slate-800 dark:text-slate-400"
-                }`}
+                onChange={props.onSelectorChange}
+                matchCount={props.matchCount}
+                selectorValid={props.selectorValid}
               />
               {locked && (
                 <Tooltip label={i18n.t("picker.pickAnother")} align="end">
                   <button
                     type="button"
                     onClick={props.onReselect}
-                    className="grid h-[34px] w-[34px] shrink-0 place-items-center rounded-lg border border-slate-300 text-slate-500 transition-colors hover:bg-slate-50 hover:text-slate-700 dark:border-slate-700 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-slate-200"
+                    className="grid h-[34px] w-[34px] shrink-0 place-items-center rounded-lg border border-slate-300 text-slate-500 transition-colors hover:border-accent-300 hover:bg-accent-50 hover:text-accent-600 dark:border-slate-700 dark:text-slate-400 dark:hover:border-accent-700 dark:hover:bg-accent-950/40 dark:hover:text-accent-300"
                   >
                     <RiCrosshair2Line size={16} />
                   </button>
                 </Tooltip>
               )}
             </div>
-
-            {/* Match count / validity */}
-            {props.selector &&
-              (!props.selectorValid ? (
-                <span className="mt-0.5 inline-flex w-fit items-center gap-1 rounded-full bg-rose-50 px-2 py-0.5 font-medium text-[11px] text-rose-600 dark:bg-rose-500/15 dark:text-rose-400">
-                  <RiErrorWarningLine size={12} />
-                  {i18n.t("picker.invalidSelector")}
-                </span>
-              ) : (
-                <span
-                  className={`mt-0.5 inline-flex w-fit items-center gap-1 rounded-full px-2 py-0.5 font-medium text-[11px] ${
-                    matchOk
-                      ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-400"
-                      : "bg-amber-50 text-amber-700 dark:bg-amber-500/15 dark:text-amber-400"
-                  }`}
-                >
-                  {matchOk ? <RiCheckLine size={12} /> : <RiErrorWarningLine size={12} />}
-                  {i18n.t("picker.matchCount", props.matchCount)}
-                </span>
-              ))}
           </div>
 
           {/* Inspector tools (locked only) */}
@@ -286,11 +261,11 @@ export function Sidebar(props: SidebarProps) {
       <div className="flex items-center justify-between gap-2 border-slate-200 border-t px-3 py-2 dark:border-slate-800">
         <MaintainedByUsertour />
         {locked && (
-          <div className="flex items-center gap-2">
+          <div className="flex shrink-0 items-center gap-2">
             <button
               type="button"
               onClick={props.onCancel}
-              className="rounded-lg px-3.5 py-2 font-medium text-slate-600 text-sm transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
+              className="rounded-lg px-3 py-2 font-medium text-slate-600 text-sm transition-colors hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-slate-800"
             >
               {i18n.t("picker.close")}
             </button>
@@ -298,10 +273,11 @@ export function Sidebar(props: SidebarProps) {
               type="button"
               onClick={props.onConfirm}
               disabled={props.confirmDone}
-              className={`inline-flex items-center gap-1.5 rounded-lg px-5 py-2 font-medium text-sm text-white shadow-sm transition-colors ${
+              style={props.confirmDone ? undefined : { background: "var(--op-accent-grad)" }}
+              className={`inline-flex items-center gap-1.5 rounded-lg px-4 py-2 font-medium text-sm text-white shadow-lg outline-none transition ${
                 props.confirmDone
-                  ? "bg-emerald-600"
-                  : "bg-slate-900 hover:bg-slate-700 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200"
+                  ? "bg-emerald-600 shadow-emerald-600/30"
+                  : "shadow-accent-600/30 hover:brightness-105 focus-visible:ring-2 focus-visible:ring-accent-400"
               }`}
             >
               {props.confirmDone ? (

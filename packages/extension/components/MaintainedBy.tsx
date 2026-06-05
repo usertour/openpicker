@@ -29,7 +29,7 @@ export function MaintainedByUsertour({ className = "" }: { className?: string })
       href="https://www.usertour.io?utm_source=openpicker&utm_medium=link&utm_campaign=maintained-by-usertour"
       target="_blank"
       rel="noopener noreferrer"
-      className={`inline-flex items-center gap-1 text-slate-400 text-xs no-underline transition-colors hover:text-slate-600 ${className}`}
+      className={`inline-flex shrink-0 items-center gap-1 whitespace-nowrap text-slate-400 text-xs no-underline transition-colors hover:text-slate-600 ${className}`}
     >
       <UsertourMark />
       <span>Maintained by Usertour</span>
