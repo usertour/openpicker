@@ -7,6 +7,7 @@
 <p align="center">An open-source CSS element picker for the web.</p>
 
 <p align="center">
+  <a href="https://chromewebstore.google.com/detail/openpicker/iflipcihgpkellfpebibkmlklembmjph"><img src="https://img.shields.io/badge/Chrome%20Web%20Store-Add%20to%20Chrome-4285F4.svg?logo=googlechrome&logoColor=white" alt="Chrome Web Store" /></a>
   <a href="./LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT" /></a>
   <a href="#contributing"><img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs welcome" /></a>
   <a href="https://www.usertour.io"><img src="https://img.shields.io/badge/maintained%20by-Usertour-867DB3.svg" alt="Maintained by Usertour" /></a>
@@ -79,7 +80,12 @@ versioning, and error model.
 
 ## Install
 
-### Extension (unpacked, for now)
+### Extension
+
+Install from the **[Chrome Web Store](https://chromewebstore.google.com/detail/openpicker/iflipcihgpkellfpebibkmlklembmjph)** (Chrome, Edge, and other Chromium browsers). Click the toolbar icon on any page to pick without writing code.
+
+<details>
+<summary>Or build from source (for development)</summary>
 
 ```bash
 pnpm install
@@ -87,8 +93,9 @@ pnpm --filter @openpicker/extension build
 ```
 
 Then in Chrome: open `chrome://extensions` → enable **Developer mode** → **Load unpacked** →
-select `packages/extension/.output/chrome-mv3`. Click the toolbar icon on any page to pick
-without writing code.
+select `packages/extension/.output/chrome-mv3`.
+
+</details>
 
 ### SDK
 
