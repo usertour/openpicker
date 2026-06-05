@@ -1,0 +1,45 @@
+/*
+ * openpicker design tokens — shared by the popup, options page, and the picker's
+ * shadow-DOM UI (imported by each entry CSS right after Tailwind + fonts).
+ *
+ * Accent: a crisp violet (accent-600 for light primaries, accent-400 for dark) —
+ * it carries the product's identity through primary actions, focus rings, the active
+ * tree node, and links. Neutrals stay on Tailwind's slate; semantic colors
+ * (emerald/amber/rose) keep their meaning. Type: bundled variable fonts from
+ * lib/fonts.css — JetBrains Mono for data (selectors, attributes), Hanken Grotesk
+ * for UI — wired here so the `font-sans` / `font-mono` utilities pick them up.
+ */
+@theme {
+  --font-sans: "Hanken Grotesk Variable", system-ui, -apple-system, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --color-accent-50: #f4f2fe;
+  --color-accent-100: #eae6fd;
+  --color-accent-200: #d8d0fb;
+  --color-accent-300: #beb1f7;
+  --color-accent-400: #9d8bf2;
+  --color-accent-500: #8470ea;
+  --color-accent-600: #6d5fe0;
+  --color-accent-700: #5a48c8;
+  --color-accent-800: #4a3da0;
+  --color-accent-900: #3f367e;
+  --color-accent-950: #28224d;
+}
+
+/*
+ * Theme-flipping gradients, applied via inline style so they also work inside the
+ * picker's shadow DOM: Tailwind's gradient utilities rely on --tw-gradient-* props
+ * that can fail to resolve there, but a plain custom property holding the whole
+ * gradient does not. Declared on :root,:host (light) the same way Tailwind emits its
+ * own theme vars, with a .dark override (the .dark class sits on an ancestor of the
+ * UI in every surface — popup, options, and the shadow-DOM container).
+ */
+:root,
+:host {
+  --op-panel: linear-gradient(180deg, #ffffff 0%, #fcfcfd 100%);
+  --op-accent-grad: linear-gradient(180deg, #7a6cf0 0%, #6457dd 100%);
+}
+.dark {
+  --op-panel: linear-gradient(180deg, #131418 0%, #0e0f12 100%);
+  --op-accent-grad: linear-gradient(180deg, #9788f5 0%, #7a68e8 100%);
+}

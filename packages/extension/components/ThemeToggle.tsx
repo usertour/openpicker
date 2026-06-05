@@ -47,7 +47,7 @@ export function ThemeToggle({ labels = false }: { labels?: boolean }) {
             aria-pressed={active}
             className={`inline-flex items-center gap-1.5 rounded-md px-2 py-1 font-medium text-xs transition-colors ${
               active
-                ? "bg-white text-slate-900 shadow-sm dark:bg-slate-950 dark:text-white"
+                ? "bg-white text-accent-700 shadow-sm dark:bg-slate-950 dark:text-accent-200"
                 : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200"
             }`}
           >

@@ -132,14 +132,14 @@ export function App() {
                   onClick={() => setMode(m.value)}
                   className={`flex w-full items-start gap-3 rounded-xl border p-4 text-left transition ${
                     selected
-                      ? "border-slate-900 bg-white shadow-sm dark:border-slate-100 dark:bg-slate-900"
-                      : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-slate-700 dark:hover:bg-slate-800"
+                      ? "border-accent-500 bg-accent-50/60 shadow-sm ring-1 ring-accent-500/20 dark:border-accent-500 dark:bg-accent-950/30 dark:ring-accent-500/25"
+                      : "border-slate-200 bg-white hover:border-accent-300 hover:bg-accent-50/40 dark:border-slate-800 dark:bg-slate-900 dark:hover:border-accent-800 dark:hover:bg-accent-950/20"
                   }`}
                 >
                   <span
                     className={`mt-px grid h-4 w-4 shrink-0 place-items-center rounded-full border transition ${
                       selected
-                        ? "border-slate-900 bg-slate-900 text-white dark:border-slate-100 dark:bg-slate-100 dark:text-slate-900"
+                        ? "border-accent-600 bg-accent-600 text-white dark:border-accent-500 dark:bg-accent-500 dark:text-white"
                         : "border-slate-300 bg-white dark:border-slate-600 dark:bg-slate-900"
                     }`}
                   >
@@ -184,13 +184,14 @@ export function App() {
                     onKeyDown={(e) =>
                       e.key === "Enter" && add(mode === "blocklist" ? "denied" : "granted")
                     }
-                    className="min-w-0 flex-1 rounded-lg border border-slate-300 px-3 py-1.5 font-mono text-sm outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:ring-slate-700"
+                    className="min-w-0 flex-1 rounded-lg border border-slate-300 px-3 py-1.5 font-mono text-sm outline-none transition focus:border-accent-500 focus:ring-2 focus:ring-accent-500/30 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100 dark:focus:border-accent-500 dark:focus:ring-accent-500/30"
                   />
                   {mode === "ask" && (
                     <button
                       type="button"
                       onClick={() => add("granted")}
-                      className="rounded-lg bg-slate-900 px-3 py-1.5 font-medium text-sm text-white transition-colors hover:bg-slate-700 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200"
+                      style={{ background: "var(--op-accent-grad)" }}
+                      className="rounded-lg px-3 py-1.5 font-medium text-sm text-white shadow-lg shadow-accent-600/30 outline-none transition hover:brightness-105 focus-visible:ring-2 focus-visible:ring-accent-400"
                     >
                       {i18n.t("options.allow")}
                     </button>

@@ -22,7 +22,7 @@ interface TreeNavigatorProps {
 }
 
 const arrowBtn =
-  "grid h-7 w-7 place-items-center rounded-md text-slate-400 transition-colors hover:bg-white hover:text-slate-700 hover:shadow-sm disabled:cursor-default disabled:opacity-25 disabled:hover:bg-transparent disabled:hover:text-slate-400 disabled:hover:shadow-none dark:text-slate-500 dark:hover:bg-slate-700 dark:hover:text-slate-100 dark:disabled:hover:text-slate-500"
+  "grid h-7 w-7 place-items-center rounded-md text-slate-400 transition-colors hover:bg-white hover:text-accent-600 hover:shadow-sm disabled:cursor-default disabled:opacity-25 disabled:hover:bg-transparent disabled:hover:text-slate-400 disabled:hover:shadow-none dark:text-slate-500 dark:hover:bg-slate-700 dark:hover:text-accent-200 dark:disabled:hover:text-slate-500"
 const info = "max-w-[12rem] truncate px-1 font-mono text-[11px]"
 
 /**
@@ -35,7 +35,7 @@ export function TreeNavigator(props: TreeNavigatorProps) {
   return (
     <div className="flex flex-col items-center gap-1 py-3">
       <span
-        className={`${info} ${props.parentLabel ? "text-sky-600 dark:text-sky-400" : "text-slate-300 dark:text-slate-600"}`}
+        className={`${info} ${props.parentLabel ? "text-accent-600 dark:text-accent-400" : "text-slate-300 dark:text-slate-600"}`}
       >
         {props.parentLabel ?? "—"}
       </span>
@@ -65,7 +65,8 @@ export function TreeNavigator(props: TreeNavigatorProps) {
           <button
             type="button"
             onClick={props.onCenter}
-            className="min-w-0 max-w-[10rem] truncate rounded-md bg-slate-900 px-2.5 py-1 font-medium font-mono text-[11px] text-white shadow-sm transition-colors hover:bg-slate-700 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200"
+            style={{ background: "var(--op-accent-grad)" }}
+            className="min-w-0 max-w-[10rem] truncate rounded-md px-2.5 py-1 font-medium font-mono text-[11px] text-white shadow-md shadow-accent-600/30 transition hover:brightness-105"
           >
             {props.currentLabel}
           </button>
