@@ -106,6 +106,18 @@ describe("generateSelector", () => {
     expect(selector).toContain("data-testid")
     expect(document.querySelector(selector)).toBe(button)
   })
+
+  it("honors an ignore regex (avoids the ignored id)", () => {
+    document.body.innerHTML = '<div><button id="keepme" class="btn">x</button></div>'
+    const button = q(document, "#keepme")
+    const settings: SelectorSettings = {
+      ...defaultSelectorSettings(),
+      id: { enabled: true, allow: "", ignore: "^keep" },
+    }
+    const selector = generateSelector(button, settings)
+    expect(selector).not.toContain("#keepme")
+    expect(document.querySelector(selector)).toBe(button)
+  })
 })
 
 describe("AUTO_ATTRS", () => {

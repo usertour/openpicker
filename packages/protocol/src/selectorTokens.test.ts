@@ -103,4 +103,10 @@ describe("matchesSelectorConfig", () => {
   it("does not constrain the universal selector", () => {
     expect(matchesSelectorConfig("*", { tag: { enabled: false } })).toBe(true)
   })
+
+  it("passes an empty selector and tolerates a malformed regex", () => {
+    expect(matchesSelectorConfig("", { id: { enabled: false } })).toBe(true)
+    // A malformed allow regex constrains nothing rather than falsely rejecting.
+    expect(matchesSelectorConfig("[data-x]", { attr: { allow: "[" } })).toBe(true)
+  })
 })
