@@ -1,6 +1,6 @@
 {
   "name": "@openpicker/protocol",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Open postMessage protocol for the openpicker CSS element picker — wire types, constants, and selector helpers.",
   "license": "MIT",
   "author": "Usertour (https://www.usertour.io)",

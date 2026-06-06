@@ -70,6 +70,18 @@ Returns an `Openpicker` handle.
 | `lockSelectorSettings` | `boolean` | Show the gear rules read-only. Default `false`. |
 | `lockSelectorEdit` | `boolean` | Make the selector field read-only. Default `false`. |
 | `requireUniqueMatch` | `boolean` | Allow confirm only when the selector matches exactly one element. Default `false`. |
+| `mustMatch` | `string` | A CSS selector the picked element must match. Non-matching elements aren't selectable (hovering snaps to the nearest matching ancestor); an invalid value rejects with `invalid_params`. |
+
+**Two axes.** `mustMatch` constrains **which element** can be picked; `selector` constrains **how its
+selector is built**. They're independent and compose — e.g. "only inputs, identified by id":
+
+```ts
+op.pick({
+  url,
+  mustMatch: "input, textarea, select, [contenteditable]",
+  selector: { class: { enabled: false }, attr: { enabled: false }, tag: { enabled: false } },
+})
+```
 
 **`SelectorConfig`** — per anchor type (`id` / `class` / `attr` / `tag`), all optional:
 
