@@ -43,13 +43,15 @@
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
-    "build": "pnpm --filter @openpicker/protocol build && tsup",
+    "build": "tsup",
     "dev": "tsup --watch",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "pnpm --filter @openpicker/protocol build && tsup"
+    "prepublishOnly": "tsup"
+  },
+  "dependencies": {
+    "@openpicker/protocol": "workspace:^"
   },
   "devDependencies": {
-    "@openpicker/protocol": "workspace:*",
     "tsup": "^8.5.0",
     "typescript": "^5.9.3"
   }
