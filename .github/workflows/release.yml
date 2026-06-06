@@ -2,9 +2,12 @@ name: Release
 
 # Publishes the public workspace packages (@openpicker/protocol, @openpicker/sdk)
 # to npm when a v* tag is pushed (e.g. v0.2.0). The tag tracks @openpicker/sdk's
-# version; @openpicker/protocol is published only when its own version is not yet
-# on npm. Requires an npm automation token in the repo secret NPM_TOKEN
-# (Settings → Secrets and variables → Actions → New repository secret).
+# version; each package is published only when its version is not yet on npm.
+#
+# Auth is npm Trusted Publishing (OIDC) — no long-lived token. Each package must
+# have a Trusted Publisher configured on npmjs.com (package → Settings → Trusted
+# Publisher → GitHub Actions, repo usertour/openpicker, workflow release.yml).
+# Requires pnpm >= 10 (OIDC support; 11 has a known 404 bug) and Node >= 22.14.
 on:
   push:
     tags:
@@ -14,18 +17,20 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # required for npm Trusted Publishing (OIDC)
     steps:
       - uses: actions/checkout@v4
 
+      # pnpm version comes from the root package.json "packageManager" field (>= 10).
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 9.15.0
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           registry-url: "https://registry.npmjs.org"
           cache: pnpm
 
@@ -48,11 +53,9 @@ jobs:
         run: pnpm -r typecheck
 
       # Publishes every non-private workspace package in dependency order
-      # (@openpicker/protocol, then @openpicker/sdk). pnpm skips any package whose
-      # version is already on npm, so re-tagging or a prior manual publish is safe.
-      # Each package's prepublishOnly rebuilds its dist; access is public via each
-      # package's publishConfig.
+      # (@openpicker/protocol, then @openpicker/sdk). pnpm authenticates via OIDC
+      # (no NODE_AUTH_TOKEN) and skips any package whose version is already on npm,
+      # so re-tagging or a prior manual publish is safe. Each package's
+      # prepublishOnly rebuilds its dist; access is public via its publishConfig.
       - name: Publish to npm
         run: pnpm -r publish --no-git-checks
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
