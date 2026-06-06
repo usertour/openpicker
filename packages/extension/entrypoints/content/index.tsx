@@ -11,6 +11,7 @@ import {
 import { ensureConsent } from "./picker/consentGate"
 import { runCrossTabPick } from "./picker/crossTab"
 import { resumeCrossTabTargetOnLoad, startCrossTabTarget } from "./picker/crossTabTarget"
+import { isValidSelector } from "./picker/dom"
 import { clearHighlight, runHighlight } from "./picker/highlight"
 import { getAuthMode, getConsent } from "./picker/messaging"
 import { cancelActivePicker, runPicker } from "./picker/run"
@@ -60,6 +61,17 @@ export default defineContentScript({
         replyErr(req.id, {
           code: "invalid_params",
           message: "openpicker: pick requires a `url` to open and pick in",
+        })
+        return
+      }
+
+      // `mustMatch` (element-eligibility filter) must be a valid CSS selector; reject
+      // a malformed one rather than silently ignoring the constraint.
+      const mustMatch = req.params.mustMatch?.trim()
+      if (mustMatch && !isValidSelector(mustMatch)) {
+        replyErr(req.id, {
+          code: "invalid_params",
+          message: "openpicker: `mustMatch` is not a valid CSS selector",
         })
         return
       }

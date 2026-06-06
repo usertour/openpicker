@@ -8,8 +8,11 @@ import {
   getNextSibling,
   getParent,
   getPrevSibling,
+  isValidSelector,
+  matchesTarget,
   openingTag,
   openingTagParts,
+  resolveTarget,
   tagLabel,
 } from "./dom"
 
@@ -138,5 +141,65 @@ describe("DOM-tree navigation (skipping the picker's own host)", () => {
     expect(getNextSibling(only, host)).toBeNull()
     expect(getPrevSibling(only, host)).toBeNull()
     expect(getFirstChild(only, host)).toBeNull()
+  })
+})
+
+describe("resolveTarget (mustMatch snap)", () => {
+  it("returns the element unchanged when there is no constraint", () => {
+    const node = el("<div><span id='x'></span></div>")
+    const span = q(node, "#x")
+    expect(resolveTarget(span, undefined)).toBe(span)
+    expect(resolveTarget(span, "")).toBe(span)
+  })
+
+  it("returns the element itself when it matches", () => {
+    const form = el("<form><input id='x'></form>")
+    const input = q(form, "#x")
+    expect(resolveTarget(input, "input, textarea")).toBe(input)
+  })
+
+  it("snaps to the nearest matching ancestor", () => {
+    const form = el("<div contenteditable><p><b id='x'>hi</b></p></div>")
+    const b = q(form, "#x")
+    expect(resolveTarget(b, "[contenteditable]")).toBe(form)
+  })
+
+  it("returns null when nothing in the chain matches", () => {
+    const node = el("<section><span id='x'></span></section>")
+    expect(resolveTarget(q(node, "#x"), "input")).toBeNull()
+  })
+
+  it("returns null for a malformed selector", () => {
+    const node = el("<div id='x'></div>")
+    expect(resolveTarget(node, ":::nope")).toBeNull()
+  })
+})
+
+describe("matchesTarget (confirm gate)", () => {
+  it("is true when unconstrained", () => {
+    expect(matchesTarget(el("<div>"), undefined)).toBe(true)
+  })
+
+  it("checks the element itself, not ancestors", () => {
+    const form = el("<form><div id='x'></div></form>")
+    const div = q(form, "#x")
+    expect(matchesTarget(div, "form")).toBe(false) // ancestor matches, element doesn't
+    expect(matchesTarget(div, "div")).toBe(true)
+  })
+
+  it("is false for a malformed selector", () => {
+    expect(matchesTarget(el("<div>"), ":::nope")).toBe(false)
+  })
+})
+
+describe("isValidSelector", () => {
+  it("accepts valid selectors", () => {
+    expect(isValidSelector("input, textarea, [contenteditable]")).toBe(true)
+    expect(isValidSelector("div.card > a[href]")).toBe(true)
+  })
+
+  it("rejects malformed selectors", () => {
+    expect(isValidSelector(":::nope")).toBe(false)
+    expect(isValidSelector("div >>> span")).toBe(false)
   })
 })

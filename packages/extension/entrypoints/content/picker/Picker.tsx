@@ -8,10 +8,12 @@ import {
   getNextSibling,
   getParent,
   getPrevSibling,
+  matchesTarget,
+  resolveTarget,
   tagLabel,
 } from "./dom"
 import { HighlightBox } from "./HighlightBox"
-import { applyHostCursor, clearHostCursor } from "./hostCursor"
+import { applyHostCursor, clearHostCursor, setHostCursorBlocked } from "./hostCursor"
 import { isNavigateMode, setNavigateMode } from "./navigateMode"
 import { RulerGuides } from "./RulerGuides"
 import type { PickOutcome } from "./run"
@@ -69,6 +71,10 @@ export function Picker({
   const [selector, setSelector] = useState("")
   const [selectorEdited, setSelectorEdited] = useState(false)
   const [copied, setCopied] = useState(false)
+  // SDK `mustMatch`: only elements matching this CSS selector are selectable.
+  const mustMatch = params.mustMatch?.trim() || undefined
+  // True while hovering a spot with no matching element (not selectable here).
+  const [blocked, setBlocked] = useState(false)
 
   const hoverRect = useTrackedRect(phase === "hover" ? hovered : null)
   const lockedRect = useTrackedRect(phase === "locked" ? locked : null)
@@ -85,7 +91,13 @@ export function Picker({
     const onMove = (e: MouseEvent) => {
       const t = e.target
       if (insideUs(t)) return
-      if (t instanceof Element) setHovered(t)
+      if (t instanceof Element) {
+        // Snap to the nearest element matching `mustMatch` (incl. self); null = not
+        // selectable here → no highlight, and the cursor/hint go to "blocked".
+        const eff = resolveTarget(t, mustMatch)
+        setHovered(eff)
+        setBlocked(!!mustMatch && eff === null)
+      }
     }
     // Select on click and cancel that same click, so a link/button can never
     // navigate or activate. Selecting on pointerdown instead would leave the
@@ -96,7 +108,11 @@ export function Picker({
       e.preventDefault()
       e.stopPropagation()
       if (e.target instanceof Element) {
-        setLocked(e.target)
+        // Lock onto the nearest matching element; ignore the click entirely when
+        // nothing in the chain matches `mustMatch` (you can't select here).
+        const eff = resolveTarget(e.target, mustMatch)
+        if (!eff) return
+        setLocked(eff)
         setSelectorEdited(false)
         setPhase("locked")
       }
@@ -147,7 +163,12 @@ export function Picker({
       for (const type of SWALLOW) window.removeEventListener(type, swallow, true)
       clearHostCursor()
     }
-  }, [phase, host, cancel])
+  }, [phase, host, cancel, mustMatch])
+
+  // Reflect "this spot can't be picked" as a not-allowed cursor on the host page.
+  useEffect(() => {
+    setHostCursorBlocked(phase === "hover" && blocked)
+  }, [phase, blocked])
 
   // Esc also cancels from the locked phase.
   useEffect(() => {
@@ -192,6 +213,7 @@ export function Picker({
     setHovered(null)
     setSelector("")
     setSelectorEdited(false)
+    setBlocked(false)
     setPhase("hover")
   }, [])
 
@@ -260,6 +282,10 @@ export function Picker({
     onResolve({ type: "result", result })
   }, [locked, selector, copyOnConfirm, params.screenshot, onResolve, host])
 
+  // The locked element fell outside `mustMatch` (e.g. after tree navigation) — block
+  // confirming it, the same way requireUniqueMatch blocks a non-unique selector.
+  const targetMismatch = !!locked && !matchesTarget(locked, mustMatch)
+
   // hover + locked share one persistent Sidebar; page overlays reflect the
   // current target (hovered while finding, locked once selected).
   const overlayEl = locked ?? hovered
@@ -326,6 +352,8 @@ export function Picker({
         lockSelectorSettings={!!params.lockSelectorSettings}
         lockSelectorEdit={!!params.lockSelectorEdit}
         requireUniqueMatch={!!params.requireUniqueMatch}
+        blocked={blocked}
+        targetMismatch={targetMismatch}
       />
     </>
   )

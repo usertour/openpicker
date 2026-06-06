@@ -53,6 +53,7 @@ options:
   done: "Готово"
 picker:
   hoverHint: Переместите курсор и щёлкните по элементу, чтобы выбрать его.
+  noMatchingTarget: "Этот элемент нельзя выбрать"
   selectorLabel: Селектор
   hoverPlaceholder: наведите курсор на элемент…
   invalidSelector: Недопустимый селектор
