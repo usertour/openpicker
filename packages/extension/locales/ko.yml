@@ -54,6 +54,8 @@ options:
 picker:
   hoverHint: 마우스를 움직여 요소를 클릭하면 선택됩니다.
   noMatchingTarget: "이 요소는 선택할 수 없습니다"
+  ruleMismatch: "이 선택자는 규칙에 맞지 않습니다"
+  ruleEmpty: "규칙에 맞는 선택자가 없습니다. 다른 요소를 선택하거나 규칙을 완화하세요"
   selectorLabel: 선택자
   hoverPlaceholder: 요소 위에 마우스를 올리세요…
   invalidSelector: 잘못된 선택자

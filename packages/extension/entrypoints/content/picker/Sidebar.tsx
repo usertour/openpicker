@@ -5,6 +5,7 @@ import {
   RiCompass3Line,
   RiCrosshair2Line,
   RiCursorLine,
+  RiErrorWarningLine,
   RiForbidLine,
   RiSettings3Line,
 } from "@remixicon/react"
@@ -76,6 +77,10 @@ interface SidebarProps {
   blocked?: boolean
   /** The locked element falls outside SDK `mustMatch` — block confirming it. */
   targetMismatch?: boolean
+  /** The current selector violates the active selector rules — warn and block confirming. */
+  ruleMismatch?: boolean
+  /** No selector conforms to the rules for this element — warn and block confirming. */
+  ruleEmpty?: boolean
 }
 
 /**
@@ -255,6 +260,12 @@ export function Sidebar(props: SidebarProps) {
                 </Tooltip>
               )}
             </div>
+            {(props.ruleMismatch || props.ruleEmpty) && (
+              <p className="flex items-start gap-1.5 text-amber-700 text-xs leading-snug dark:text-amber-300">
+                <RiErrorWarningLine size={13} className="mt-0.5 shrink-0" />
+                {i18n.t(props.ruleEmpty ? "picker.ruleEmpty" : "picker.ruleMismatch")}
+              </p>
+            )}
           </div>
 
           {/* Inspector tools (locked only) */}
@@ -295,14 +306,20 @@ export function Sidebar(props: SidebarProps) {
               disabled={
                 props.confirmDone ||
                 (!!props.requireUniqueMatch && props.matchCount !== 1) ||
-                !!props.targetMismatch
+                !!props.targetMismatch ||
+                !!props.ruleMismatch ||
+                !!props.ruleEmpty
               }
               title={
                 props.targetMismatch
                   ? i18n.t("picker.noMatchingTarget")
-                  : props.requireUniqueMatch && props.matchCount !== 1
-                    ? i18n.t("settings.requireUnique")
-                    : undefined
+                  : props.ruleEmpty
+                    ? i18n.t("picker.ruleEmpty")
+                    : props.ruleMismatch
+                      ? i18n.t("picker.ruleMismatch")
+                      : props.requireUniqueMatch && props.matchCount !== 1
+                        ? i18n.t("settings.requireUnique")
+                        : undefined
               }
               style={props.confirmDone ? undefined : { background: "var(--op-accent-grad)" }}
               className={`inline-flex items-center gap-1.5 rounded-lg px-4 py-2 font-medium text-sm text-white shadow-lg outline-none transition disabled:cursor-not-allowed disabled:opacity-50 ${

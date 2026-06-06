@@ -54,6 +54,8 @@ options:
 picker:
   hoverHint: Fareyi hareket ettirin ve seçmek için bir öğeye tıklayın.
   noMatchingTarget: "Bu öğe seçilemez"
+  ruleMismatch: "Bu seçici kurallarınıza uymuyor"
+  ruleEmpty: "Kurallarınıza uyan seçici yok — başka bir öğe seçin veya kuralları gevşetin"
   selectorLabel: Seçici
   hoverPlaceholder: bir öğenin üzerine gelin…
   invalidSelector: Geçersiz seçici

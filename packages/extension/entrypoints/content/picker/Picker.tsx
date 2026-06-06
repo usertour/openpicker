@@ -19,7 +19,13 @@ import { RulerGuides } from "./RulerGuides"
 import type { PickOutcome } from "./run"
 import { Sidebar } from "./Sidebar"
 import { captureScreenshot, normalizeScreenshotMode } from "./screenshot"
-import { matchCount as countMatches, evalSelector, generateSelector } from "./selector"
+import {
+  conformsToSettings,
+  matchCount as countMatches,
+  evalSelector,
+  generateSelector,
+  hasSelectorRules,
+} from "./selector"
 import type { SelectorSettings } from "./selectorSettings"
 import { saveSelectorSettings } from "./settingsStore"
 import { TagTooltip } from "./TagTooltip"
@@ -286,6 +292,15 @@ export function Picker({
   // confirming it, the same way requireUniqueMatch blocks a non-unique selector.
   const targetMismatch = !!locked && !matchesTarget(locked, mustMatch)
 
+  // Selector-rule conformance (strict): with rules active, the selector must conform —
+  // an empty one (no conforming selector for this element) or a violating one (e.g.
+  // hand-edited) shows a warning and blocks confirming.
+  const rulesActive = hasSelectorRules(settings)
+  const trimmedSelector = shownSelector.trim()
+  const ruleEmpty = !!locked && rulesActive && !trimmedSelector
+  const ruleMismatch =
+    !!locked && rulesActive && !!trimmedSelector && !conformsToSettings(shownSelector, settings)
+
   // hover + locked share one persistent Sidebar; page overlays reflect the
   // current target (hovered while finding, locked once selected).
   const overlayEl = locked ?? hovered
@@ -354,6 +369,8 @@ export function Picker({
         requireUniqueMatch={!!params.requireUniqueMatch}
         blocked={blocked}
         targetMismatch={targetMismatch}
+        ruleMismatch={ruleMismatch}
+        ruleEmpty={ruleEmpty}
       />
     </>
   )
