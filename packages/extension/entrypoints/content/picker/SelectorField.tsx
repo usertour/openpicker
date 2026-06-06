@@ -1,7 +1,7 @@
+import { type SelectorTokenType, tokenizeSelector } from "@openpicker/protocol"
 import { RiCheckLine, RiFileCopyLine, RiLock2Line } from "@remixicon/react"
 import { useMemo, useState } from "react"
 import { i18n } from "#i18n"
-import { type SelectorTokenType, tokenizeSelector } from "./selectorTokens"
 
 /**
  * The selector readout — the picker's hero. A syntax-highlighted field that stays
@@ -16,7 +16,8 @@ const TOKEN_CLASS: Record<SelectorTokenType, string> = {
   tag: "text-pink-700 dark:text-pink-300",
   id: "text-accent-600 dark:text-accent-400",
   class: "text-sky-600 dark:text-sky-300",
-  attr: "text-amber-700 dark:text-amber-300",
+  attrName: "text-amber-700 dark:text-amber-300",
+  attrValue: "text-amber-700 dark:text-amber-300",
   pseudo: "text-emerald-600 dark:text-emerald-300",
   combinator: "text-slate-400 dark:text-slate-500",
   punctuation: "text-slate-400 dark:text-slate-500",

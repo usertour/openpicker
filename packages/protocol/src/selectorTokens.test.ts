@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
-import { type SelectorTokenType, tokenizeSelector } from "./selectorTokens"
+import type { SelectorConfig } from "./methods"
+import { matchesSelectorConfig, type SelectorTokenType, tokenizeSelector } from "./selectorTokens"
 
-/** Collapse tokens to "text:type" pairs for compact assertions. */
 const shape = (sel: string): string[] => tokenizeSelector(sel).map((t) => `${t.text}:${t.type}`)
 const typesOf = (sel: string, text: string): SelectorTokenType[] =>
   tokenizeSelector(sel)
@@ -13,7 +13,7 @@ describe("tokenizeSelector", () => {
     expect(tokenizeSelector("")).toEqual([])
   })
 
-  it("preserves the exact input when concatenated (no dropped/added chars)", () => {
+  it("preserves the exact input when concatenated", () => {
     const samples = [
       "div",
       "#main",
@@ -46,18 +46,17 @@ describe("tokenizeSelector", () => {
     expect(typesOf("a > b", ">")).toEqual(["combinator"])
     expect(typesOf("a + b", "+")).toEqual(["combinator"])
     expect(typesOf("a ~ b", "~")).toEqual(["combinator"])
-    // A plain descendant space is its own combinator token.
     expect(tokenizeSelector("a b").some((t) => t.type === "combinator" && /\s/.test(t.text))).toBe(
       true,
     )
   })
 
-  it("sub-tokenizes attribute selectors: brackets/operators punctuation, name+value attr", () => {
+  it("splits attribute selectors into name and value", () => {
     expect(shape('[data-testid="submit"]')).toEqual([
       "[:punctuation",
-      "data-testid:attr",
+      "data-testid:attrName",
       "=:punctuation",
-      '"submit":attr',
+      '"submit":attrValue',
       "]:punctuation",
     ])
   })
@@ -67,12 +66,41 @@ describe("tokenizeSelector", () => {
     expect(typesOf("li:nth-child(2n+1)", ":nth-child(2n+1)")).toEqual(["pseudo"])
     expect(typesOf("p::before", "::before")).toEqual(["pseudo"])
   })
+})
 
-  it("handles a realistic compound selector end to end", () => {
-    const toks = tokenizeSelector('nav > .toolbar button[data-testid="submit"]')
-    expect(toks.map((t) => t.text).join("")).toBe('nav > .toolbar button[data-testid="submit"]')
-    expect(typesOf('nav > .toolbar button[data-testid="submit"]', "nav")).toEqual(["tag"])
-    expect(typesOf('nav > .toolbar button[data-testid="submit"]', ".toolbar")).toEqual(["class"])
-    expect(typesOf('nav > .toolbar button[data-testid="submit"]', "button")).toEqual(["tag"])
+describe("matchesSelectorConfig", () => {
+  const onlyDataStep: SelectorConfig = {
+    id: { enabled: false },
+    class: { enabled: false },
+    tag: { enabled: false },
+    attr: { allow: "^data-step$" },
+  }
+
+  it("accepts a selector that uses only allowed anchors", () => {
+    expect(matchesSelectorConfig('[data-step="x"]', onlyDataStep)).toBe(true)
+  })
+
+  it("rejects selectors that use disabled dimensions", () => {
+    expect(matchesSelectorConfig("div[data-step]", onlyDataStep)).toBe(false) // tag disabled
+    expect(matchesSelectorConfig("#main", onlyDataStep)).toBe(false) // id disabled
+    expect(matchesSelectorConfig(".foo", onlyDataStep)).toBe(false) // class disabled
+  })
+
+  it("rejects an attribute name outside the allow regex", () => {
+    expect(matchesSelectorConfig('[data-other="y"]', onlyDataStep)).toBe(false)
+  })
+
+  it("treats a missing dimension as unconstrained", () => {
+    expect(matchesSelectorConfig("div#a.b[c]", {})).toBe(true)
+    expect(matchesSelectorConfig("a:hover > span", {})).toBe(true)
+  })
+
+  it("honors an ignore regex", () => {
+    expect(matchesSelectorConfig("#ember123", { id: { ignore: "^ember" } })).toBe(false)
+    expect(matchesSelectorConfig("#main", { id: { ignore: "^ember" } })).toBe(true)
+  })
+
+  it("does not constrain the universal selector", () => {
+    expect(matchesSelectorConfig("*", { tag: { enabled: false } })).toBe(true)
   })
 })
