@@ -80,10 +80,12 @@ async function pick(): Promise<void> {
   pickBtn.textContent = "Picking…"
   try {
     const config = getSelectorConfig()
+    const mustMatch = byId<HTMLInputElement>("mustMatch").value.trim()
     const res = await op.pick({
       url,
       screenshot: shotSel.value as ScreenshotMode,
       selector: config,
+      mustMatch: mustMatch || undefined,
       lockSelectorSettings: lockSettingsEl.checked,
       lockSelectorEdit: lockEditEl.checked,
       requireUniqueMatch: reqUniqueEl.checked,

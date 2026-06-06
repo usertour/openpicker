@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "devDependencies": {
-    "@openpicker/sdk": "npm:@openpicker/sdk@^0.2.0",
+    "@openpicker/sdk": "npm:@openpicker/sdk@^0.2.3",
     "@openpicker/selector-rules-ui": "workspace:*",
     "@tailwindcss/vite": "^4.3.0",
     "@types/react": "^19.0.0",
