@@ -1,5 +1,5 @@
 # Turkish (Türkçe) — machine-translated, review welcome. Mirrors en.yml.
-# Brand names (openpicker, Usertour) and example/regex values stay in English.
+# Brand names (OpenPicker, Usertour) and example/regex values stay in English.
 
 extDescription: Açık kaynaklı CSS öğe seçici.
 
@@ -40,7 +40,7 @@ options:
   invalidOrigin: Geçerli bir kaynak girin, örn. https://example.com
   removeDecision: Bu kararı kaldır
   appearanceTitle: Görünüm
-  appearanceDesc: openpicker'ın kendi arayüzünün teması.
+  appearanceDesc: OpenPicker'ın kendi arayüzünün teması.
 
   selectorRulesTitle: "Seçici kuralları"
   selectorRulesDesc: "Seçicilerin nasıl oluşturulacağını denetleyin: genel veya site bazlı."

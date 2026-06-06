@@ -1,6 +1,6 @@
 # @openpicker/docs
 
-The documentation site for openpicker (**docs.openpicker.dev**), built with
+The documentation site for OpenPicker (**docs.openpicker.dev**), built with
 [VitePress](https://vitepress.dev). User guide + developer/SDK reference. Deployed to Cloudflare
 (Workers static assets), like the rest of the apps.
 

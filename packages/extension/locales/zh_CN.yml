@@ -1,5 +1,5 @@
 # Simplified Chinese (简体中文) — machine-translated, review welcome. Mirrors en.yml.
-# Brand names (openpicker, Usertour) and example/regex values stay in English.
+# Brand names (OpenPicker, Usertour) and example/regex values stay in English.
 
 extDescription: 开源的 CSS 元素选择器。
 
@@ -40,7 +40,7 @@ options:
   invalidOrigin: 请输入有效的来源，例如 https://example.com
   removeDecision: 移除此项设置
   appearanceTitle: 外观
-  appearanceDesc: openpicker 自身界面的主题。
+  appearanceDesc: OpenPicker 自身界面的主题。
 
   selectorRulesTitle: "选择器规则"
   selectorRulesDesc: "控制选择器如何生成——全局或按站点。"

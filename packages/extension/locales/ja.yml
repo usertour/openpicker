@@ -1,5 +1,5 @@
 # Japanese (日本語) — machine-translated, review welcome. Mirrors en.yml.
-# Brand names (openpicker, Usertour) and example/regex values stay in English.
+# Brand names (OpenPicker, Usertour) and example/regex values stay in English.
 
 extDescription: オープンソースの CSS 要素ピッカー。
 
@@ -40,7 +40,7 @@ options:
   invalidOrigin: '有効なオリジンを入力してください（例: https://example.com）'
   removeDecision: この設定を削除
   appearanceTitle: 外観
-  appearanceDesc: openpicker 自体の UI のテーマ。
+  appearanceDesc: OpenPicker 自体の UI のテーマ。
 
   selectorRulesTitle: "セレクターのルール"
   selectorRulesDesc: "セレクターの作り方を制御（全体またはサイト単位）。"

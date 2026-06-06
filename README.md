@@ -2,7 +2,7 @@
   <img src="./.github/openpicker.svg" alt="openpicker" width="88" height="88" />
 </p>
 
-<h1 align="center">openpicker</h1>
+<h1 align="center">OpenPicker</h1>
 
 <p align="center">An open-source CSS element picker for the web.</p>
 
@@ -42,7 +42,7 @@ straight from the toolbar, with no code at all.
 A web page can already inspect its *own* DOM. What it can't do is ask the user to point at an
 element on **another tab or origin** and hand the selector back — browsers isolate origins for
 good reason. That cross-tab/cross-origin hop is exactly what an extension can bridge, and it's the
-reason openpicker exists. It's a natural fit for product onboarding/tours, event tagging, no-code
+reason OpenPicker exists. It's a natural fit for product onboarding/tours, event tagging, no-code
 automation, scraping config, and anything that needs "let me point at that element."
 
 ## Features
@@ -69,7 +69,7 @@ Two communication hops; only the first is the public protocol:
 ```
 [ your code ]
      │  function calls
-[ openpicker SDK ]  ── window.postMessage ──►  [ extension content script ]   ◄── PUBLIC PROTOCOL
+[ OpenPicker SDK ]  ── window.postMessage ──►  [ extension content script ]   ◄── PUBLIC PROTOCOL
                                                       │  chrome.runtime.*  (extension-internal)
                                                [ background service worker ]
 ```
@@ -206,7 +206,7 @@ display-only; only the verified `event.origin` is authoritative. See [PROTOCOL.m
 openpicker/
 ├── packages/
 │   ├── protocol/     # @openpicker/protocol — shared types & constants (source-only, private)
-│   ├── sdk/          # openpicker — the npm SDK integrators install (tsup build)
+│   ├── sdk/          # OpenPicker — the npm SDK integrators install (tsup build)
 │   └── extension/    # @openpicker/extension — the browser extension (WXT + React + Tailwind, MV3)
 ├── apps/
 │   ├── test/         # interactive Ping/Pick test page

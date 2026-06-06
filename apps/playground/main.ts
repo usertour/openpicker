@@ -10,7 +10,7 @@ import { getSelectorConfig, mountRulesIsland } from "./rules-island"
 const out = document.getElementById("out") as HTMLPreElement
 const shot = document.getElementById("shot") as HTMLImageElement
 const statusEl = document.getElementById("status") as HTMLSpanElement
-const op = createOpenpicker({ appName: "openpicker playground" })
+const op = createOpenpicker({ appName: "OpenPicker playground" })
 
 function show(label: string, value: unknown): void {
   out.textContent = `${label}\n${JSON.stringify(value, null, 2)}`

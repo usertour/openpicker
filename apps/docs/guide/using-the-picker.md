@@ -1,6 +1,6 @@
 # Using the picker
 
-Once a pick starts (from the toolbar or the SDK), openpicker takes over the page with an isolated
+Once a pick starts (from the toolbar or the SDK), OpenPicker takes over the page with an isolated
 overlay. Here's the full flow.
 
 ## Find an element

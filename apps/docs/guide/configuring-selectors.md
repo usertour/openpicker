@@ -1,7 +1,7 @@
 # Configuring selectors
 
 Different sites have different conventions — one relies on `data-testid`, another on stable ids or
-class names. openpicker lets you control **how selectors are built**, with a global default and
+class names. OpenPicker lets you control **how selectors are built**, with a global default and
 per-site overrides.
 
 You can set the rules in two places:
@@ -20,7 +20,7 @@ has two regex filters:
 
 | Field | What it does |
 | --- | --- |
-| **Allow** | Only names matching this regex may be used. Empty = openpicker's stable-name default. |
+| **Allow** | Only names matching this regex may be used. Empty = OpenPicker's stable-name default. |
 | **Ignore** | Names matching this regex are never used (applied on top of Allow). |
 
 Examples:
@@ -34,7 +34,7 @@ For attributes, Allow / Ignore match the attribute **name**.
 
 ## Built-in stability filters
 
-When an **Allow** box is empty, openpicker uses a sensible default and automatically avoids anchors
+When an **Allow** box is empty, OpenPicker uses a sensible default and automatically avoids anchors
 that won't survive a redeploy: auto-generated ids (Ember, Radix, React `useId`, long hex hashes),
 hashed class names (Emotion, styled-components, CSS modules), and it prefers test hooks
 (`data-testid`, `data-cy`, …) plus a curated set of stable attributes (`name`, `aria-label`, `role`,

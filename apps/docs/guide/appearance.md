@@ -1,6 +1,6 @@
 # Appearance
 
-openpicker's own UI (the popup, the options page, and the picker sidebar) supports three themes:
+OpenPicker's own UI (the popup, the options page, and the picker sidebar) supports three themes:
 
 | Theme | Behavior |
 | --- | --- |
@@ -19,5 +19,5 @@ Both write the same setting, so changing it in one place updates the other immed
 sidebar simply follows your choice.
 
 ::: tip
-This theme controls **openpicker's interface only** — it never changes the websites you pick on.
+This theme controls **OpenPicker's interface only** — it never changes the websites you pick on.
 :::

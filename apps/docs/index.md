@@ -1,7 +1,7 @@
 ---
 layout: home
 hero:
-  name: openpicker
+  name: OpenPicker
   text: Pick an element, get its selector.
   tagline: An open-source CSS element picker for the web — a browser extension plus a tiny SDK. Point at any element on any page and get a stable CSS selector back.
   image:

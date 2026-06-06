@@ -1,6 +1,6 @@
 # Getting started
 
-**openpicker** is an open-source CSS element picker for the web. It has two parts:
+**OpenPicker** is an open-source CSS element picker for the web. It has two parts:
 
 - A **browser extension** that renders the whole picking experience — a hover highlight, a sidebar
   inspector, a DOM-tree navigator, a live match count, and per-site selector settings.
@@ -11,11 +11,11 @@ You can pick in two ways: straight from the **toolbar** (no code), or programmat
 
 ## Install the extension
 
-Install **openpicker** from the [Chrome Web Store](https://chromewebstore.google.com/detail/openpicker/iflipcihgpkellfpebibkmlklembmjph) — it works in Chrome, Edge, and other Chromium browsers. You'll see the openpicker icon in the toolbar.
+Install **OpenPicker** from the [Chrome Web Store](https://chromewebstore.google.com/detail/openpicker/iflipcihgpkellfpebibkmlklembmjph) — it works in Chrome, Edge, and other Chromium browsers. You'll see the OpenPicker icon in the toolbar.
 
 ### Build from source (for development)
 
-Prefer to build it yourself, or working on openpicker?
+Prefer to build it yourself, or working on OpenPicker?
 
 1. Clone the repo and build the extension:
    ```bash
@@ -27,10 +27,10 @@ Prefer to build it yourself, or working on openpicker?
 
 ## Pick from the toolbar
 
-![The openpicker toolbar popup](/popup.png)
+![The OpenPicker toolbar popup](/popup.png)
 
 1. Open any page.
-2. Click the openpicker toolbar icon → **Pick an element on this page**.
+2. Click the OpenPicker toolbar icon → **Pick an element on this page**.
 3. Hover to highlight, click to select, refine in the sidebar if needed.
 4. Click **Copy** — the selector is on your clipboard.
 

@@ -1,5 +1,5 @@
 # Korean (한국어) — machine-translated, review welcome. Mirrors en.yml.
-# Brand names (openpicker, Usertour) and example/regex values stay in English.
+# Brand names (OpenPicker, Usertour) and example/regex values stay in English.
 
 extDescription: 오픈 소스 CSS 요소 선택기.
 
@@ -40,7 +40,7 @@ options:
   invalidOrigin: '유효한 출처를 입력하세요. 예: https://example.com'
   removeDecision: 이 설정 제거
   appearanceTitle: 모양
-  appearanceDesc: openpicker 자체 UI의 테마.
+  appearanceDesc: OpenPicker 자체 UI의 테마.
 
   selectorRulesTitle: "선택자 규칙"
   selectorRulesDesc: "선택자 생성 방식을 제어합니다(전역 또는 사이트별)."
