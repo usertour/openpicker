@@ -22,8 +22,6 @@ export interface PingResult {
 }
 
 export interface PickParams {
-  /** Extra regex of id/class names to exclude, layered on the built-in blacklist. */
-  exclude?: string
   /** Request resolution of elements inside iframes (may be reported unsupported in v1). */
   iframe?: boolean
   /**

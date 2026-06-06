@@ -169,7 +169,6 @@ try {
 | ------------ | ------------------------------- | --------------------------------------------------------------------- |
 | `url`        | `string` *(required)*           | Page to open and pick in. Omitting it rejects with `invalid_params`.   |
 | `screenshot` | `"none" \| "element" \| "viewport"` | Screenshot to include. Defaults to `"none"`.                      |
-| `exclude`    | `string`                        | Extra regex of id/class names to exclude, on top of the built-ins.    |
 | `key`        | `string`                        | Opaque task id; decides whether a later pick reuses the target tab.   |
 | `iframe`     | `boolean`                       | Request subframe resolution (may report `unsupported` in v1).         |
 | `appName`    | `string`                        | Overrides the instance `appName` for this call.                       |

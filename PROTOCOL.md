@@ -115,7 +115,7 @@ Response `result`:
 {
   "extensionVersion": "1.4.0",
   "protocolVersions": [1],
-  "capabilities": ["pick", "highlight", "exclude", "screenshot", "openUrl", "activateSelf", "isTargetOpen"]
+  "capabilities": ["pick", "highlight", "screenshot", "openUrl", "activateSelf", "isTargetOpen"]
 }
 ```
 - `protocolVersions` — protocol majors the extension supports.
@@ -129,14 +129,12 @@ Request `params` (`url` required, the rest optional):
 ```json
 {
   "url": "https://example.com",
-  "exclude": "css-|sc-|jsx-",
   "iframe": false,
   "screenshot": "element",
   "key": "onboarding-step-1",
   "appName": "Acme Onboarding"
 }
 ```
-- `exclude`: extra regex of id/class names to exclude (layered on the built-in blacklist).
 - `iframe`: request subframe resolution (v1 may report unsupported; see roadmap).
 - `screenshot`: `"none"` (default) | `"element"` (crop to the selected element) | `"viewport"`
   (full visible viewport). Booleans are accepted for compatibility: `true`→`"element"`,
@@ -279,7 +277,7 @@ Named here so the envelope and method space leave room (not implemented in v1):
 SDK  → ext : {channel:"openpicker", v:1, kind:"req", id:"op:7Hk2:1", method:"ping", params:{}}
 ext  → SDK : {channel:"openpicker", v:1, kind:"res", id:"op:7Hk2:1", ok:true,
               result:{extensionVersion:"1.4.0", protocolVersions:[1],
-                      capabilities:["pick","highlight","exclude","screenshot","openUrl","activateSelf","isTargetOpen"]}}
+                      capabilities:["pick","highlight","screenshot","openUrl","activateSelf","isTargetOpen"]}}
 
 SDK  → ext : {channel:"openpicker", v:1, kind:"req", id:"op:7Hk2:2", method:"pick",
               params:{url:"https://app.example.com", appName:"Acme Onboarding"}}

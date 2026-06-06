@@ -25,7 +25,7 @@ openpicker is a platform, not one product's tool. Capabilities are exposed as **
 extensible enums**, not hardcoded behavior, so integrators decide what fits their use case:
 
 - **Behavior is opt-in via parameters / string enums**, never baked in. Examples already in v1:
-  selector `mode` (`unique` | `list`), `exclude` regex, screenshot range (§ below). New behavior
+  selector `mode` (`unique` | `list`), screenshot range (§ below). New behavior
   is added as a new option, not a new fork in the code.
 - **The protocol is forward-extensible.** Enums are strings (room for new values), and the message
   envelope ignores unknown fields, so new options/capabilities don't break older SDKs/extensions.
@@ -241,8 +241,7 @@ map onto `@medv/finder` configuration, surfaced as UI.
 - **Enable ID / Class / Attribute** (default all on): whether the selector may anchor on each kind.
   Unchecking a kind disables finder's corresponding predicate (`idName` / `className` / `attr`).
 - **Ignore id / class pattern**: per-type regex of names to skip, on top of openpicker's built-in
-  blacklist that already filters hashed Tailwind / CSS-in-JS names. (The SDK's single `exclude`
-  param seeds both fields.)
+  blacklist that already filters hashed Tailwind / CSS-in-JS names.
 - **Attributes to use**: comma/space/pipe-separated attribute names to allow (e.g. `data-testid,
   name`). **Empty = a sensible default**: test hooks (`data-testid`…) plus finder's curated set
   (`name` / `aria-label` / `role` / `href` / `data-*`). This is what fixes attributes that the old

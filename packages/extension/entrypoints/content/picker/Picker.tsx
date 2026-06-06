@@ -26,7 +26,7 @@ import { useTrackedRect } from "./useTrackedRect"
 type Phase = "hover" | "locked" | "navigate"
 
 interface PickerProps {
-  /** Picker-side options (mode/exclude/screenshot/appName); `url` is not used here. */
+  /** Picker-side options (screenshot/appName); `url` is not used here. */
   params: Partial<PickParams>
   /** Our shadow host element, excluded from targeting. */
   host: Element
@@ -42,7 +42,7 @@ interface PickerProps {
    * so confirming copies the selector to the clipboard instead of returning it.
    */
   copyOnConfirm?: boolean
-  /** Initial selector settings (loaded per-origin, with the SDK `exclude` applied). */
+  /** Initial selector settings (loaded per-origin). */
   initialSettings: SelectorSettings
   onResolve: (outcome: PickOutcome) => void
 }

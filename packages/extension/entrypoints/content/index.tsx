@@ -36,7 +36,6 @@ export default defineContentScript({
       "cancel",
       "highlight",
       "clearHighlight",
-      "exclude",
       "screenshot",
       "openUrl",
       "activateSelf",
