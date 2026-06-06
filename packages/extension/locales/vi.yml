@@ -40,7 +40,7 @@ options:
   invalidOrigin: Nhập một nguồn hợp lệ, ví dụ https://example.com
   removeDecision: Xóa quyết định này
   appearanceTitle: Giao diện
-  appearanceDesc: Chủ đề cho giao diện của chính openpicker.
+  appearanceDesc: Chủ đề cho giao diện của chính OpenPicker.
 
   selectorRulesTitle: "Quy tắc selector"
   selectorRulesDesc: "Kiểm soát cách tạo selector — toàn cục hoặc theo trang."

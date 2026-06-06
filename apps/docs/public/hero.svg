@@ -34,7 +34,7 @@
   <rect x="304" y="212" width="22" height="22" rx="6" fill="#0f172a" />
   <circle cx="315" cy="223" r="6" fill="none" stroke="#ffffff" stroke-width="1.8" />
   <circle cx="315" cy="223" r="1.8" fill="#ffffff" />
-  <text x="334" y="227" fill="#0f172a" font-size="13" font-weight="600">openpicker</text>
+  <text x="334" y="227" fill="#0f172a" font-size="13" font-weight="600">OpenPicker</text>
   <line x1="304" y1="244" x2="456" y2="244" stroke="#eef2f7" />
   <!-- selector -->
   <text x="304" y="265" fill="#94a3b8" font-size="9" font-weight="700" letter-spacing="0.6">SELECTOR</text>

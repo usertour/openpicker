@@ -3,7 +3,7 @@ import { defineConfig } from "vitepress"
 const GITHUB = "https://github.com/usertour/openpicker"
 
 export default defineConfig({
-  title: "openpicker",
+  title: "OpenPicker",
   description:
     "Documentation for OpenPicker — an open-source CSS element picker for the web (browser extension + SDK).",
   cleanUrls: true,

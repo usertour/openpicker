@@ -1,6 +1,6 @@
 # @openpicker/demo
 
-The public, deployable demo for openpicker. A static site (Vite) that calls the **published**
+The public, deployable demo for OpenPicker. A static site (Vite) that calls the **published**
 [`@openpicker/sdk`](https://www.npmjs.com/package/@openpicker/sdk) — not the local workspace copy —
 so it always exercises the real package a user would `npm install`. It detects the extension,
 opens a URL, picks an element, and shows the selector that comes back. This is the page deployed to
@@ -27,5 +27,5 @@ pnpm --filter @openpicker/demo build    # -> apps/demo/dist
 - **Root directory:** repo root
 - Set `NODE_VERSION` to `20` (or add a `.nvmrc`); Cloudflare detects pnpm from the lockfile.
 
-> The demo can only complete a pick for visitors who have the openpicker extension installed.
+> The demo can only complete a pick for visitors who have the OpenPicker extension installed.
 > Until the Chrome Web Store listing exists, it shows unpacked-install instructions.

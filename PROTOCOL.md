@@ -2,7 +2,7 @@
 
 > The contract between the **page SDK** (npm) and the **browser extension**. It defines how
 > they discover each other, exchange requests/responses, correlate them, handle consent, and
-> stay compatible across versions. All naming is original to openpicker.
+> stay compatible across versions. All naming is original to OpenPicker.
 
 This is a design spec. JSON shapes below describe the wire format, not an implementation.
 
