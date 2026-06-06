@@ -42,6 +42,15 @@ options:
   appearanceTitle: Darstellung
   appearanceDesc: Design für die eigene Oberfläche von openpicker.
 
+  selectorRulesTitle: "Selektor-Regeln"
+  selectorRulesDesc: "Steuere, wie Selektoren gebaut werden – global oder pro Website."
+  globalDefault: "Globaler Standard"
+  perSiteRules: "Regeln pro Website"
+  perSiteRulesDesc: "Überschreibe den globalen Standard für bestimmte Websites."
+  noSiteRules: "Noch keine Regeln pro Website."
+  add: "Hinzufügen"
+  edit: "Bearbeiten"
+  done: "Fertig"
 picker:
   hoverHint: Bewege die Maus und klicke auf ein Element, um es auszuwählen.
   selectorLabel: Selektor

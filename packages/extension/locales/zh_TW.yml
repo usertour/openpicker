@@ -42,6 +42,15 @@ options:
   appearanceTitle: 外觀
   appearanceDesc: openpicker 自身介面的主題。
 
+  selectorRulesTitle: "選擇器規則"
+  selectorRulesDesc: "控制選擇器如何產生——全域或依網站。"
+  globalDefault: "全域預設"
+  perSiteRules: "各網站規則"
+  perSiteRulesDesc: "為特定網站覆寫全域預設。"
+  noSiteRules: "尚無各網站規則。"
+  add: "新增"
+  edit: "編輯"
+  done: "完成"
 picker:
   hoverHint: 移動滑鼠並點擊一個元素以選取它。
   selectorLabel: 選擇器

@@ -8,8 +8,10 @@ import { coerceSelectorSettings, type SelectorSettings } from "./selectorSetting
  * migrated on load (legacy shape → current). See DESIGN.md §5.1f / §6.
  */
 
-const originKey = (origin: string) => `op:selectorSettings:${origin}`
-const GLOBAL_KEY = "op:selectorSettings:global"
+const PREFIX = "op:selectorSettings:"
+const originKey = (origin: string) => `${PREFIX}${origin}`
+// "global" is not a valid origin, so this never collides with a per-site key.
+const GLOBAL_KEY = `${PREFIX}global`
 
 export async function loadSelectorSettings(origin: string): Promise<SelectorSettings | null> {
   try {
@@ -39,6 +41,31 @@ export async function loadGlobalSelectorSettings(): Promise<SelectorSettings | n
 export function saveGlobalSelectorSettings(settings: SelectorSettings): void {
   try {
     void browser.storage.local.set({ [GLOBAL_KEY]: settings })
+  } catch {
+    // storage unavailable
+  }
+}
+
+/** All per-origin overrides (excludes the global default), for the options page. */
+export async function listSelectorOriginSettings(): Promise<Record<string, SelectorSettings>> {
+  try {
+    const all = await browser.storage.local.get(null)
+    const out: Record<string, SelectorSettings> = {}
+    for (const [k, v] of Object.entries(all)) {
+      if (!k.startsWith(PREFIX) || k === GLOBAL_KEY) continue
+      const settings = coerceSelectorSettings(v)
+      if (settings) out[k.slice(PREFIX.length)] = settings
+    }
+    return out
+  } catch {
+    return {}
+  }
+}
+
+/** Remove a per-origin override (the site falls back to the global default). */
+export function removeSelectorSettings(origin: string): void {
+  try {
+    void browser.storage.local.remove(originKey(origin))
   } catch {
     // storage unavailable
   }

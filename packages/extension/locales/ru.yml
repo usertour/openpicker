@@ -42,6 +42,15 @@ options:
   appearanceTitle: Оформление
   appearanceDesc: Тема собственного интерфейса openpicker.
 
+  selectorRulesTitle: "Правила селектора"
+  selectorRulesDesc: "Управляйте построением селекторов — глобально или для сайта."
+  globalDefault: "Глобальное значение по умолчанию"
+  perSiteRules: "Правила для сайтов"
+  perSiteRulesDesc: "Переопределите глобальное значение для конкретных сайтов."
+  noSiteRules: "Пока нет правил для сайтов."
+  add: "Добавить"
+  edit: "Изменить"
+  done: "Готово"
 picker:
   hoverHint: Переместите курсор и щёлкните по элементу, чтобы выбрать его.
   selectorLabel: Селектор

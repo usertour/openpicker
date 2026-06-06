@@ -42,6 +42,15 @@ options:
   appearanceTitle: 外观
   appearanceDesc: openpicker 自身界面的主题。
 
+  selectorRulesTitle: "选择器规则"
+  selectorRulesDesc: "控制选择器如何生成——全局或按站点。"
+  globalDefault: "全局默认"
+  perSiteRules: "按站点规则"
+  perSiteRulesDesc: "为特定站点覆盖全局默认。"
+  noSiteRules: "暂无按站点规则。"
+  add: "添加"
+  edit: "编辑"
+  done: "完成"
 picker:
   hoverHint: 移动鼠标并点击一个元素以选中它。
   selectorLabel: 选择器

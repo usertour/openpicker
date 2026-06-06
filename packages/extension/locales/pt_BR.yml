@@ -42,6 +42,15 @@ options:
   appearanceTitle: Aparência
   appearanceDesc: Tema da interface do próprio openpicker.
 
+  selectorRulesTitle: "Regras de seletor"
+  selectorRulesDesc: "Controle como os seletores são criados: global ou por site."
+  globalDefault: "Padrão global"
+  perSiteRules: "Regras por site"
+  perSiteRulesDesc: "Substitua o padrão global para sites específicos."
+  noSiteRules: "Ainda não há regras por site."
+  add: "Adicionar"
+  edit: "Editar"
+  done: "Concluir"
 picker:
   hoverHint: Mova o mouse e clique em um elemento para selecioná-lo.
   selectorLabel: Seletor

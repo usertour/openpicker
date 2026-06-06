@@ -43,6 +43,15 @@ options:
   appearanceTitle: Appearance
   appearanceDesc: Theme for openpicker's own UI.
 
+  selectorRulesTitle: "Selector rules"
+  selectorRulesDesc: "Control how selectors are built — globally or per site."
+  globalDefault: "Global default"
+  perSiteRules: "Per-site rules"
+  perSiteRulesDesc: "Override the global default for specific sites."
+  noSiteRules: "No per-site rules yet."
+  add: "Add"
+  edit: "Edit"
+  done: "Done"
 picker:
   hoverHint: Move your mouse and click an element to select it.
   selectorLabel: Selector

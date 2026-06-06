@@ -42,6 +42,15 @@ options:
   appearanceTitle: 모양
   appearanceDesc: openpicker 자체 UI의 테마.
 
+  selectorRulesTitle: "선택자 규칙"
+  selectorRulesDesc: "선택자 생성 방식을 제어합니다(전역 또는 사이트별)."
+  globalDefault: "전역 기본값"
+  perSiteRules: "사이트별 규칙"
+  perSiteRulesDesc: "특정 사이트에서 전역 기본값을 재정의합니다."
+  noSiteRules: "아직 사이트별 규칙이 없습니다."
+  add: "추가"
+  edit: "편집"
+  done: "완료"
 picker:
   hoverHint: 마우스를 움직여 요소를 클릭하면 선택됩니다.
   selectorLabel: 선택자

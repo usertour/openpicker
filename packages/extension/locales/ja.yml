@@ -42,6 +42,15 @@ options:
   appearanceTitle: 外観
   appearanceDesc: openpicker 自体の UI のテーマ。
 
+  selectorRulesTitle: "セレクターのルール"
+  selectorRulesDesc: "セレクターの作り方を制御（全体またはサイト単位）。"
+  globalDefault: "全体のデフォルト"
+  perSiteRules: "サイト別ルール"
+  perSiteRulesDesc: "特定のサイトで全体のデフォルトを上書きします。"
+  noSiteRules: "サイト別ルールはまだありません。"
+  add: "追加"
+  edit: "編集"
+  done: "完了"
 picker:
   hoverHint: マウスを動かして要素をクリックすると選択できます。
   selectorLabel: セレクター

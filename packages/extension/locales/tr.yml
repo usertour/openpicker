@@ -42,6 +42,15 @@ options:
   appearanceTitle: Görünüm
   appearanceDesc: openpicker'ın kendi arayüzünün teması.
 
+  selectorRulesTitle: "Seçici kuralları"
+  selectorRulesDesc: "Seçicilerin nasıl oluşturulacağını denetleyin: genel veya site bazlı."
+  globalDefault: "Genel varsayılan"
+  perSiteRules: "Site bazlı kurallar"
+  perSiteRulesDesc: "Belirli siteler için genel varsayılanı geçersiz kılın."
+  noSiteRules: "Henüz site bazlı kural yok."
+  add: "Ekle"
+  edit: "Düzenle"
+  done: "Bitti"
 picker:
   hoverHint: Fareyi hareket ettirin ve seçmek için bir öğeye tıklayın.
   selectorLabel: Seçici

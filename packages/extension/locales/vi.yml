@@ -42,6 +42,15 @@ options:
   appearanceTitle: Giao diện
   appearanceDesc: Chủ đề cho giao diện của chính openpicker.
 
+  selectorRulesTitle: "Quy tắc selector"
+  selectorRulesDesc: "Kiểm soát cách tạo selector — toàn cục hoặc theo trang."
+  globalDefault: "Mặc định toàn cục"
+  perSiteRules: "Quy tắc theo trang"
+  perSiteRulesDesc: "Ghi đè mặc định toàn cục cho các trang cụ thể."
+  noSiteRules: "Chưa có quy tắc theo trang."
+  add: "Thêm"
+  edit: "Sửa"
+  done: "Xong"
 picker:
   hoverHint: Di chuyển chuột và nhấp vào một phần tử để chọn nó.
   selectorLabel: Selector
