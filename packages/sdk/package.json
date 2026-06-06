@@ -1,6 +1,6 @@
 {
   "name": "@openpicker/sdk",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Open-source CSS element picker — SDK for invoking the openpicker browser extension.",
   "license": "MIT",
   "author": "Usertour (https://www.usertour.io)",
