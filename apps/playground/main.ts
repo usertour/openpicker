@@ -1,4 +1,10 @@
-import { createOpenpicker, OpenpickerError, type ScreenshotMode } from "@openpicker/sdk"
+import {
+  createOpenpicker,
+  matchesSelectorConfig,
+  OpenpickerError,
+  type ScreenshotMode,
+  type SelectorConfig,
+} from "@openpicker/sdk"
 
 const out = document.getElementById("out") as HTMLPreElement
 const shot = document.getElementById("shot") as HTMLImageElement
@@ -30,6 +36,18 @@ function screenshotMode(): ScreenshotMode {
   return (document.getElementById("shotMode") as HTMLSelectElement).value as ScreenshotMode
 }
 
+const checked = (id: string) => (document.getElementById(id) as HTMLInputElement).checked
+
+function buildSelectorConfig(): SelectorConfig | undefined {
+  const config: SelectorConfig = {}
+  const allow = (document.getElementById("attrAllow") as HTMLInputElement).value.trim()
+  if (allow) config.attr = { allow }
+  if (!checked("useId")) config.id = { enabled: false }
+  if (!checked("useClass")) config.class = { enabled: false }
+  if (!checked("useTag")) config.tag = { enabled: false }
+  return Object.keys(config).length > 0 ? config : undefined
+}
+
 document.getElementById("ping")?.addEventListener("click", async () => {
   statusEl.textContent = "extension status: pinging…"
   try {
@@ -48,8 +66,19 @@ document.getElementById("pickUrl")?.addEventListener("click", async () => {
   out.textContent = `opening ${url} and picking there…`
   showShot(undefined)
   try {
-    const r = await op.pick({ url, screenshot: screenshotMode() })
-    show("pick ok", r)
+    const config = buildSelectorConfig()
+    const r = await op.pick({
+      url,
+      screenshot: screenshotMode(),
+      selector: config,
+      lockSelectorSettings: checked("lockSettings"),
+      lockSelectorEdit: checked("lockEdit"),
+      requireUniqueMatch: checked("reqUnique"),
+    })
+    show("pick ok", {
+      ...r,
+      matchesSelectorConfig: config ? matchesSelectorConfig(r.selector, config) : "(no rules set)",
+    })
     showShot(r.screenshot)
   } catch (error) {
     showError("pick", error)

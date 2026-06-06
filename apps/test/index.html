@@ -47,6 +47,21 @@
     </div>
 
     <div class="row">
+      <label>Attr allow (regex):</label>
+      <input id="attrAllow" type="text" placeholder="^data-" />
+    </div>
+    <div class="row">
+      <label><input id="useId" type="checkbox" checked /> use id</label>
+      <label><input id="useClass" type="checkbox" checked /> use class</label>
+      <label><input id="useTag" type="checkbox" checked /> use tag</label>
+    </div>
+    <div class="row">
+      <label><input id="reqUnique" type="checkbox" /> require unique match</label>
+      <label><input id="lockSettings" type="checkbox" /> lock settings</label>
+      <label><input id="lockEdit" type="checkbox" /> lock selector edit</label>
+    </div>
+
+    <div class="row">
       <button type="button" id="isTargetOpen">Is target open?</button>
       <button type="button" id="activateSelf">Activate self (3s delay)</button>
     </div>
@@ -123,6 +138,19 @@
         }
       })
 
+      const checked = (id) => document.getElementById(id).checked
+
+      // Build a SelectorConfig from the inputs (omitted entirely when untouched).
+      function buildSelectorConfig() {
+        const config = {}
+        const allow = document.getElementById("attrAllow").value.trim()
+        if (allow) config.attr = { allow }
+        if (!checked("useId")) config.id = { enabled: false }
+        if (!checked("useClass")) config.class = { enabled: false }
+        if (!checked("useTag")) config.tag = { enabled: false }
+        return Object.keys(config).length ? config : undefined
+      }
+
       document.getElementById("pickUrl").addEventListener("click", async () => {
         const url = document.getElementById("url").value.trim()
         const screenshot = document.getElementById("shotMode").value
@@ -130,7 +158,14 @@
         out.textContent = `opening ${url} and picking there…`
         shot.style.display = "none"
         try {
-          const r = await call("pick", { url, screenshot })
+          const r = await call("pick", {
+            url,
+            screenshot,
+            selector: buildSelectorConfig(),
+            lockSelectorSettings: checked("lockSettings"),
+            lockSelectorEdit: checked("lockEdit"),
+            requireUniqueMatch: checked("reqUnique"),
+          })
           show("pick ok", r)
           showShot(r)
         } catch (err) {

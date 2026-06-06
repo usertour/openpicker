@@ -46,6 +46,21 @@
       <button type="button" id="pickUrl" class="primary">Pick on URL</button>
     </div>
 
+    <div class="row">
+      <label>Attr allow (regex):</label>
+      <input id="attrAllow" type="text" placeholder="^data-" />
+    </div>
+    <div class="row">
+      <label><input id="useId" type="checkbox" checked /> use id</label>
+      <label><input id="useClass" type="checkbox" checked /> use class</label>
+      <label><input id="useTag" type="checkbox" checked /> use tag</label>
+    </div>
+    <div class="row">
+      <label><input id="reqUnique" type="checkbox" /> require unique match</label>
+      <label><input id="lockSettings" type="checkbox" /> lock settings</label>
+      <label><input id="lockEdit" type="checkbox" /> lock selector edit</label>
+    </div>
+
     <pre id="out">ready</pre>
     <img id="shot" alt="screenshot of the picked element" />
 
