@@ -40,7 +40,7 @@ options:
   invalidOrigin: Introduce un origen válido, p. ej. https://example.com
   removeDecision: Eliminar esta decisión
   appearanceTitle: Apariencia
-  appearanceDesc: Tema de la propia interfaz de openpicker.
+  appearanceDesc: Tema de la propia interfaz de OpenPicker.
 
   selectorRulesTitle: "Reglas de selector"
   selectorRulesDesc: "Controla cómo se construyen los selectores: global o por sitio."

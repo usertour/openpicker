@@ -40,7 +40,7 @@ options:
   invalidOrigin: Введите корректный источник, например https://example.com
   removeDecision: Удалить это решение
   appearanceTitle: Оформление
-  appearanceDesc: Тема собственного интерфейса openpicker.
+  appearanceDesc: Тема собственного интерфейса OpenPicker.
 
   selectorRulesTitle: "Правила селектора"
   selectorRulesDesc: "Управляйте построением селекторов — глобально или для сайта."

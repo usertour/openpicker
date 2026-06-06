@@ -1,6 +1,6 @@
-# openpicker test page
+# OpenPicker test page
 
-A page for manually testing the extension. It speaks the openpicker protocol
+A page for manually testing the extension. It speaks the OpenPicker protocol
 directly over `window.postMessage` — no SDK, just the raw protocol. Served by Vite.
 
 ## Use

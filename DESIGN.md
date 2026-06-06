@@ -423,7 +423,7 @@ Cross-tab amplifies power: a source origin can open an arbitrary URL — but it 
 the user actively picks (a selector / optional screenshot), never a silent DOM read. Mitigations:
 **the user is present and must confirm**; the URL is user-entered; the picker is visible in a
 foreground tab; the authorization mode (§6 / PROTOCOL §7) can gate or block the source origin; and
-(recommended) a banner in the target tab — e.g. "openpicker is selecting an element for
+(recommended) a banner in the target tab — e.g. "OpenPicker is selecting an element for
 dashboard.example.com" — for transparency.
 
 ---
