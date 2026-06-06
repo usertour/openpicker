@@ -136,12 +136,19 @@ Request `params` (`url` required, the rest optional):
   "selector": { "attr": { "allow": "^data-step$" }, "tag": { "enabled": false } },
   "lockSelectorSettings": false,
   "lockSelectorEdit": false,
-  "requireUniqueMatch": false
+  "requireUniqueMatch": false,
+  "mustMatch": "input, textarea, select, [contenteditable]"
 }
 ```
+- `mustMatch`: a CSS selector the picked **element** must match — the element-eligibility axis,
+  orthogonal to `selector` (which shapes the selector text). Hovering a descendant snaps to the
+  nearest matching ancestor (`Element.closest`); elements with no match are not selectable. A
+  malformed value returns `invalid_params`. Omit for no restriction.
 - `selector`: per-anchor rules (`id` / `class` / `attr` / `tag`), each
   `{ enabled?, allow?, ignore? }` where `allow`/`ignore` are regex sources (for `attr`, matched
   against the attribute name). Composes with the user's saved rules — each layer can only narrow.
+  The picker won't return a selector that violates the active rules (it returns a conforming one or
+  none); `matchesSelectorConfig` is the SDK-side validator for a hand-edited result.
 - `lockSelectorSettings`: show the in-picker rule settings read-only (visible, not editable).
 - `lockSelectorEdit`: make the selector field read-only (no hand-editing).
 - `requireUniqueMatch`: allow confirm only when the selector matches exactly one element. The user

@@ -176,6 +176,7 @@ try {
 | `lockSelectorSettings` | `boolean`             | Show the picker's rule settings read-only. Default `false`.           |
 | `lockSelectorEdit`     | `boolean`             | Make the selector field read-only. Default `false`.                   |
 | `requireUniqueMatch`   | `boolean`             | Allow confirm only when the selector matches exactly one. Default `false`. |
+| `mustMatch`            | `string`              | CSS selector the picked element must match (e.g. `"input, textarea, [contenteditable]"`); non-matching elements aren't selectable. Invalid → `invalid_params`. |
 
 **`PickResult`** → `{ selector, matchCount, element: { tag, id, classes, text, attributes }, screenshot? }`
 

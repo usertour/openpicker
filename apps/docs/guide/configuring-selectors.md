@@ -69,8 +69,10 @@ op.pick({
 ```
 
 SDK rules compose with the user's saved rules — each layer can only **narrow** (enable ANDs, ignore
-unions). Because the user can still hand-edit the selector unless you set `lockSelectorEdit`,
-validate the returned selector with `matchesSelectorConfig`:
+unions). The picker **won't return a selector that violates the active rules**: it offers a
+conforming selector or none (confirm is blocked, with a hint, when no conforming selector exists or
+the user hand-edits an off-rule one). Because the user can still hand-edit unless you set
+`lockSelectorEdit`, validate the returned selector with `matchesSelectorConfig`:
 
 ```ts
 import { matchesSelectorConfig } from "@openpicker/sdk"
@@ -81,5 +83,28 @@ if (!matchesSelectorConfig(selector, cfg)) {
   // doesn't meet your requirement — ask the user to pick again
 }
 ```
+
+## Restricting which element can be picked (`mustMatch`)
+
+Selector rules shape **how a selector is built**. A separate axis, `mustMatch`, controls **which
+element** can be picked at all — pass a CSS selector and only matching elements are selectable:
+
+```ts
+op.pick({ url, mustMatch: "input, textarea, select, [contenteditable]" })
+```
+
+Hovering a descendant snaps to the nearest matching ancestor; elements with no match show a
+"can't select" cursor and ignore the click. The two axes are independent and compose — e.g. *only
+inputs, identified by id*:
+
+```ts
+op.pick({
+  url,
+  mustMatch: "input, textarea, select, [contenteditable]",
+  selector: { class: { enabled: false }, attr: { enabled: false }, tag: { enabled: false } },
+})
+```
+
+An invalid `mustMatch` rejects the pick with `invalid_params`.
 
 See the [SDK reference](/developers/sdk) for the full parameter list.
