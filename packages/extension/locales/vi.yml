@@ -79,7 +79,9 @@ settings:
   enableId: Bật ID
   enableClass: Bật Class
   enableAttribute: Bật thuộc tính
-  idHint: Dùng id của phần tử. Ô này là một regex các tên id cần bỏ qua (ví dụ ^ember|^radix- cho các id tạo tự động).
-  classHint: Dùng tên lớp. Ô này là một regex các tên lớp cần bỏ qua (ví dụ css-|sc-|jsx- cho các lớp đã băm).
-  attrHintEmpty: 'Tên thuộc tính cần dùng, ví dụ "data-testid, name". Để trống = tự động: $1 (chỉ giá trị ổn định).'
-  attrHintFilled: Chỉ dùng các tên thuộc tính này (giá trị bất kỳ).
+  enableTag: "Bật thẻ"
+  allow: "Cho phép"
+  ignore: "Bỏ qua"
+  regexHint: "Regex tên. Cho phép = chỉ khớp; Bỏ qua = không bao giờ; trống = tự động."
+  lockedBySite: "Bị khóa bởi trang"
+  requireUnique: "Hãy chọn một phần tử khớp đúng một."

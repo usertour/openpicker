@@ -79,7 +79,9 @@ settings:
   enableId: ID を有効化
   enableClass: Class を有効化
   enableAttribute: 属性を有効化
-  idHint: '要素の id を使用します。ボックスは無視する id 名の正規表現です（自動生成の id には例: ^ember|^radix-）。'
-  classHint: 'クラス名を使用します。ボックスは無視するクラス名の正規表現です（ハッシュ化クラスには例: css-|sc-|jsx-）。'
-  attrHintEmpty: '使用する属性名（例: "data-testid, name"）。空 = 自動: $1（安定した値のみ）。'
-  attrHintFilled: これらの属性名のみを使用します（値は任意）。
+  enableTag: "タグを有効化"
+  allow: "許可"
+  ignore: "無視"
+  regexHint: "名前の正規表現。許可＝一致のみ／無視＝一致を除外／空＝自動。"
+  lockedBySite: "サイトによりロック"
+  requireUnique: "ちょうど1つに一致する要素を選んでください。"

@@ -1,4 +1,4 @@
-import { RiCheckLine, RiFileCopyLine } from "@remixicon/react"
+import { RiCheckLine, RiFileCopyLine, RiLock2Line } from "@remixicon/react"
 import { useMemo, useState } from "react"
 import { i18n } from "#i18n"
 import { type SelectorTokenType, tokenizeSelector } from "./selectorTokens"
@@ -37,6 +37,8 @@ interface SelectorFieldProps {
   matchCount: number
   /** False when the selector is not valid CSS. */
   selectorValid: boolean
+  /** SDK locked editing: show a "locked by the site" hint (the field is read-only). */
+  lockedBySite?: boolean
 }
 
 function StatusPill({ matchCount, valid }: { matchCount: number; valid: boolean }) {
@@ -63,6 +65,7 @@ export function SelectorField({
   onChange,
   matchCount,
   selectorValid,
+  lockedBySite,
 }: SelectorFieldProps) {
   const [copied, setCopied] = useState(false)
   // Key each token by its start offset (unique + stable, not the array index).
@@ -138,6 +141,12 @@ export function SelectorField({
         )}
       </div>
       {value && <StatusPill matchCount={matchCount} valid={selectorValid} />}
+      {lockedBySite && (
+        <div className="mt-1.5 inline-flex items-center gap-1 text-[10px] text-slate-400 dark:text-slate-500">
+          <RiLock2Line size={11} />
+          {i18n.t("settings.lockedBySite")}
+        </div>
+      )}
     </div>
   )
 }

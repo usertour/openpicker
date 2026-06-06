@@ -79,7 +79,9 @@ settings:
   enableId: 啟用 ID
   enableClass: 啟用 Class
   enableAttribute: 啟用屬性
-  idHint: 使用元素的 id。文字方塊是要忽略的 id 名稱的正規表達式（例如 ^ember|^radix- 用於自動產生的 id）。
-  classHint: 使用類別名稱。文字方塊是要忽略的類別名稱的正規表達式（例如 css-|sc-|jsx- 用於雜湊類別名稱）。
-  attrHintEmpty: '要使用的屬性名稱，例如 "data-testid, name"。留空 = 自動：$1（僅限穩定值）。'
-  attrHintFilled: 只使用這些屬性名稱（任意值）。
+  enableTag: "啟用標籤"
+  allow: "允許"
+  ignore: "忽略"
+  regexHint: "名稱正規表達式。允許＝只用符合項;忽略＝排除符合項;留空＝智慧預設。"
+  lockedBySite: "由網站鎖定"
+  requireUnique: "請選擇唯一符合的元素。"

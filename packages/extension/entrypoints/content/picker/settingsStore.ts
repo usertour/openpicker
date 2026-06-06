@@ -1,18 +1,20 @@
-import type { SelectorSettings } from "./SettingsPopover"
+import { coerceSelectorSettings, type SelectorSettings } from "./selectorSettings"
 
 /**
- * Persist the selector settings per target origin: a site's conventions differ
- * (one uses `data-testid`, another stable ids/classes), so "how to build selectors
- * here" is remembered per origin, not globally. Stored in chrome.storage.local.
+ * Persist selector settings. A site's conventions differ (one uses `data-testid`,
+ * another stable ids/classes), so "how to build selectors" is remembered **per
+ * origin**; a **global default** applies where a site has no override. Both live in
+ * chrome.storage.local and are read on every pick. Stored values are coerced/
+ * migrated on load (legacy shape → current). See DESIGN.md §5.1f / §6.
  */
 
-const key = (origin: string) => `op:selectorSettings:${origin}`
+const originKey = (origin: string) => `op:selectorSettings:${origin}`
+const GLOBAL_KEY = "op:selectorSettings:global"
 
 export async function loadSelectorSettings(origin: string): Promise<SelectorSettings | null> {
   try {
-    const k = key(origin)
-    const value = (await browser.storage.local.get(k))[k]
-    return value ? (value as SelectorSettings) : null
+    const k = originKey(origin)
+    return coerceSelectorSettings((await browser.storage.local.get(k))[k])
   } catch {
     return null
   }
@@ -20,8 +22,24 @@ export async function loadSelectorSettings(origin: string): Promise<SelectorSett
 
 export function saveSelectorSettings(origin: string, settings: SelectorSettings): void {
   try {
-    void browser.storage.local.set({ [key(origin)]: settings })
+    void browser.storage.local.set({ [originKey(origin)]: settings })
   } catch {
     // storage unavailable; settings just won't persist this session
+  }
+}
+
+export async function loadGlobalSelectorSettings(): Promise<SelectorSettings | null> {
+  try {
+    return coerceSelectorSettings((await browser.storage.local.get(GLOBAL_KEY))[GLOBAL_KEY])
+  } catch {
+    return null
+  }
+}
+
+export function saveGlobalSelectorSettings(settings: SelectorSettings): void {
+  try {
+    void browser.storage.local.set({ [GLOBAL_KEY]: settings })
+  } catch {
+    // storage unavailable
   }
 }

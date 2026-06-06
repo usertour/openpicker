@@ -79,7 +79,9 @@ settings:
   enableId: ID'yi etkinleştir
   enableClass: Class'ı etkinleştir
   enableAttribute: Özniteliği etkinleştir
-  idHint: Öğenin id'sini kullanır. Kutu, yok sayılacak id adlarının regex'idir (örn. otomatik oluşturulan id'ler için ^ember|^radix-).
-  classHint: Sınıf adlarını kullanır. Kutu, yok sayılacak sınıf adlarının regex'idir (örn. karma sınıflar için css-|sc-|jsx-).
-  attrHintEmpty: 'Kullanılacak öznitelik adları, örn. "data-testid, name". Boş = otomatik: $1 (yalnızca kararlı değerler).'
-  attrHintFilled: Yalnızca bu öznitelik adları kullanılır (herhangi bir değer).
+  enableTag: "Etiketi etkinleştir"
+  allow: "İzin ver"
+  ignore: "Yoksay"
+  regexHint: "Ad regex'i. İzin ver = yalnızca eşleşenler; Yoksay = asla; boş = otomatik."
+  lockedBySite: "Site tarafından kilitlendi"
+  requireUnique: "Tam olarak bir öğeyle eşleşen bir öğe seçin."

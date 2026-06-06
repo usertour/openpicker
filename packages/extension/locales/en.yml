@@ -80,7 +80,9 @@ settings:
   enableId: Enable ID
   enableClass: Enable Class
   enableAttribute: Enable Attribute
-  idHint: Use the element's id. The box is a regex of id names to ignore (e.g. ^ember|^radix- for auto-generated ids).
-  classHint: Use class names. The box is a regex of class names to ignore (e.g. css-|sc-|jsx- for hashed classes).
-  attrHintEmpty: 'Attribute names to use, e.g. "data-testid, name". Empty = auto: $1 (stable values only).'
-  attrHintFilled: Only these attribute names are used (any value).
+  enableTag: "Enable tag"
+  allow: "Allow"
+  ignore: "Ignore"
+  regexHint: "Regex of names. Allow = only matches; Ignore = never matches. Empty = smart default."
+  lockedBySite: "Locked by the site"
+  requireUnique: "Pick an element that matches exactly one."

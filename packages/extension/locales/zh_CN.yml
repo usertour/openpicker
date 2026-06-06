@@ -79,7 +79,9 @@ settings:
   enableId: 启用 ID
   enableClass: 启用 Class
   enableAttribute: 启用属性
-  idHint: 使用元素的 id。文本框是要忽略的 id 名称的正则（例如 ^ember|^radix- 用于自动生成的 id）。
-  classHint: 使用类名。文本框是要忽略的类名的正则（例如 css-|sc-|jsx- 用于哈希类名）。
-  attrHintEmpty: '要使用的属性名，例如 "data-testid, name"。留空 = 自动：$1（仅限稳定值）。'
-  attrHintFilled: 只使用这些属性名（任意值）。
+  enableTag: "启用标签"
+  allow: "允许"
+  ignore: "忽略"
+  regexHint: "名称正则。允许=只用匹配项;忽略=排除匹配项;留空=智能默认。"
+  lockedBySite: "由站点锁定"
+  requireUnique: "请选择唯一匹配的元素。"

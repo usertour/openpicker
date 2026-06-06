@@ -1,9 +1,11 @@
 import { attr as defaultAttr, finder } from "@medv/finder"
+import type { SelectorAnchor, SelectorSettings } from "./selectorSettings"
 
 /**
- * Selector generation, built on @medv/finder (a dependency) plus filters that
- * reject auto-generated ids and hashed CSS-in-JS / CSS-module class names so the
- * output favors stable, human-readable selectors. See DESIGN.md §5.2 / §5.1f.
+ * Selector generation, built on @medv/finder plus per-dimension rules
+ * (id / class / attr / tag, each enable + allow/ignore regex) and built-in filters
+ * that reject auto-generated ids and hashed CSS-in-JS / CSS-module class names so
+ * the output favors stable, human-readable selectors. See DESIGN.md §5.2 / §5.1f.
  */
 
 // Prefixes / shapes of auto-generated ids that should not anchor a selector.
@@ -28,9 +30,8 @@ const HASHED_CLASS_PATTERNS: RegExp[] = [
 const PREFERRED_ATTR = /^data-(testid|test|test-id|cy|qa)$/i
 
 /**
- * The default attribute names used when the allow-list is empty ("auto"), for
- * display in the settings UI. Mirrors PREFERRED_ATTR + finder's accepted set
- * (role/name/aria-label/rel/href + data-*); auto also requires non-random values.
+ * The default attribute names used when an attribute allow-list is empty ("auto"),
+ * shown in the settings UI. Mirrors PREFERRED_ATTR + finder's accepted set.
  */
 export const AUTO_ATTRS = [
   "name",
@@ -43,25 +44,7 @@ export const AUTO_ATTRS = [
   "data-*",
 ]
 
-export interface SelectorConfig {
-  /** Whether the selector may use the element's id. */
-  useIds: boolean
-  /** Whether the selector may use the element's classes. */
-  useClasses: boolean
-  /** Whether the selector may use the element's attributes. */
-  useAttrs: boolean
-  /** Regex (source string) of id names to ignore. */
-  ignoreId?: string
-  /** Regex (source string) of class names to ignore. */
-  ignoreClass?: string
-  /**
-   * Comma/space/pipe-separated attribute names to allow as anchors. Empty → a
-   * sensible default set (test hooks + finder's defaults: name/aria-label/role/…).
-   */
-  attrAllow?: string
-}
-
-function compileExclude(pattern: string | undefined): RegExp | null {
+function compile(pattern: string): RegExp | null {
   if (!pattern) return null
   try {
     return new RegExp(pattern)
@@ -70,69 +53,74 @@ function compileExclude(pattern: string | undefined): RegExp | null {
   }
 }
 
-/** Parse the attribute allow-list; null means "use the default set". */
-function parseAttrAllow(raw: string | undefined): string[] | null {
-  const list = (raw ?? "")
-    .split(/[\s,|]+/)
-    .map((s) => s.trim().toLowerCase())
-    .filter(Boolean)
-  return list.length ? list : null
-}
-
-/** Whether finder may use this attribute, per the allow-list (or the default set). */
-function attrAllowed(name: string, value: string, allow: string[] | null): boolean {
-  if (allow) return allow.includes(name.toLowerCase())
-  // Default: prefer test hooks, plus finder's own curated set (name/aria-label/role/href/data-*).
-  return PREFERRED_ATTR.test(name) || defaultAttr(name, value)
-}
-
 function matchesAny(name: string, patterns: RegExp[]): boolean {
   return patterns.some((re) => re.test(name))
 }
 
-export function isStableId(name: string, excludeRe: RegExp | null): boolean {
-  if (!name) return false
-  if (excludeRe?.test(name)) return false
-  return !matchesAny(name, HASHED_ID_PATTERNS)
+/** Whether an id looks human-authored (not an auto-generated/hashed id). */
+export function isStableId(name: string): boolean {
+  return !!name && !matchesAny(name, HASHED_ID_PATTERNS)
 }
 
-export function isStableClass(name: string, excludeRe: RegExp | null): boolean {
-  if (!name) return false
-  if (excludeRe?.test(name)) return false
-  return !matchesAny(name, HASHED_CLASS_PATTERNS)
+/** Whether a class looks human-authored (not a hashed CSS-in-JS / module name). */
+export function isStableClass(name: string): boolean {
+  return !!name && !matchesAny(name, HASHED_CLASS_PATTERNS)
 }
+
+/** Default attribute predicate: prefer test hooks, plus finder's own curated set. */
+function isDefaultAttr(name: string, value: string): boolean {
+  return PREFERRED_ATTR.test(name) || defaultAttr(name, value)
+}
+
+/**
+ * Build a finder predicate for one anchor: `ignore` wins, then `allow`, else the
+ * dimension's built-in stable-name default. Returns a `(name, value?)` so it fits
+ * both the name-only predicates (id/class/tag) and finder's `attr(name, value)`.
+ */
+function anchorPredicate(
+  anchor: SelectorAnchor,
+  smartDefault: (name: string, value: string) => boolean,
+): (name: string, value?: string) => boolean {
+  const allowRe = compile(anchor.allow)
+  const ignoreRe = compile(anchor.ignore)
+  return (name, value = "") => {
+    if (!name) return false
+    if (ignoreRe?.test(name)) return false
+    if (allowRe) return allowRe.test(name)
+    return smartDefault(name, value)
+  }
+}
+
+const never = () => false
 
 /** Fallback when finder can't produce a unique selector: tag + stable classes. */
-function fallbackSelector(el: Element, useClasses: boolean, ignoreClassRe: RegExp | null): string {
+function fallbackSelector(el: Element, settings: SelectorSettings): string {
   const tag = el.tagName.toLowerCase()
-  if (!useClasses) return tag
+  if (!settings.class.enabled) return tag
+  const classOk = anchorPredicate(settings.class, isStableClass)
   const classes =
     typeof el.className === "string"
       ? el.className
           .trim()
           .split(/\s+/)
-          .filter((c) => c && isStableClass(c, ignoreClassRe))
+          .filter((c) => c && classOk(c))
       : []
   if (classes.length === 0) return tag
   return `${tag}.${classes.map((c) => CSS.escape(c)).join(".")}`
 }
 
-const never = () => false
-
 /** Generate a unique CSS selector for an element, honoring the anchor settings. */
-export function generateSelector(el: Element, config: SelectorConfig): string {
-  const ignoreIdRe = compileExclude(config.ignoreId)
-  const ignoreClassRe = compileExclude(config.ignoreClass)
-  const allow = parseAttrAllow(config.attrAllow)
+export function generateSelector(el: Element, settings: SelectorSettings): string {
   try {
     return finder(el, {
-      idName: config.useIds ? (name) => isStableId(name, ignoreIdRe) : never,
-      className: config.useClasses ? (name) => isStableClass(name, ignoreClassRe) : never,
-      attr: config.useAttrs ? (name, value) => attrAllowed(name, value, allow) : never,
+      idName: settings.id.enabled ? anchorPredicate(settings.id, isStableId) : never,
+      className: settings.class.enabled ? anchorPredicate(settings.class, isStableClass) : never,
+      tagName: settings.tag.enabled ? anchorPredicate(settings.tag, () => true) : never,
+      attr: settings.attr.enabled ? anchorPredicate(settings.attr, isDefaultAttr) : never,
     })
   } catch {
     // finder throws if it cannot find a unique selector; fall back to a tag path.
-    return fallbackSelector(el, config.useClasses, ignoreClassRe)
+    return fallbackSelector(el, settings)
   }
 }
 

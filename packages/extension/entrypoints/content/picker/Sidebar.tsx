@@ -14,7 +14,8 @@ import { MaintainedByUsertour } from "@/components/MaintainedBy"
 import { AttributeList } from "./AttributeList"
 import type { AttrEntry } from "./dom"
 import { SelectorField } from "./SelectorField"
-import { type SelectorSettings, SettingsPopover } from "./SettingsPopover"
+import { SettingsPopover } from "./SettingsPopover"
+import type { SelectorSettings } from "./selectorSettings"
 import { Tooltip } from "./Tooltip"
 import { TreeNavigator } from "./TreeNavigator"
 
@@ -64,6 +65,12 @@ interface SidebarProps {
   confirmLabel?: string
   /** When true, the confirm button shows a transient "Copied" success state. */
   confirmDone?: boolean
+  /** SDK `lockSelectorSettings`: the gear settings are read-only (visible, not editable). */
+  lockSelectorSettings?: boolean
+  /** SDK `lockSelectorEdit`: the selector field is read-only (no hand-editing). */
+  lockSelectorEdit?: boolean
+  /** SDK `requireUniqueMatch`: confirm is allowed only when the selector matches exactly one. */
+  requireUniqueMatch?: boolean
 }
 
 /**
@@ -181,6 +188,7 @@ export function Sidebar(props: SidebarProps) {
           settings={props.settings}
           onChange={props.onSettingsChange}
           onClose={() => setSettingsOpen(false)}
+          readOnly={props.lockSelectorSettings}
         />
       )}
 
@@ -217,7 +225,8 @@ export function Sidebar(props: SidebarProps) {
             <div className="relative flex items-start gap-1.5">
               <SelectorField
                 value={props.selector}
-                editable={locked}
+                editable={locked && !props.lockSelectorEdit}
+                lockedBySite={locked && !!props.lockSelectorEdit}
                 placeholder={locked ? "" : i18n.t("picker.hoverPlaceholder")}
                 onChange={props.onSelectorChange}
                 matchCount={props.matchCount}
@@ -272,9 +281,14 @@ export function Sidebar(props: SidebarProps) {
             <button
               type="button"
               onClick={props.onConfirm}
-              disabled={props.confirmDone}
+              disabled={props.confirmDone || (!!props.requireUniqueMatch && props.matchCount !== 1)}
+              title={
+                props.requireUniqueMatch && props.matchCount !== 1
+                  ? i18n.t("settings.requireUnique")
+                  : undefined
+              }
               style={props.confirmDone ? undefined : { background: "var(--op-accent-grad)" }}
-              className={`inline-flex items-center gap-1.5 rounded-lg px-4 py-2 font-medium text-sm text-white shadow-lg outline-none transition ${
+              className={`inline-flex items-center gap-1.5 rounded-lg px-4 py-2 font-medium text-sm text-white shadow-lg outline-none transition disabled:cursor-not-allowed disabled:opacity-50 ${
                 props.confirmDone
                   ? "bg-emerald-600 shadow-emerald-600/30"
                   : "shadow-accent-600/30 hover:brightness-105 focus-visible:ring-2 focus-visible:ring-accent-400"
