@@ -132,9 +132,20 @@ Request `params` (`url` required, the rest optional):
   "iframe": false,
   "screenshot": "element",
   "key": "onboarding-step-1",
-  "appName": "Acme Onboarding"
+  "appName": "Acme Onboarding",
+  "selector": { "attr": { "allow": "^data-step$" }, "tag": { "enabled": false } },
+  "lockSelectorSettings": false,
+  "lockSelectorEdit": false,
+  "requireUniqueMatch": false
 }
 ```
+- `selector`: per-anchor rules (`id` / `class` / `attr` / `tag`), each
+  `{ enabled?, allow?, ignore? }` where `allow`/`ignore` are regex sources (for `attr`, matched
+  against the attribute name). Composes with the user's saved rules — each layer can only narrow.
+- `lockSelectorSettings`: show the in-picker rule settings read-only (visible, not editable).
+- `lockSelectorEdit`: make the selector field read-only (no hand-editing).
+- `requireUniqueMatch`: allow confirm only when the selector matches exactly one element. The user
+  may still edit the selector (unless locked), so callers should validate the returned selector.
 - `iframe`: request subframe resolution (v1 may report unsupported; see roadmap).
 - `screenshot`: `"none"` (default) | `"element"` (crop to the selected element) | `"viewport"`
   (full visible viewport). Booleans are accepted for compatibility: `true`→`"element"`,
