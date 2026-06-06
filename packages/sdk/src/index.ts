@@ -231,5 +231,8 @@ export type {
   PickResult,
   PingResult,
   ProtocolError,
+  RegexSource,
   ScreenshotMode,
+  SelectorAnchorConfig,
+  SelectorConfig,
 } from "@openpicker/protocol"

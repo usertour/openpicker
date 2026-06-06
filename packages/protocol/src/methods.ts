@@ -7,6 +7,35 @@
  */
 export type ScreenshotMode = "none" | "element" | "viewport"
 
+/** A regular-expression source string. Compiled with `new RegExp(...)` — never eval'd. */
+export type RegexSource = string
+
+/**
+ * Rules for one anchor type (id / class / attr / tag) when building a selector.
+ * This mirrors the in-picker gear settings; passed via {@link PickParams.selector}
+ * it pre-fills them. For `attr`, `allow`/`ignore` match the attribute NAME.
+ */
+export interface SelectorAnchorConfig {
+  /** Whether this anchor type may be used at all. Default: true. */
+  enabled?: boolean
+  /**
+   * Only names matching this regex may be used. Omitted/empty = openpicker's
+   * built-in "stable name" heuristics (skips ember/radix ids, hashed CSS-in-JS /
+   * CSS-module classes, etc.).
+   */
+  allow?: RegexSource
+  /** Names matching this regex are never used (applied on top of `allow`). */
+  ignore?: RegexSource
+}
+
+/** Per-dimension selector-generation rules. See {@link SelectorAnchorConfig}. */
+export interface SelectorConfig {
+  id?: SelectorAnchorConfig
+  class?: SelectorAnchorConfig
+  attr?: SelectorAnchorConfig
+  tag?: SelectorAnchorConfig
+}
+
 export interface PingParams {
   /** Display-only application name, surfaced in the consent prompt. Never trusted. */
   appName?: string
@@ -45,6 +74,18 @@ export interface PickParams {
   key?: string
   /** Display-only application name, surfaced in the consent prompt. Never trusted. */
   appName?: string
+  /**
+   * Initial selector-generation rules for this pick (also the values shown in the
+   * gear). Composed (AND) with the user's saved rules — both can only narrow.
+   * Omitted dimensions use openpicker's defaults.
+   */
+  selector?: SelectorConfig
+  /** Open the gear settings read-only (the user can see them but not change). Default: false. */
+  lockSelectorSettings?: boolean
+  /** Make the selector field read-only (no hand-editing). Default: false. */
+  lockSelectorEdit?: boolean
+  /** Only allow confirming (OK) when the selector matches exactly one element. Default: false. */
+  requireUniqueMatch?: boolean
 }
 
 export interface PickedElement {
