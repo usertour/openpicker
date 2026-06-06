@@ -22,6 +22,7 @@
     "@fontsource-variable/hanken-grotesk": "^5.2.8",
     "@fontsource-variable/jetbrains-mono": "^5.2.8",
     "@openpicker/protocol": "workspace:*",
+    "@openpicker/selector-rules-ui": "workspace:*",
     "@tailwindcss/vite": "^4.3.0",
     "@types/chrome": "^0.1.12",
     "@types/react": "^19.0.0",

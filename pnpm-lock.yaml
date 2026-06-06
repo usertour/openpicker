@@ -103,6 +103,9 @@ importers:
       '@openpicker/protocol':
         specifier: workspace:*
         version: link:../protocol
+      '@openpicker/selector-rules-ui':
+        specifier: workspace:*
+        version: link:../selector-rules-ui
       '@tailwindcss/vite':
         specifier: ^4.3.0
         version: 4.3.0(vite@8.0.14(@types/node@25.9.1)(esbuild@0.27.7)(jiti@2.7.0)(yaml@2.9.0))
@@ -149,6 +152,22 @@ importers:
       tsup:
         specifier: ^8.5.0
         version: 8.5.1(jiti@2.7.0)(postcss@8.5.15)(typescript@5.9.3)(yaml@2.9.0)
+      typescript:
+        specifier: ^5.9.3
+        version: 5.9.3
+
+  packages/selector-rules-ui:
+    dependencies:
+      '@openpicker/protocol':
+        specifier: workspace:*
+        version: link:../protocol
+    devDependencies:
+      '@types/react':
+        specifier: 19.2.15
+        version: 19.2.15
+      react:
+        specifier: ^19.1.0
+        version: 19.2.6
       typescript:
         specifier: ^5.9.3
         version: 5.9.3

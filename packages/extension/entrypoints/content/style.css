@@ -2,5 +2,9 @@
 @import "../../lib/fonts.css";
 @import "../../lib/tokens.css";
 
+/* The shared selector-rules editor lives outside this package; scan it so its
+   Tailwind classes (accent-*, slate-*, dark:*) are generated here. */
+@source "../../../selector-rules-ui/src";
+
 /* Dark mode is class-based (a `.dark` ancestor), driven by lib/theme.ts. */
 @custom-variant dark (&:where(.dark, .dark *));
