@@ -61,8 +61,31 @@ if (!matchesSelectorConfig(selector, config)) {
 }
 ```
 
-See [Configuring selectors](https://docs.openpicker.dev/guide/configuring-selectors) for the full
-model.
+The picker won't return a selector that violates the active rules — it offers a conforming one or
+none. See [Configuring selectors](https://docs.openpicker.dev/guide/configuring-selectors) for the
+full model.
+
+## Restrict which element can be picked
+
+`selector` shapes **how** a selector is built; `mustMatch` controls **which** element can be picked.
+Pass a CSS selector and only matching elements are selectable (hovering a descendant snaps to the
+nearest matching ancestor; non-matching elements aren't selectable):
+
+```ts
+op.pick({ url, mustMatch: "input, textarea, select, [contenteditable]" })
+```
+
+The two axes are independent and compose — e.g. "only inputs, identified by id":
+
+```ts
+op.pick({
+  url,
+  mustMatch: "input, textarea, select, [contenteditable]",
+  selector: { class: { enabled: false }, attr: { enabled: false }, tag: { enabled: false } },
+})
+```
+
+An invalid `mustMatch` rejects the pick with `invalid_params`.
 
 ## More
 
