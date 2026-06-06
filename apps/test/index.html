@@ -46,6 +46,11 @@
       <button type="button" id="pickUrl" class="primary">Pick on URL</button>
     </div>
 
+    <div class="row">
+      <label>mustMatch (CSS):</label>
+      <input id="mustMatch" type="text" placeholder="input, textarea, select, [contenteditable]" />
+    </div>
+
     <p class="muted" style="margin-bottom: 0">
       Selector rules — each dimension: enable + allow / ignore regex (mirrors the extension's editor):
     </p>
@@ -179,6 +184,7 @@
             url,
             screenshot,
             selector: buildSelectorConfig(),
+            mustMatch: val("mustMatch") || undefined,
             lockSelectorSettings: checked("lockSettings"),
             lockSelectorEdit: checked("lockEdit"),
             requireUniqueMatch: checked("reqUnique"),
