@@ -35,12 +35,8 @@ export async function runPicker(
   if (active) return { type: "cancelled" }
   active = true
 
-  // Per-origin selector settings (a site's conventions are remembered). The SDK's
-  // `exclude` takes priority over the saved ignore patterns when the caller passes it.
-  const saved = (await loadSelectorSettings(window.origin)) ?? defaultSelectorSettings()
-  const initialSettings = params.exclude
-    ? { ...saved, ignoreId: params.exclude, ignoreClass: params.exclude }
-    : saved
+  // Per-origin selector settings (a site's conventions are remembered).
+  const initialSettings = (await loadSelectorSettings(window.origin)) ?? defaultSelectorSettings()
 
   const mount = await mountShadow()
   // Theme the picker UI to match the user's choice; `.dark` lands on the shadow

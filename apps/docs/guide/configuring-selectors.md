@@ -45,8 +45,3 @@ styled-components, CSS modules). Your ignore patterns are layered on top of thes
 
 Your settings are saved per origin (e.g. `https://app.example.com`) in the browser, so each site
 keeps its own conventions. Nothing is sent anywhere.
-
-## SDK override
-
-When a pick is started via the SDK with an [`exclude`](/developers/sdk) regex, that pattern takes
-priority over the saved ignore patterns for that pick.
