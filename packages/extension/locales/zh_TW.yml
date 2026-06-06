@@ -53,6 +53,7 @@ options:
   done: "完成"
 picker:
   hoverHint: 移動滑鼠並點擊一個元素以選取它。
+  noMatchingTarget: "無法選擇此元素"
   selectorLabel: 選擇器
   hoverPlaceholder: 將游標停在某個元素上…
   invalidSelector: 選擇器無效

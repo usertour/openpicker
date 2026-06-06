@@ -5,6 +5,7 @@ import {
   RiCompass3Line,
   RiCrosshair2Line,
   RiCursorLine,
+  RiForbidLine,
   RiSettings3Line,
 } from "@remixicon/react"
 import { useState } from "react"
@@ -71,6 +72,10 @@ interface SidebarProps {
   lockSelectorEdit?: boolean
   /** SDK `requireUniqueMatch`: confirm is allowed only when the selector matches exactly one. */
   requireUniqueMatch?: boolean
+  /** Hovering a spot with no element matching SDK `mustMatch` — show a "can't select" hint. */
+  blocked?: boolean
+  /** The locked element falls outside SDK `mustMatch` — block confirming it. */
+  targetMismatch?: boolean
 }
 
 /**
@@ -212,12 +217,18 @@ export function Sidebar(props: SidebarProps) {
         </div>
       ) : (
         <div className="flex min-h-0 flex-1 flex-col gap-4 p-3">
-          {!locked && (
-            <div className="flex items-center gap-2 rounded-lg bg-slate-50 px-3 py-2.5 text-slate-500 text-xs dark:bg-slate-800 dark:text-slate-400">
-              <RiCursorLine size={15} className="shrink-0 text-slate-400 dark:text-slate-500" />
-              {i18n.t("picker.hoverHint")}
-            </div>
-          )}
+          {!locked &&
+            (props.blocked ? (
+              <div className="flex items-center gap-2 rounded-lg bg-amber-50 px-3 py-2.5 text-amber-700 text-xs dark:bg-amber-950/40 dark:text-amber-300">
+                <RiForbidLine size={15} className="shrink-0" />
+                {i18n.t("picker.noMatchingTarget")}
+              </div>
+            ) : (
+              <div className="flex items-center gap-2 rounded-lg bg-slate-50 px-3 py-2.5 text-slate-500 text-xs dark:bg-slate-800 dark:text-slate-400">
+                <RiCursorLine size={15} className="shrink-0 text-slate-400 dark:text-slate-500" />
+                {i18n.t("picker.hoverHint")}
+              </div>
+            ))}
 
           {/* Selector: read-only live preview while hovering, editable once locked */}
           <div className="flex flex-col gap-1.5">
@@ -281,11 +292,17 @@ export function Sidebar(props: SidebarProps) {
             <button
               type="button"
               onClick={props.onConfirm}
-              disabled={props.confirmDone || (!!props.requireUniqueMatch && props.matchCount !== 1)}
+              disabled={
+                props.confirmDone ||
+                (!!props.requireUniqueMatch && props.matchCount !== 1) ||
+                !!props.targetMismatch
+              }
               title={
-                props.requireUniqueMatch && props.matchCount !== 1
-                  ? i18n.t("settings.requireUnique")
-                  : undefined
+                props.targetMismatch
+                  ? i18n.t("picker.noMatchingTarget")
+                  : props.requireUniqueMatch && props.matchCount !== 1
+                    ? i18n.t("settings.requireUnique")
+                    : undefined
               }
               style={props.confirmDone ? undefined : { background: "var(--op-accent-grad)" }}
               className={`inline-flex items-center gap-1.5 rounded-lg px-4 py-2 font-medium text-sm text-white shadow-lg outline-none transition disabled:cursor-not-allowed disabled:opacity-50 ${

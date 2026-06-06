@@ -53,6 +53,7 @@ options:
   done: "Fatto"
 picker:
   hoverHint: Muovi il mouse e fai clic su un elemento per selezionarlo.
+  noMatchingTarget: "Impossibile selezionare questo elemento"
   selectorLabel: Selettore
   hoverPlaceholder: passa il cursore su un elemento…
   invalidSelector: Selettore non valido

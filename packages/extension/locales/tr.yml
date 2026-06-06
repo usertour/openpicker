@@ -53,6 +53,7 @@ options:
   done: "Bitti"
 picker:
   hoverHint: Fareyi hareket ettirin ve seçmek için bir öğeye tıklayın.
+  noMatchingTarget: "Bu öğe seçilemez"
   selectorLabel: Seçici
   hoverPlaceholder: bir öğenin üzerine gelin…
   invalidSelector: Geçersiz seçici

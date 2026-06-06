@@ -9,9 +9,13 @@
 
 const STYLE_ID = "openpicker-cursor-style"
 const BODY_CLASS = "openpicker-active"
+const BLOCKED_CLASS = "openpicker-blocked"
 
+// The blocked rule is declared last so it wins over the pointer rule when both
+// classes are present (same specificity → source order decides).
 const CSS = `
 body.${BODY_CLASS}, body.${BODY_CLASS} * { cursor: pointer !important; }
+body.${BLOCKED_CLASS}, body.${BLOCKED_CLASS} * { cursor: not-allowed !important; }
 `
 
 /** Apply the host pointer cursor for the duration of a pick. */
@@ -24,8 +28,14 @@ export function applyHostCursor(): void {
   ;(document.head ?? document.documentElement).appendChild(style)
 }
 
+/** Toggle the "not-allowed" cursor (element under the cursor can't be picked). */
+export function setHostCursorBlocked(blocked: boolean): void {
+  document.body.classList.toggle(BLOCKED_CLASS, blocked)
+}
+
 /** Remove the host pointer cursor when the pick ends. */
 export function clearHostCursor(): void {
   document.body.classList.remove(BODY_CLASS)
+  document.body.classList.remove(BLOCKED_CLASS)
   document.getElementById(STYLE_ID)?.remove()
 }

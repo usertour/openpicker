@@ -53,6 +53,7 @@ options:
   done: "Xong"
 picker:
   hoverHint: Di chuyển chuột và nhấp vào một phần tử để chọn nó.
+  noMatchingTarget: "Không thể chọn phần tử này"
   selectorLabel: Selector
   hoverPlaceholder: di chuột lên một phần tử…
   invalidSelector: Selector không hợp lệ

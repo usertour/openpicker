@@ -86,6 +86,18 @@ export interface PickParams {
   lockSelectorEdit?: boolean
   /** Only allow confirming (OK) when the selector matches exactly one element. Default: false. */
   requireUniqueMatch?: boolean
+  /**
+   * Restrict which elements can be picked: the user may only select an element that
+   * matches this CSS selector — hovering a descendant snaps to the nearest matching
+   * ancestor (Element.closest), and elements with no match are not selectable
+   * (not-allowed cursor, click ignored). A comma list works:
+   * "input, textarea, select, [contenteditable]". Omit for no restriction.
+   *
+   * Orthogonal to {@link selector}: `mustMatch` decides WHICH element is picked,
+   * `selector` decides HOW its selector is built. Must be a valid CSS selector — an
+   * invalid one rejects the pick with `invalid_params`.
+   */
+  mustMatch?: string
 }
 
 export interface PickedElement {

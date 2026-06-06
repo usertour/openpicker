@@ -2,6 +2,41 @@ import type { PickedElement } from "@openpicker/protocol"
 
 /** Geometry, labelling, attribute extraction, and DOM-tree navigation helpers. */
 
+/**
+ * The element a pick would actually select for `el` under a `mustMatch` constraint:
+ * the nearest ancestor (including `el` itself) that matches the CSS selector, or `el`
+ * unchanged when there is no constraint. Returns null when nothing in the chain
+ * matches — i.e. this position is not selectable. Defensive against a bad selector.
+ */
+export function resolveTarget(el: Element, mustMatch: string | undefined): Element | null {
+  if (!mustMatch) return el
+  try {
+    return el.closest(mustMatch)
+  } catch {
+    return null
+  }
+}
+
+/** Whether `el` itself matches the `mustMatch` constraint (true when unconstrained). */
+export function matchesTarget(el: Element, mustMatch: string | undefined): boolean {
+  if (!mustMatch) return true
+  try {
+    return el.matches(mustMatch)
+  } catch {
+    return false
+  }
+}
+
+/** Whether a string is a syntactically valid CSS selector (parses without throwing). */
+export function isValidSelector(selector: string): boolean {
+  try {
+    document.createDocumentFragment().querySelector(selector)
+    return true
+  } catch {
+    return false
+  }
+}
+
 /** A short human label for an element, e.g. `div#main.card`. */
 export function tagLabel(el: Element): string {
   const tag = el.tagName.toLowerCase()

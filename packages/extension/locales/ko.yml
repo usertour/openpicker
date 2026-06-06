@@ -53,6 +53,7 @@ options:
   done: "완료"
 picker:
   hoverHint: 마우스를 움직여 요소를 클릭하면 선택됩니다.
+  noMatchingTarget: "이 요소는 선택할 수 없습니다"
   selectorLabel: 선택자
   hoverPlaceholder: 요소 위에 마우스를 올리세요…
   invalidSelector: 잘못된 선택자
