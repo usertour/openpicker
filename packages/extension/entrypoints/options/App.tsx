@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from "react"
 import { i18n } from "#i18n"
 import { BrandLockup } from "@/components/Brand"
 import { ThemeToggle } from "@/components/ThemeToggle"
+import { SelectorRules } from "./SelectorRules"
 
 /**
  * Options page (opened from the popup or chrome://extensions). Sets the
@@ -268,6 +269,9 @@ export function App() {
             </div>
           </section>
         )}
+
+        {/* Selector rules — global default + per-site overrides */}
+        <SelectorRules />
 
         {/* Appearance — theme for openpicker's own UI */}
         <section className="mt-8">

@@ -7,7 +7,7 @@ brandTagline: Wähle ein Element und erhalte seinen Selektor
 
 popup:
   pickThisPage: Ein Element auf dieser Seite auswählen
-  manageSites: Autorisierte Websites verwalten
+  settings: "Einstellungen"
   docs: Doku
 
 theme:
@@ -42,6 +42,15 @@ options:
   appearanceTitle: Darstellung
   appearanceDesc: Design für die eigene Oberfläche von openpicker.
 
+  selectorRulesTitle: "Selektor-Regeln"
+  selectorRulesDesc: "Steuere, wie Selektoren gebaut werden – global oder pro Website."
+  globalDefault: "Globaler Standard"
+  perSiteRules: "Regeln pro Website"
+  perSiteRulesDesc: "Überschreibe den globalen Standard für bestimmte Websites."
+  noSiteRules: "Noch keine Regeln pro Website."
+  add: "Hinzufügen"
+  edit: "Bearbeiten"
+  done: "Fertig"
 picker:
   hoverHint: Bewege die Maus und klicke auf ein Element, um es auszuwählen.
   selectorLabel: Selektor
@@ -79,7 +88,9 @@ settings:
   enableId: ID aktivieren
   enableClass: Class aktivieren
   enableAttribute: Attribut aktivieren
-  idHint: Verwendet die id des Elements. Das Feld ist eine Regex der zu ignorierenden id-Namen (z. B. ^ember|^radix- für automatisch erzeugte ids).
-  classHint: Verwendet die Klassennamen. Das Feld ist eine Regex der zu ignorierenden Klassennamen (z. B. css-|sc-|jsx- für gehashte Klassen).
-  attrHintEmpty: 'Zu verwendende Attributnamen, z. B. "data-testid, name". Leer = automatisch: $1 (nur stabile Werte).'
-  attrHintFilled: Es werden nur diese Attributnamen verwendet (beliebiger Wert).
+  enableTag: "Tag aktivieren"
+  allow: "Zulassen"
+  ignore: "Ignorieren"
+  regexHint: "Regex für Namen. Zulassen = nur Treffer; Ignorieren = nie; leer = automatisch."
+  lockedBySite: "Von der Website gesperrt"
+  requireUnique: "Wähle ein Element, das genau eines trifft."

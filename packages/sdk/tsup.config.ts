@@ -6,6 +6,8 @@ export default defineConfig({
   dts: true,
   clean: true,
   treeshake: true,
-  // @openpicker/protocol is a private, source-only package: bundle it into the output.
-  noExternal: [/@openpicker\/protocol/],
+  // @openpicker/protocol is a published dependency: keep it external (the default) so
+  // the SDK's .d.ts re-exports its types from the real package and npm dedupes the
+  // runtime — no bundling.
+  external: ["@openpicker/protocol"],
 })

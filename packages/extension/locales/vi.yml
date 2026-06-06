@@ -7,7 +7,7 @@ brandTagline: Chọn một phần tử, nhận selector của nó
 
 popup:
   pickThisPage: Chọn một phần tử trên trang này
-  manageSites: Quản lý các trang được ủy quyền
+  settings: "Cài đặt"
   docs: Tài liệu
 
 theme:
@@ -42,6 +42,15 @@ options:
   appearanceTitle: Giao diện
   appearanceDesc: Chủ đề cho giao diện của chính openpicker.
 
+  selectorRulesTitle: "Quy tắc selector"
+  selectorRulesDesc: "Kiểm soát cách tạo selector — toàn cục hoặc theo trang."
+  globalDefault: "Mặc định toàn cục"
+  perSiteRules: "Quy tắc theo trang"
+  perSiteRulesDesc: "Ghi đè mặc định toàn cục cho các trang cụ thể."
+  noSiteRules: "Chưa có quy tắc theo trang."
+  add: "Thêm"
+  edit: "Sửa"
+  done: "Xong"
 picker:
   hoverHint: Di chuyển chuột và nhấp vào một phần tử để chọn nó.
   selectorLabel: Selector
@@ -79,7 +88,9 @@ settings:
   enableId: Bật ID
   enableClass: Bật Class
   enableAttribute: Bật thuộc tính
-  idHint: Dùng id của phần tử. Ô này là một regex các tên id cần bỏ qua (ví dụ ^ember|^radix- cho các id tạo tự động).
-  classHint: Dùng tên lớp. Ô này là một regex các tên lớp cần bỏ qua (ví dụ css-|sc-|jsx- cho các lớp đã băm).
-  attrHintEmpty: 'Tên thuộc tính cần dùng, ví dụ "data-testid, name". Để trống = tự động: $1 (chỉ giá trị ổn định).'
-  attrHintFilled: Chỉ dùng các tên thuộc tính này (giá trị bất kỳ).
+  enableTag: "Bật thẻ"
+  allow: "Cho phép"
+  ignore: "Bỏ qua"
+  regexHint: "Regex tên. Cho phép = chỉ khớp; Bỏ qua = không bao giờ; trống = tự động."
+  lockedBySite: "Bị khóa bởi trang"
+  requireUnique: "Hãy chọn một phần tử khớp đúng một."

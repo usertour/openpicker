@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { describe, expect, it } from "vitest"
 import { AUTO_ATTRS, evalSelector, generateSelector, isStableClass, isStableId } from "./selector"
+import { defaultSelectorSettings, type SelectorSettings } from "./selectorSettings"
 
 function q(root: ParentNode, selector: string): Element {
   const found = root.querySelector(selector)
@@ -10,42 +11,38 @@ function q(root: ParentNode, selector: string): Element {
 
 describe("isStableId", () => {
   it("accepts human-readable ids", () => {
-    expect(isStableId("main-header", null)).toBe(true)
-    expect(isStableId("nav", null)).toBe(true)
+    expect(isStableId("main-header")).toBe(true)
+    expect(isStableId("nav")).toBe(true)
   })
 
   it("rejects auto-generated ids", () => {
-    expect(isStableId("ember123", null)).toBe(false) // Ember
-    expect(isStableId("radix-:r1:", null)).toBe(false) // Radix
-    expect(isStableId("react-aria1", null)).toBe(false) // React Aria
-    expect(isStableId("headlessui-menu-1", null)).toBe(false) // Headless UI
-    expect(isStableId(":r0:", null)).toBe(false) // React useId
-    expect(isStableId("a1b2c3d4", null)).toBe(false) // long hex hash
+    expect(isStableId("ember123")).toBe(false) // Ember
+    expect(isStableId("radix-:r1:")).toBe(false) // Radix
+    expect(isStableId("react-aria1")).toBe(false) // React Aria
+    expect(isStableId("headlessui-menu-1")).toBe(false) // Headless UI
+    expect(isStableId(":r0:")).toBe(false) // React useId
+    expect(isStableId("a1b2c3d4")).toBe(false) // long hex hash
   })
 
-  it("rejects empty and honors the user exclude regex", () => {
-    expect(isStableId("", null)).toBe(false)
-    expect(isStableId("keep-this", /^keep/)).toBe(false)
-    expect(isStableId("other", /^keep/)).toBe(true)
+  it("rejects the empty string", () => {
+    expect(isStableId("")).toBe(false)
   })
 })
 
 describe("isStableClass", () => {
   it("accepts human-readable class names", () => {
-    expect(isStableClass("card", null)).toBe(true)
-    expect(isStableClass("nav-bar", null)).toBe(true)
+    expect(isStableClass("card")).toBe(true)
+    expect(isStableClass("nav-bar")).toBe(true)
   })
 
   it("rejects hashed CSS-in-JS / CSS-module class names", () => {
-    expect(isStableClass("css-1a2b3c", null)).toBe(false) // emotion
-    expect(isStableClass("sc-AbCdEf", null)).toBe(false) // styled-components
-    expect(isStableClass("emotion-7", null)).toBe(false)
+    expect(isStableClass("css-1a2b3c")).toBe(false) // emotion
+    expect(isStableClass("sc-AbCdEf")).toBe(false) // styled-components
+    expect(isStableClass("emotion-7")).toBe(false)
   })
 
-  it("rejects empty and honors the user exclude regex", () => {
-    expect(isStableClass("", null)).toBe(false)
-    expect(isStableClass("col-12", /^col-/)).toBe(false)
-    expect(isStableClass("button", /^col-/)).toBe(true)
+  it("rejects the empty string", () => {
+    expect(isStableClass("")).toBe(false)
   })
 })
 
@@ -68,12 +65,14 @@ describe("evalSelector", () => {
 })
 
 describe("generateSelector", () => {
-  const allOn = { useIds: true, useClasses: true, useAttrs: true }
+  function withDisabled(dim: keyof SelectorSettings): SelectorSettings {
+    return { ...defaultSelectorSettings(), [dim]: { enabled: false, allow: "", ignore: "" } }
+  }
 
   it("produces a selector that uniquely identifies the element", () => {
     document.body.innerHTML = '<div id="wrap"><button id="save" class="btn">Save</button></div>'
     const button = q(document, "#save")
-    const selector = generateSelector(button, allOn)
+    const selector = generateSelector(button, defaultSelectorSettings())
     expect(document.querySelectorAll(selector)).toHaveLength(1)
     expect(document.querySelector(selector)).toBe(button)
   })
@@ -81,17 +80,43 @@ describe("generateSelector", () => {
   it("does not anchor on an auto-generated id, but still resolves uniquely", () => {
     document.body.innerHTML = '<section><a id="ember123" class="link">x</a></section>'
     const link = q(document, "#ember123")
-    const selector = generateSelector(link, allOn)
+    const selector = generateSelector(link, defaultSelectorSettings())
     expect(selector).not.toContain("#ember123")
     expect(document.querySelector(selector)).toBe(link)
   })
 
-  it("avoids ids entirely when useIds is false", () => {
+  it("avoids ids entirely when the id anchor is disabled", () => {
     document.body.innerHTML = '<div><span id="here" class="tag">x</span></div>'
     const span = q(document, "#here")
-    const selector = generateSelector(span, { useIds: false, useClasses: true, useAttrs: true })
+    const selector = generateSelector(span, withDisabled("id"))
     expect(selector).not.toContain("#here")
     expect(document.querySelector(selector)).toBe(span)
+  })
+
+  it("honors an attribute allow regex", () => {
+    document.body.innerHTML = '<div><button data-testid="save" class="btn">x</button></div>'
+    const button = q(document, "[data-testid='save']")
+    const settings: SelectorSettings = {
+      id: { enabled: false, allow: "", ignore: "" },
+      class: { enabled: false, allow: "", ignore: "" },
+      tag: { enabled: false, allow: "", ignore: "" },
+      attr: { enabled: true, allow: "^data-testid$", ignore: "" },
+    }
+    const selector = generateSelector(button, settings)
+    expect(selector).toContain("data-testid")
+    expect(document.querySelector(selector)).toBe(button)
+  })
+
+  it("honors an ignore regex (avoids the ignored id)", () => {
+    document.body.innerHTML = '<div><button id="keepme" class="btn">x</button></div>'
+    const button = q(document, "#keepme")
+    const settings: SelectorSettings = {
+      ...defaultSelectorSettings(),
+      id: { enabled: true, allow: "", ignore: "^keep" },
+    }
+    const selector = generateSelector(button, settings)
+    expect(selector).not.toContain("#keepme")
+    expect(document.querySelector(selector)).toBe(button)
   })
 })
 

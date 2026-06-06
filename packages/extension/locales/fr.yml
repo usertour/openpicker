@@ -7,7 +7,7 @@ brandTagline: Choisissez un élément, obtenez son sélecteur
 
 popup:
   pickThisPage: Choisir un élément sur cette page
-  manageSites: Gérer les sites autorisés
+  settings: "Paramètres"
   docs: Docs
 
 theme:
@@ -42,6 +42,15 @@ options:
   appearanceTitle: Apparence
   appearanceDesc: Thème de l'interface d'openpicker.
 
+  selectorRulesTitle: "Règles de sélecteur"
+  selectorRulesDesc: "Contrôlez la construction des sélecteurs : globalement ou par site."
+  globalDefault: "Valeur par défaut globale"
+  perSiteRules: "Règles par site"
+  perSiteRulesDesc: "Remplacez la valeur par défaut globale pour des sites précis."
+  noSiteRules: "Aucune règle par site pour l'instant."
+  add: "Ajouter"
+  edit: "Modifier"
+  done: "Terminé"
 picker:
   hoverHint: Déplacez la souris et cliquez sur un élément pour le sélectionner.
   selectorLabel: Sélecteur
@@ -79,7 +88,9 @@ settings:
   enableId: Activer l'ID
   enableClass: Activer Class
   enableAttribute: Activer l'attribut
-  idHint: Utilise l'id de l'élément. Le champ est une regex des noms d'id à ignorer (p. ex. ^ember|^radix- pour les id générés automatiquement).
-  classHint: Utilise les noms de classe. Le champ est une regex des noms de classe à ignorer (p. ex. css-|sc-|jsx- pour les classes hachées).
-  attrHintEmpty: 'Noms d''attributs à utiliser, p. ex. "data-testid, name". Vide = automatique : $1 (valeurs stables uniquement).'
-  attrHintFilled: Seuls ces noms d'attributs sont utilisés (n'importe quelle valeur).
+  enableTag: "Activer la balise"
+  allow: "Autoriser"
+  ignore: "Ignorer"
+  regexHint: "Regex de noms. Autoriser = uniquement les correspondances ; Ignorer = jamais ; vide = auto."
+  lockedBySite: "Verrouillé par le site"
+  requireUnique: "Choisissez un élément qui correspond à un seul."

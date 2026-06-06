@@ -231,5 +231,12 @@ export type {
   PickResult,
   PingResult,
   ProtocolError,
+  RegexSource,
   ScreenshotMode,
+  SelectorAnchorConfig,
+  SelectorConfig,
+  SelectorToken,
+  SelectorTokenType,
 } from "@openpicker/protocol"
+/** Validate a returned selector against a {@link SelectorConfig} (the user may have edited it). */
+export { matchesSelectorConfig } from "@openpicker/protocol"

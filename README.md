@@ -172,8 +172,16 @@ try {
 | `key`        | `string`                        | Opaque task id; decides whether a later pick reuses the target tab.   |
 | `iframe`     | `boolean`                       | Request subframe resolution (may report `unsupported` in v1).         |
 | `appName`    | `string`                        | Overrides the instance `appName` for this call.                       |
+| `selector`   | `SelectorConfig`                | Selector-generation rules (per id/class/attr/tag: `enabled`/`allow`/`ignore` regex). |
+| `lockSelectorSettings` | `boolean`             | Show the picker's rule settings read-only. Default `false`.           |
+| `lockSelectorEdit`     | `boolean`             | Make the selector field read-only. Default `false`.                   |
+| `requireUniqueMatch`   | `boolean`             | Allow confirm only when the selector matches exactly one. Default `false`. |
 
 **`PickResult`** → `{ selector, matchCount, element: { tag, id, classes, text, attributes }, screenshot? }`
+
+`selector` rules compose with the user's saved rules (each layer can only narrow). The user can edit
+the returned selector unless you `lockSelectorEdit`, so validate it with `matchesSelectorConfig(selector, config)`.
+See [Configuring selectors](https://docs.openpicker.dev/guide/configuring-selectors).
 
 **Error codes** (`OpenpickerError.code`): `extension_not_installed`, `unsupported_protocol`,
 `consent_denied`, `cancelled`, `invalid_params`, `unsupported`, `timeout`, `internal_error`.

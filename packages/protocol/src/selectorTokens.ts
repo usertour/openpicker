@@ -1,16 +1,20 @@
+import type { SelectorAnchorConfig, SelectorConfig } from "./methods"
+
 /**
- * Tokenize a CSS selector for syntax highlighting in the selector field. Best-effort
- * and resilient: anything unrecognized falls through as "punctuation", so an
- * in-progress or invalid selector still renders without throwing. Invariant: the
- * concatenated token text always equals the input exactly (no chars dropped/added),
- * which keeps the highlight layer aligned with the editable textarea over it.
+ * Tokenize a CSS selector for syntax highlighting and for validating a selector
+ * against a {@link SelectorConfig}. Best-effort and resilient: anything
+ * unrecognized falls through as "punctuation", so an in-progress or invalid
+ * selector still tokenizes without throwing. Invariant: the concatenated token text
+ * always equals the input exactly. Lives in the protocol package so both the
+ * extension (highlighting) and the SDK (validation) can share it.
  */
 
 export type SelectorTokenType =
   | "tag"
   | "id"
   | "class"
-  | "attr"
+  | "attrName"
+  | "attrValue"
   | "pseudo"
   | "combinator"
   | "punctuation"
@@ -39,7 +43,6 @@ export function tokenizeSelector(selector: string): SelectorToken[] {
   while (i < n) {
     const c = selector.charAt(i)
 
-    // Whitespace = the descendant combinator (also absorbs space around > + ~).
     if (/\s/.test(c)) {
       let j = i + 1
       while (j < n && /\s/.test(selector.charAt(j))) j++
@@ -68,7 +71,6 @@ export function tokenizeSelector(selector: string): SelectorToken[] {
       let j = i + 1
       if (selector.charAt(j) === ":") j++
       j = runOfWord(j)
-      // Functional pseudo-class: include a balanced (...) group.
       if (selector.charAt(j) === "(") {
         let depth = 0
         while (j < n) {
@@ -86,13 +88,11 @@ export function tokenizeSelector(selector: string): SelectorToken[] {
       continue
     }
     if (c === "[") {
-      // Sub-tokenize the attribute selector: brackets/operators as punctuation,
-      // the name and value as "attr".
       push("[", "punctuation")
       i++
       i = (() => {
         const nameEnd = runOfWord(i)
-        push(selector.slice(i, nameEnd), "attr")
+        push(selector.slice(i, nameEnd), "attrName")
         let k = nameEnd
         while (k < n && selector.charAt(k) !== "]") {
           const ch = selector.charAt(k)
@@ -100,7 +100,7 @@ export function tokenizeSelector(selector: string): SelectorToken[] {
             let q = k + 1
             while (q < n && selector.charAt(q) !== ch) q++
             if (q < n) q++ // include the closing quote
-            push(selector.slice(k, q), "attr")
+            push(selector.slice(k, q), "attrValue")
             k = q
           } else if (/[\s~|^$*=]/.test(ch)) {
             push(ch, "punctuation")
@@ -108,7 +108,7 @@ export function tokenizeSelector(selector: string): SelectorToken[] {
           } else {
             let v = k
             while (v < n && !/[\]\s=~|^$*'"]/.test(selector.charAt(v))) v++
-            push(selector.slice(k, v), "attr")
+            push(selector.slice(k, v), "attrValue")
             k = v
           }
         }
@@ -132,10 +132,44 @@ export function tokenizeSelector(selector: string): SelectorToken[] {
       continue
     }
 
-    // Commas, stray parens, and anything else.
     push(c, "punctuation")
     i++
   }
 
   return tokens
+}
+
+/** Whether a name is allowed by one anchor config. A missing anchor = no constraint. */
+function anchorAllowsName(name: string, anchor?: SelectorAnchorConfig): boolean {
+  if (!anchor) return true
+  if (anchor.enabled === false) return false
+  try {
+    if (anchor.ignore && new RegExp(anchor.ignore).test(name)) return false
+    if (anchor.allow) return new RegExp(anchor.allow).test(name)
+  } catch {
+    // A malformed regex constrains nothing — don't falsely reject.
+    return true
+  }
+  return true
+}
+
+/**
+ * Whether a CSS selector only uses anchors permitted by a {@link SelectorConfig} —
+ * the SDK-side check a developer runs on the returned selector (which the user may
+ * have hand-edited). Combinators, pseudo-classes, attribute values, and the
+ * universal `*` are unconstrained. A selector touching no constrained anchors passes.
+ */
+export function matchesSelectorConfig(selector: string, config: SelectorConfig): boolean {
+  for (const tok of tokenizeSelector(selector)) {
+    if (tok.type === "id") {
+      if (!anchorAllowsName(tok.text.replace(/^#/, ""), config.id)) return false
+    } else if (tok.type === "class") {
+      if (!anchorAllowsName(tok.text.replace(/^\./, ""), config.class)) return false
+    } else if (tok.type === "tag") {
+      if (tok.text !== "*" && !anchorAllowsName(tok.text, config.tag)) return false
+    } else if (tok.type === "attrName") {
+      if (!anchorAllowsName(tok.text, config.attr)) return false
+    }
+  }
+  return true
 }

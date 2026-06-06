@@ -7,7 +7,7 @@ brandTagline: Wybierz element i uzyskaj jego selektor
 
 popup:
   pickThisPage: Wybierz element na tej stronie
-  manageSites: Zarządzaj autoryzowanymi witrynami
+  settings: "Ustawienia"
   docs: Dokumentacja
 
 theme:
@@ -42,6 +42,15 @@ options:
   appearanceTitle: Wygląd
   appearanceDesc: Motyw własnego interfejsu openpicker.
 
+  selectorRulesTitle: "Reguły selektora"
+  selectorRulesDesc: "Steruj sposobem budowania selektorów — globalnie lub dla witryny."
+  globalDefault: "Domyślne globalne"
+  perSiteRules: "Reguły dla witryn"
+  perSiteRulesDesc: "Zastąp domyślne globalne dla wybranych witryn."
+  noSiteRules: "Brak reguł dla witryn."
+  add: "Dodaj"
+  edit: "Edytuj"
+  done: "Gotowe"
 picker:
   hoverHint: Przesuń myszą i kliknij element, aby go wybrać.
   selectorLabel: Selektor
@@ -79,7 +88,9 @@ settings:
   enableId: Włącz ID
   enableClass: Włącz Class
   enableAttribute: Włącz atrybut
-  idHint: Używa id elementu. Pole to wyrażenie regularne nazw id do zignorowania (np. ^ember|^radix- dla automatycznie generowanych id).
-  classHint: Używa nazw klas. Pole to wyrażenie regularne nazw klas do zignorowania (np. css-|sc-|jsx- dla zahaszowanych klas).
-  attrHintEmpty: 'Nazwy atrybutów do użycia, np. "data-testid, name". Puste = automatycznie: $1 (tylko stabilne wartości).'
-  attrHintFilled: Używane są tylko te nazwy atrybutów (dowolna wartość).
+  enableTag: "Włącz tag"
+  allow: "Zezwól"
+  ignore: "Ignoruj"
+  regexHint: "Regex nazw. Zezwól = tylko dopasowania; Ignoruj = nigdy; puste = automatycznie."
+  lockedBySite: "Zablokowane przez witrynę"
+  requireUnique: "Wybierz element pasujący do dokładnie jednego."

@@ -7,7 +7,7 @@ brandTagline: Scegli un elemento e ottieni il suo selettore
 
 popup:
   pickThisPage: Scegli un elemento in questa pagina
-  manageSites: Gestisci i siti autorizzati
+  settings: "Impostazioni"
   docs: Docs
 
 theme:
@@ -42,6 +42,15 @@ options:
   appearanceTitle: Aspetto
   appearanceDesc: Tema dell'interfaccia di openpicker.
 
+  selectorRulesTitle: "Regole del selettore"
+  selectorRulesDesc: "Controlla come vengono costruiti i selettori: globale o per sito."
+  globalDefault: "Predefinito globale"
+  perSiteRules: "Regole per sito"
+  perSiteRulesDesc: "Sovrascrivi il predefinito globale per siti specifici."
+  noSiteRules: "Ancora nessuna regola per sito."
+  add: "Aggiungi"
+  edit: "Modifica"
+  done: "Fatto"
 picker:
   hoverHint: Muovi il mouse e fai clic su un elemento per selezionarlo.
   selectorLabel: Selettore
@@ -79,7 +88,9 @@ settings:
   enableId: Abilita ID
   enableClass: Abilita Class
   enableAttribute: Abilita attributo
-  idHint: Usa l'id dell'elemento. Il campo è una regex dei nomi di id da ignorare (ad es. ^ember|^radix- per gli id generati automaticamente).
-  classHint: Usa i nomi delle classi. Il campo è una regex dei nomi di classe da ignorare (ad es. css-|sc-|jsx- per le classi con hash).
-  attrHintEmpty: 'Nomi di attributi da usare, ad es. "data-testid, name". Vuoto = automatico: $1 (solo valori stabili).'
-  attrHintFilled: Vengono usati solo questi nomi di attributi (qualsiasi valore).
+  enableTag: "Abilita tag"
+  allow: "Consenti"
+  ignore: "Ignora"
+  regexHint: "Regex dei nomi. Consenti = solo corrispondenze; Ignora = mai; vuoto = automatico."
+  lockedBySite: "Bloccato dal sito"
+  requireUnique: "Scegli un elemento che corrisponda a uno solo."

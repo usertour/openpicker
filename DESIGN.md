@@ -77,7 +77,7 @@ Three publishable units:
 | SDK build | tsup (ESM + CJS + d.ts) |
 | Testing | Vitest (unit) + Playwright (E2E, loads unpacked extension) |
 | Lint/format | Biome |
-| Versioning/release | Changesets + GitHub Actions |
+| Versioning/release | Tag-driven GitHub Actions (`v*` tag → publishes @openpicker/protocol + @openpicker/sdk) |
 | Docs site | TBD (candidate: Astro Starlight) |
 
 ### Known one-time setup cost
@@ -238,14 +238,22 @@ map onto `@medv/finder` configuration, surfaced as UI.
 - The generated selector always targets **exactly one element** (finder's unique selector). A
   "list / group" mode was considered but cut — openpicker's purpose is targeting a single element,
   and the feature was borrowed from a reference UI without a real use case (see git history).
-- **Enable ID / Class / Attribute** (default all on): whether the selector may anchor on each kind.
-  Unchecking a kind disables finder's corresponding predicate (`idName` / `className` / `attr`).
-- **Ignore id / class pattern**: per-type regex of names to skip, on top of openpicker's built-in
-  blacklist that already filters hashed Tailwind / CSS-in-JS names.
-- **Attributes to use**: comma/space/pipe-separated attribute names to allow (e.g. `data-testid,
-  name`). **Empty = a sensible default**: test hooks (`data-testid`…) plus finder's curated set
-  (`name` / `aria-label` / `role` / `href` / `data-*`). This is what fixes attributes that the old
-  test-hooks-only filter used to throw away.
+- **Per-dimension rules** (id / class / attr / tag): each has an **enable** toggle plus an **allow**
+  and an **ignore** regex, mapping onto finder's `idName` / `className` / `attr` / `tagName`
+  predicates. For `attr`, allow/ignore match the attribute **name**. An empty **allow** falls back to
+  openpicker's stable-name default (skips hashed ids/classes; prefers test hooks + finder's curated
+  attribute set). The settings are one resolved `SelectorSettings` object; legacy stored shapes
+  (boolean toggles + a single ignore + an attr name-list) are migrated on load.
+- **Layering**: built-in defaults < the user's **global default** (options page) < the user's
+  **per-site override** < the SDK's `selector` (per pick). Anchors compose by **intersection** —
+  `enabled` ANDs, `ignore` unions, `allow` is taken from the override when set — so every layer can
+  only *narrow*. The user's live gear/selector edits are the final say (unless the SDK locked them).
+- **SDK control**: `selector` seeds the rules; `lockSelectorSettings` / `lockSelectorEdit` render the
+  gear / selector read-only (visible, not editable — transparency); `requireUniqueMatch` gates
+  confirm. None of this touches consent. The user can still edit the selector unless locked, so the
+  guarantee is the caller's: validate with `matchesSelectorConfig` (shared tokenizer in the protocol).
+- **Where it's set**: the sidebar **gear** edits the current site (written back only on toolbar
+  picks); the **options page → Selector rules** edits the global default + per-site overrides.
 - Changes update the live selector preview and match count immediately.
 - **Subframe (iframe)** is **not** in the panel — picking inside iframes is deferred to v2 (needs
   injecting into child frames and a two-part result `{ frame, selector }`; see §5d open items). The

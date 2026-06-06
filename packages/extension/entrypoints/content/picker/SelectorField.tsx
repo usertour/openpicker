@@ -1,7 +1,7 @@
-import { RiCheckLine, RiFileCopyLine } from "@remixicon/react"
+import { type SelectorTokenType, tokenizeSelector } from "@openpicker/protocol"
+import { RiCheckLine, RiFileCopyLine, RiLock2Line } from "@remixicon/react"
 import { useMemo, useState } from "react"
 import { i18n } from "#i18n"
-import { type SelectorTokenType, tokenizeSelector } from "./selectorTokens"
 
 /**
  * The selector readout — the picker's hero. A syntax-highlighted field that stays
@@ -16,7 +16,8 @@ const TOKEN_CLASS: Record<SelectorTokenType, string> = {
   tag: "text-pink-700 dark:text-pink-300",
   id: "text-accent-600 dark:text-accent-400",
   class: "text-sky-600 dark:text-sky-300",
-  attr: "text-amber-700 dark:text-amber-300",
+  attrName: "text-amber-700 dark:text-amber-300",
+  attrValue: "text-amber-700 dark:text-amber-300",
   pseudo: "text-emerald-600 dark:text-emerald-300",
   combinator: "text-slate-400 dark:text-slate-500",
   punctuation: "text-slate-400 dark:text-slate-500",
@@ -37,6 +38,8 @@ interface SelectorFieldProps {
   matchCount: number
   /** False when the selector is not valid CSS. */
   selectorValid: boolean
+  /** SDK locked editing: show a "locked by the site" hint (the field is read-only). */
+  lockedBySite?: boolean
 }
 
 function StatusPill({ matchCount, valid }: { matchCount: number; valid: boolean }) {
@@ -63,6 +66,7 @@ export function SelectorField({
   onChange,
   matchCount,
   selectorValid,
+  lockedBySite,
 }: SelectorFieldProps) {
   const [copied, setCopied] = useState(false)
   // Key each token by its start offset (unique + stable, not the array index).
@@ -138,6 +142,12 @@ export function SelectorField({
         )}
       </div>
       {value && <StatusPill matchCount={matchCount} valid={selectorValid} />}
+      {lockedBySite && (
+        <div className="mt-1.5 inline-flex items-center gap-1 text-[10px] text-slate-400 dark:text-slate-500">
+          <RiLock2Line size={11} />
+          {i18n.t("settings.lockedBySite")}
+        </div>
+      )}
     </div>
   )
 }

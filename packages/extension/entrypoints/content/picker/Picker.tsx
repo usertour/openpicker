@@ -15,10 +15,10 @@ import { applyHostCursor, clearHostCursor } from "./hostCursor"
 import { isNavigateMode, setNavigateMode } from "./navigateMode"
 import { RulerGuides } from "./RulerGuides"
 import type { PickOutcome } from "./run"
-import type { SelectorSettings } from "./SettingsPopover"
 import { Sidebar } from "./Sidebar"
 import { captureScreenshot, normalizeScreenshotMode } from "./screenshot"
 import { matchCount as countMatches, evalSelector, generateSelector } from "./selector"
+import type { SelectorSettings } from "./selectorSettings"
 import { saveSelectorSettings } from "./settingsStore"
 import { TagTooltip } from "./TagTooltip"
 import { useTrackedRect } from "./useTrackedRect"
@@ -308,7 +308,9 @@ export function Picker({
         onSettingsChange={(patch) =>
           setSettings((s) => {
             const next = { ...s, ...patch }
-            saveSelectorSettings(window.origin, next)
+            // Write back only for toolbar picks (the user's own context); SDK picks
+            // are session-only so a site can't mutate the user's saved preferences.
+            if (copyOnConfirm) saveSelectorSettings(window.origin, next)
             return next
           })
         }
@@ -321,6 +323,9 @@ export function Picker({
         onCancel={cancel}
         confirmLabel={copyOnConfirm ? i18n.t("picker.copy") : i18n.t("picker.ok")}
         confirmDone={copied}
+        lockSelectorSettings={!!params.lockSelectorSettings}
+        lockSelectorEdit={!!params.lockSelectorEdit}
+        requireUniqueMatch={!!params.requireUniqueMatch}
       />
     </>
   )

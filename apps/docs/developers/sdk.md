@@ -66,6 +66,20 @@ Returns an `Openpicker` handle.
 | `screenshot` | `"none" \| "element" \| "viewport"` | Screenshot to include. Defaults to `"none"`. |
 | `key` | `string` | Opaque task id; decides whether a later pick reuses the target tab. |
 | `appName` | `string` | Overrides the instance `appName` for this call. |
+| `selector` | `SelectorConfig` | Selector-generation rules for this pick (composed with the user's). |
+| `lockSelectorSettings` | `boolean` | Show the gear rules read-only. Default `false`. |
+| `lockSelectorEdit` | `boolean` | Make the selector field read-only. Default `false`. |
+| `requireUniqueMatch` | `boolean` | Allow confirm only when the selector matches exactly one element. Default `false`. |
+
+**`SelectorConfig`** — per anchor type (`id` / `class` / `attr` / `tag`), all optional:
+
+```ts
+{ id?: SelectorAnchorConfig; class?: …; attr?: …; tag?: … }
+// SelectorAnchorConfig: { enabled?: boolean; allow?: string /* regex */; ignore?: string /* regex */ }
+```
+
+`selector` composes with the user's saved rules — each layer can only narrow. See
+[Configuring selectors](/guide/configuring-selectors).
 
 **`PickResult`**
 
@@ -80,3 +94,18 @@ Returns an `Openpicker` handle.
 
 `pick` is **cross-tab only** — see [Cross-tab picking](/developers/cross-tab). Error codes are
 listed in [Errors](/developers/errors).
+
+## `matchesSelectorConfig(selector, config)`
+
+Returns whether a selector only uses anchors permitted by a `SelectorConfig`. The user can hand-edit
+the returned selector (unless you set `lockSelectorEdit`), so validate it against your rules:
+
+```ts
+import { matchesSelectorConfig } from "@openpicker/sdk"
+
+const cfg = { attr: { allow: "^data-step$" }, tag: { enabled: false } }
+const { selector } = await op.pick({ url, selector: cfg })
+if (!matchesSelectorConfig(selector, cfg)) {
+  // doesn't meet the requirement — ask the user to pick again
+}
+```
