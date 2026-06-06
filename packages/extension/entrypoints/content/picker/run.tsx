@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client"
 import { watchTheme } from "@/lib/theme"
 import { mountShadow } from "./mount"
 import { Picker } from "./Picker"
-import { composeSelectorSettings, defaultSelectorSettings } from "./selectorSettings"
+import { resolveInitialSettings } from "./selectorSettings"
 import { loadGlobalSelectorSettings, loadSelectorSettings } from "./settingsStore"
 
 /** Outcome of a pick: a confirmed result, a user cancel, or a consent denial. */
@@ -37,11 +37,11 @@ export async function runPicker(
 
   // Resolve selector settings (read semantics B): per-site override, else the global
   // default, else built-in — then layer the SDK's `selector` config on top (AND).
-  const base =
-    (await loadSelectorSettings(window.origin)) ??
-    (await loadGlobalSelectorSettings()) ??
-    defaultSelectorSettings()
-  const initialSettings = composeSelectorSettings(base, params.selector)
+  const [perSite, global] = await Promise.all([
+    loadSelectorSettings(window.origin),
+    loadGlobalSelectorSettings(),
+  ])
+  const initialSettings = resolveInitialSettings(perSite, global, params.selector)
 
   const mount = await mountShadow()
   // Theme the picker UI to match the user's choice; `.dark` lands on the shadow

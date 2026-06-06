@@ -4,6 +4,7 @@ import {
   coerceSelectorSettings,
   composeSelectorSettings,
   defaultSelectorSettings,
+  resolveInitialSettings,
 } from "./selectorSettings"
 
 describe("attrListToRegex", () => {
@@ -95,5 +96,22 @@ describe("composeSelectorSettings", () => {
     expect(re.test("ember1")).toBe(true)
     expect(re.test("radix-x")).toBe(true)
     expect(re.test("main")).toBe(false)
+  })
+})
+
+describe("resolveInitialSettings", () => {
+  it("prefers per-site, then global, then built-in default", () => {
+    const perSite = { ...defaultSelectorSettings(), id: { enabled: false, allow: "", ignore: "" } }
+    const global = {
+      ...defaultSelectorSettings(),
+      class: { enabled: false, allow: "", ignore: "" },
+    }
+    expect(resolveInitialSettings(perSite, global).id.enabled).toBe(false) // per-site wins
+    expect(resolveInitialSettings(null, global).class.enabled).toBe(false) // global when no per-site
+    expect(resolveInitialSettings(null, null)).toEqual(defaultSelectorSettings()) // built-in
+  })
+
+  it("layers the SDK config on top (only narrows)", () => {
+    expect(resolveInitialSettings(null, null, { tag: { enabled: false } }).tag.enabled).toBe(false)
   })
 })

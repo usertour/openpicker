@@ -15,6 +15,9 @@ importers:
       '@biomejs/biome':
         specifier: ^2.2.5
         version: 2.4.16
+      '@webext-core/fake-browser':
+        specifier: ^1.5.2
+        version: 1.5.2
       jsdom:
         specifier: ^29.1.1
         version: 29.1.1
@@ -1487,6 +1490,9 @@ packages:
 
   '@webext-core/fake-browser@1.5.1':
     resolution: {integrity: sha512-E+zd0viM8eSRmf8nLrk4bRjngHK/05+F0FaifIDVWcPRKGoxcWjA3El3RrX67bGAGf0RwIUgDjjBoXptgC8+3Q==}
+
+  '@webext-core/fake-browser@1.5.2':
+    resolution: {integrity: sha512-nkDQwOJ23X5Q7cEtN6LRuBtVFf1KVOFi5GoQAro0lzqdh59F5E+K350j1isbnqYbzsXRh1NJtboudIcHfZtvOQ==}
 
   '@webext-core/isolated-element@1.1.5':
     resolution: {integrity: sha512-4m6oP8Vzm/68YO1QmkUOZqqUcmyBtA53tji2g00/nYXE3E3IceYgeub7eIqvXDV2Z7xU6cm6qO1IMt4XFVwtvQ==}
@@ -4455,6 +4461,11 @@ snapshots:
       - typescript
 
   '@webext-core/fake-browser@1.5.1':
+    dependencies:
+      '@types/webextension-polyfill': 0.10.7
+      lodash.merge: 4.6.2
+
+  '@webext-core/fake-browser@1.5.2':
     dependencies:
       '@types/webextension-polyfill': 0.10.7
       lodash.merge: 4.6.2

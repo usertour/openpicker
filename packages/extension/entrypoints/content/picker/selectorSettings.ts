@@ -136,3 +136,16 @@ export function composeSelectorSettings(
     tag: composeAnchor(base.tag, override.tag),
   }
 }
+
+/**
+ * Resolve the settings a pick starts with (read semantics B): the per-site override
+ * if any, else the global default, else built-in — then layer the SDK `selector` on
+ * top. See DESIGN.md §5.1f.
+ */
+export function resolveInitialSettings(
+  perSite: SelectorSettings | null,
+  global: SelectorSettings | null,
+  sdk?: SelectorConfig,
+): SelectorSettings {
+  return composeSelectorSettings(perSite ?? global ?? defaultSelectorSettings(), sdk)
+}

@@ -1,9 +1,16 @@
+import { fakeBrowser } from "@webext-core/fake-browser"
+
 /**
- * Shared test setup. jsdom does not implement `CSS.escape`, but the picker's
- * selector code (and @medv/finder) rely on it the way a real browser provides it.
- * Polyfill it for the test environment so selector generation behaves faithfully.
- * (Spec algorithm, per https://drafts.csswg.org/cssom/#serialize-an-identifier.)
+ * Shared test setup.
+ *
+ * 1. Expose an in-memory WebExtension API as the global `browser` so modules that
+ *    use `browser.storage.*` (e.g. settingsStore) run under vitest. Tests reset it
+ *    with `fakeBrowser.reset()`.
+ * 2. jsdom does not implement `CSS.escape`, but the picker's selector code (and
+ *    @medv/finder) rely on it the way a real browser provides it — polyfill it.
+ *    (Spec algorithm, per https://drafts.csswg.org/cssom/#serialize-an-identifier.)
  */
+;(globalThis as { browser?: unknown }).browser = fakeBrowser
 
 function cssEscape(value: string): string {
   const text = String(value)
