@@ -77,7 +77,7 @@ Three publishable units:
 | SDK build | tsup (ESM + CJS + d.ts) |
 | Testing | Vitest (unit) + Playwright (E2E, loads unpacked extension) |
 | Lint/format | Biome |
-| Versioning/release | Changesets + GitHub Actions |
+| Versioning/release | Tag-driven GitHub Actions (`v*` tag → publishes @openpicker/protocol + @openpicker/sdk) |
 | Docs site | TBD (candidate: Astro Starlight) |
 
 ### Known one-time setup cost

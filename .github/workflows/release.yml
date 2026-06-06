@@ -1,7 +1,9 @@
 name: Release
 
-# Publishes @openpicker/sdk to npm when a v* tag is pushed (e.g. v0.2.0).
-# Requires an npm automation token in the repo secret NPM_TOKEN
+# Publishes the public workspace packages (@openpicker/protocol, @openpicker/sdk)
+# to npm when a v* tag is pushed (e.g. v0.2.0). The tag tracks @openpicker/sdk's
+# version; @openpicker/protocol is published only when its own version is not yet
+# on npm. Requires an npm automation token in the repo secret NPM_TOKEN
 # (Settings → Secrets and variables → Actions → New repository secret).
 on:
   push:
@@ -45,21 +47,12 @@ jobs:
       - name: Typecheck
         run: pnpm -r typecheck
 
-      # Idempotent: skip publishing a version that's already on npm (so re-tagging
-      # or a manual prior publish doesn't fail the run).
-      - name: Check if already published
-        id: check
-        run: |
-          VERSION="$(node -p "require('./packages/sdk/package.json').version")"
-          if npm view "@openpicker/sdk@$VERSION" version >/dev/null 2>&1; then
-            echo "exists=true" >> "$GITHUB_OUTPUT"
-            echo "@openpicker/sdk@$VERSION already on npm — skipping publish"
-          else
-            echo "exists=false" >> "$GITHUB_OUTPUT"
-          fi
-
+      # Publishes every non-private workspace package in dependency order
+      # (@openpicker/protocol, then @openpicker/sdk). pnpm skips any package whose
+      # version is already on npm, so re-tagging or a prior manual publish is safe.
+      # Each package's prepublishOnly rebuilds its dist; access is public via each
+      # package's publishConfig.
       - name: Publish to npm
-        if: steps.check.outputs.exists == 'false'
-        run: pnpm --filter @openpicker/sdk publish --no-git-checks
+        run: pnpm -r publish --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
