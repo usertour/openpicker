@@ -1,7 +1,7 @@
 # openpicker UI strings (source locale). Other locales mirror these keys.
 # Brand names (openpicker, Usertour) and example/regex values stay in English.
 
-# Shown in chrome://extensions and the Web Store (the name stays "openpicker").
+# Store/extension description (the manifest name lives in wxt.config.ts, not here).
 extDescription: Open-source CSS element picker.
 
 brandTagline: Pick an element, get its selector

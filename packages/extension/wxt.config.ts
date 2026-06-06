@@ -15,9 +15,11 @@ export default defineConfig({
     },
   }),
   manifest: {
-    name: "openpicker",
-    // Localized via _locales (generated from locales/*.yml). The name stays
-    // "openpicker" (brand); only the description is translated per locale.
+    // Chrome Web Store title + chrome://extensions name (the store shows the manifest
+    // name verbatim). Capitalized + descriptive for store discoverability; the brand
+    // elsewhere (UI wordmark, npm, docs) stays lowercase "openpicker". Not localized.
+    name: "OpenPicker - Pick CSS Selectors on Any Page",
+    // Only the description is translated per locale (via _locales from locales/*.yml).
     description: "__MSG_extDescription__",
     // Locale to fall back to; per-locale UI strings live in locales/*.yml and are
     // generated into _locales by @wxt-dev/i18n. The language follows the browser.
