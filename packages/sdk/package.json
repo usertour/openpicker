@@ -1,6 +1,6 @@
 {
   "name": "@openpicker/sdk",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Open-source CSS element picker — SDK for invoking the openpicker browser extension.",
   "license": "MIT",
   "author": "Usertour (https://www.usertour.io)",
@@ -43,10 +43,10 @@
     "registry": "https://registry.npmjs.org/"
   },
   "scripts": {
-    "build": "tsup",
+    "build": "pnpm --filter @openpicker/protocol build && tsup",
     "dev": "tsup --watch",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "tsup"
+    "prepublishOnly": "pnpm --filter @openpicker/protocol build && tsup"
   },
   "devDependencies": {
     "@openpicker/protocol": "workspace:*",

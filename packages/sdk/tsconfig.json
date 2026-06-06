@@ -1,4 +1,15 @@
 {
   "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    // Resolve @openpicker/protocol to its *built* bundle (single self-contained
+    // dist/index.{js,d.ts}) rather than its multi-file source. This lets the SDK's
+    // published .d.ts inline protocol's types into one file — a bare re-export of the
+    // private, unpublished protocol package would break consumers' types. Only the SDK
+    // overrides this; the extension and tests still use protocol source. Requires
+    // protocol to be built first (handled by `pnpm -r build` order and prepublishOnly).
+    "paths": {
+      "@openpicker/protocol": ["../protocol/dist/index"]
+    }
+  },
   "include": ["src", "tsup.config.ts"]
 }

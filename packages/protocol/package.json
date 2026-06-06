@@ -8,10 +8,11 @@
   },
   "types": "./src/index.ts",
   "scripts": {
-    "build": "echo \"@openpicker/protocol: source-only package, no build step\"",
+    "build": "tsup",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "tsup": "^8.5.0",
     "typescript": "^5.9.3"
   }
 }
