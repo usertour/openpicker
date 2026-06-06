@@ -61,10 +61,12 @@ document.getElementById("pickUrl")?.addEventListener("click", async () => {
   showShot(undefined)
   try {
     const config = getSelectorConfig()
+    const mustMatch = (document.getElementById("mustMatch") as HTMLInputElement).value.trim()
     const r = await op.pick({
       url,
       screenshot: screenshotMode(),
       selector: config,
+      mustMatch: mustMatch || undefined,
       lockSelectorSettings: checked("lockSettings"),
       lockSelectorEdit: checked("lockEdit"),
       requireUniqueMatch: checked("reqUnique"),
