@@ -122,8 +122,8 @@
           <div class="rounded-2xl border border-slate-200 bg-white p-[22px]">
             <h3 class="mb-2 font-semibold text-[17px]">Tunable per site</h3>
             <p class="text-[15px] text-slate-500">
-              Choose whether selectors use id / class / attributes, set ignore patterns and an
-              attribute allow-list — remembered per website.
+              Per-dimension rules for id / class / attribute / tag, each with an allow and an ignore
+              regex. Set a global default or per-site overrides — and the SDK can pre-set and lock them.
             </p>
           </div>
           <div class="rounded-2xl border border-slate-200 bg-white p-[22px]">
@@ -158,7 +158,8 @@
           <p class="mb-6 max-w-[44em] text-[17px] text-slate-500">
             Install <code class="rounded bg-slate-200/70 px-1.5 py-0.5 text-slate-700">@openpicker/sdk</code>, start a
             pick, and await the result. The SDK never draws UI — the extension owns the picker overlay
-            and the cross-tab routing.
+            and the cross-tab routing. You can constrain which selectors are allowed, lock the picker
+            UI, require a unique match, and validate the result with <code class="rounded bg-slate-200/70 px-1.5 py-0.5 text-slate-700">matchesSelectorConfig</code>.
           </p>
           <pre class="mb-6 overflow-x-auto rounded-2xl bg-slate-900 px-6 py-5 text-[14px] leading-7 text-slate-200"><code><span class="text-sky-300">import</span> { createOpenpicker } <span class="text-sky-300">from</span> <span class="text-emerald-300">"@openpicker/sdk"</span>
 
