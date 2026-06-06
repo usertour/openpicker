@@ -46,6 +46,8 @@ The options page's **Selector rules** section has a **global default** (applies 
 **per-site overrides** (for specific origins). The sidebar gear edits the current site's rules.
 Everything is stored in the browser, per origin — nothing is sent anywhere.
 
+![The options page's Selector rules: a global default plus per-site overrides](/selector-rules.png)
+
 ## Controlling it from the SDK
 
 An integration can pass selector rules into a pick, and optionally lock the UI so the user can't
