@@ -51,7 +51,7 @@ export function App() {
         className="mt-2 flex w-full items-center gap-2 rounded-lg border border-slate-200 px-3 py-2 font-medium text-[13px] text-slate-700 outline-none transition hover:border-accent-300 hover:bg-accent-50 hover:text-accent-700 focus-visible:ring-2 focus-visible:ring-accent-400/40 dark:border-slate-700 dark:text-slate-200 dark:hover:border-accent-700 dark:hover:bg-accent-950/40 dark:hover:text-accent-200"
       >
         <RiSettings3Line size={15} className="shrink-0" />
-        {i18n.t("popup.manageSites")}
+        {i18n.t("popup.settings")}
       </button>
 
       <div className="mt-3 flex items-center justify-between">

@@ -7,7 +7,7 @@ brandTagline: Bir öğe seç, seçicisini al
 
 popup:
   pickThisPage: Bu sayfada bir öğe seç
-  manageSites: Yetkili siteleri yönet
+  settings: "Ayarlar"
   docs: Belgeler
 
 theme:

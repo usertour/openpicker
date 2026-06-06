@@ -7,7 +7,7 @@ brandTagline: Chọn một phần tử, nhận selector của nó
 
 popup:
   pickThisPage: Chọn một phần tử trên trang này
-  manageSites: Quản lý các trang được ủy quyền
+  settings: "Cài đặt"
   docs: Tài liệu
 
 theme:

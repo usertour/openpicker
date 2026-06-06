@@ -7,7 +7,7 @@ brandTagline: Escolha um elemento e obtenha o seletor dele
 
 popup:
   pickThisPage: Escolher um elemento nesta página
-  manageSites: Gerenciar sites autorizados
+  settings: "Configurações"
   docs: Docs
 
 theme:

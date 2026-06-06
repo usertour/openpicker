@@ -7,7 +7,7 @@ brandTagline: 选中一个元素，得到它的选择器
 
 popup:
   pickThisPage: 在此页面选取元素
-  manageSites: 管理已授权的网站
+  settings: "设置"
   docs: 文档
 
 theme:

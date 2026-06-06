@@ -7,7 +7,7 @@ brandTagline: 要素を選んで、そのセレクターを取得
 
 popup:
   pickThisPage: このページで要素を選択
-  manageSites: 許可したサイトを管理
+  settings: "設定"
   docs: ドキュメント
 
 theme:

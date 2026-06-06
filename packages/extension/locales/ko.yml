@@ -7,7 +7,7 @@ brandTagline: 요소를 선택하면 선택자를 얻습니다
 
 popup:
   pickThisPage: 이 페이지에서 요소 선택
-  manageSites: 허용된 사이트 관리
+  settings: "설정"
   docs: 문서
 
 theme:

@@ -7,7 +7,7 @@ brandTagline: Wähle ein Element und erhalte seinen Selektor
 
 popup:
   pickThisPage: Ein Element auf dieser Seite auswählen
-  manageSites: Autorisierte Websites verwalten
+  settings: "Einstellungen"
   docs: Doku
 
 theme:
