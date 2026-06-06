@@ -1,7 +1,6 @@
 @import "tailwindcss";
 
-/* Match the extension's accent token (crisp violet) so the shared selector-rules
-   editor renders in the brand color here too. */
+/* Match the extension's accent token so the shared selector-rules editor renders in brand color. */
 @theme {
   --color-accent-50: #f4f2fe;
   --color-accent-100: #eae6fd;
@@ -16,7 +15,7 @@
   --color-accent-950: #28224d;
 }
 
-/* Class-based dark variant (the demo is light-only, so dark: utilities never fire). */
+/* Class-based dark variant (playground is light-only, so dark: utilities never fire). */
 @custom-variant dark (&:where(.dark, .dark *));
 
 /* Scan the shared selector-rules editor so its Tailwind classes are generated here. */
