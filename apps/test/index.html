@@ -46,14 +46,28 @@
       <button type="button" id="pickUrl" class="primary">Pick on URL</button>
     </div>
 
+    <p class="muted" style="margin-bottom: 0">
+      Selector rules — each dimension: enable + allow / ignore regex (mirrors the extension's editor):
+    </p>
     <div class="row">
-      <label>Attr allow (regex):</label>
-      <input id="attrAllow" type="text" placeholder="^data-" />
+      <label style="min-width: 88px"><input id="idEn" type="checkbox" checked /> id</label>
+      <input id="idAllow" type="text" placeholder="allow e.g. ^app-" style="flex: 0 1 150px; min-width: 110px" />
+      <input id="idIgnore" type="text" placeholder="ignore e.g. ^ember" style="flex: 0 1 150px; min-width: 110px" />
     </div>
     <div class="row">
-      <label><input id="useId" type="checkbox" checked /> use id</label>
-      <label><input id="useClass" type="checkbox" checked /> use class</label>
-      <label><input id="useTag" type="checkbox" checked /> use tag</label>
+      <label style="min-width: 88px"><input id="classEn" type="checkbox" checked /> class</label>
+      <input id="classAllow" type="text" placeholder="allow e.g. ^btn" style="flex: 0 1 150px; min-width: 110px" />
+      <input id="classIgnore" type="text" placeholder="ignore e.g. css-|sc-" style="flex: 0 1 150px; min-width: 110px" />
+    </div>
+    <div class="row">
+      <label style="min-width: 88px"><input id="attrEn" type="checkbox" checked /> attr</label>
+      <input id="attrAllow" type="text" placeholder="allow e.g. ^data-testid$" style="flex: 0 1 150px; min-width: 110px" />
+      <input id="attrIgnore" type="text" placeholder="ignore e.g. ^data-reactid$" style="flex: 0 1 150px; min-width: 110px" />
+    </div>
+    <div class="row">
+      <label style="min-width: 88px"><input id="tagEn" type="checkbox" checked /> tag</label>
+      <input id="tagAllow" type="text" placeholder="allow (rare)" style="flex: 0 1 150px; min-width: 110px" />
+      <input id="tagIgnore" type="text" placeholder="ignore e.g. ^(div|span)$" style="flex: 0 1 150px; min-width: 110px" />
     </div>
     <div class="row">
       <label><input id="reqUnique" type="checkbox" /> require unique match</label>
@@ -140,14 +154,17 @@
 
       const checked = (id) => document.getElementById(id).checked
 
-      // Build a SelectorConfig from the inputs (omitted entirely when untouched).
+      // Build a SelectorConfig from the per-dimension inputs (omitted when untouched).
+      const val = (id) => document.getElementById(id).value.trim()
       function buildSelectorConfig() {
         const config = {}
-        const allow = document.getElementById("attrAllow").value.trim()
-        if (allow) config.attr = { allow }
-        if (!checked("useId")) config.id = { enabled: false }
-        if (!checked("useClass")) config.class = { enabled: false }
-        if (!checked("useTag")) config.tag = { enabled: false }
+        for (const dim of ["id", "class", "attr", "tag"]) {
+          const anchor = {}
+          if (!checked(`${dim}En`)) anchor.enabled = false
+          if (val(`${dim}Allow`)) anchor.allow = val(`${dim}Allow`)
+          if (val(`${dim}Ignore`)) anchor.ignore = val(`${dim}Ignore`)
+          if (Object.keys(anchor).length) config[dim] = anchor
+        }
         return Object.keys(config).length ? config : undefined
       }
 

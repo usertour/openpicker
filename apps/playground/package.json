@@ -5,10 +5,18 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "echo \"@openpicker/playground: dev-only app, no build step\""
+    "build": "vite build"
   },
   "devDependencies": {
     "@openpicker/sdk": "workspace:*",
+    "@openpicker/selector-rules-ui": "workspace:*",
+    "@tailwindcss/vite": "^4.3.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "tailwindcss": "^4.3.0",
     "vite": "^6.0.0"
   }
 }

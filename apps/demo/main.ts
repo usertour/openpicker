@@ -3,8 +3,8 @@ import {
   matchesSelectorConfig,
   OpenpickerError,
   type ScreenshotMode,
-  type SelectorConfig,
 } from "@openpicker/sdk"
+import { getSelectorConfig, mountRulesIsland } from "./rules-island"
 
 const op = createOpenpicker({ appName: "openpicker demo", pingTimeout: 700 })
 
@@ -25,24 +25,12 @@ const copyBtn = byId<HTMLButtonElement>("copy")
 const metaEl = byId("meta")
 const rulesMatchEl = byId("rulesMatch")
 const shotImg = byId<HTMLImageElement>("shotImg")
-const attrAllowInput = byId<HTMLInputElement>("attrAllow")
-const useIdEl = byId<HTMLInputElement>("useId")
-const useClassEl = byId<HTMLInputElement>("useClass")
-const useTagEl = byId<HTMLInputElement>("useTag")
 const reqUniqueEl = byId<HTMLInputElement>("reqUnique")
 const lockSettingsEl = byId<HTMLInputElement>("lockSettings")
 const lockEditEl = byId<HTMLInputElement>("lockEdit")
 
-/** Read the optional selector-rule inputs into a SelectorConfig (undefined if untouched). */
-function buildSelectorConfig(): SelectorConfig | undefined {
-  const config: SelectorConfig = {}
-  const allow = attrAllowInput.value.trim()
-  if (allow) config.attr = { allow }
-  if (!useIdEl.checked) config.id = { enabled: false }
-  if (!useClassEl.checked) config.class = { enabled: false }
-  if (!useTagEl.checked) config.tag = { enabled: false }
-  return Object.keys(config).length > 0 ? config : undefined
-}
+// The selector-rules editor is the shared React component the extension uses.
+mountRulesIsland(byId("rulesRoot"))
 
 const STATUS_COLORS = {
   checking: ["bg-slate-100", "text-slate-500"],
@@ -91,7 +79,7 @@ async function pick(): Promise<void> {
   pickBtn.disabled = true
   pickBtn.textContent = "Picking…"
   try {
-    const config = buildSelectorConfig()
+    const config = getSelectorConfig()
     const res = await op.pick({
       url,
       screenshot: shotSel.value as ScreenshotMode,
