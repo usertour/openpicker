@@ -1,4 +1,4 @@
-# openpicker Protocol v1
+# OpenPicker Protocol v1
 
 > The contract between the **page SDK** (npm) and the **browser extension**. It defines how
 > they discover each other, exchange requests/responses, correlate them, handle consent, and
@@ -15,7 +15,7 @@ There are two communication hops; only the first is part of this public protocol
 ```
 [ integrator code ]
        │  function calls
-[ openpicker SDK ]  ── window.postMessage ──►  [ extension content script ]   ◄── THIS PROTOCOL
+[ OpenPicker SDK ]  ── window.postMessage ──►  [ extension content script ]   ◄── THIS PROTOCOL
                                                        │  chrome.runtime.*  (extension-internal)
                                                 [ background service worker ]
 ```
@@ -80,7 +80,7 @@ Unknown fields MUST be ignored (forward compatibility). Receivers must not assum
 
 - `id` format: `op:<instanceId>:<seq>`
   - `instanceId` — a short random id (e.g. nanoid) generated once per SDK instance. Disambiguates
-    multiple SDK instances on the same page (host app + an embedded widget both using openpicker).
+    multiple SDK instances on the same page (host app + an embedded widget both using OpenPicker).
   - `seq` — a monotonically increasing counter within that instance.
 - A response MUST echo the request's `id` exactly.
 - The SDK keeps a pending map `id → { resolve, reject, timer }`. On a matching `res` it settles

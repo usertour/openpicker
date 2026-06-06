@@ -1,6 +1,6 @@
 # @openpicker/sdk
 
-SDK for invoking the [openpicker](https://openpicker.dev) browser extension to pick a CSS selector
+SDK for invoking the [OpenPicker](https://openpicker.dev) browser extension to pick a CSS selector
 on any page. Website: [openpicker.dev](https://openpicker.dev) · Docs:
 [docs.openpicker.dev](https://docs.openpicker.dev) · Live demo:
 [demo.openpicker.dev](https://demo.openpicker.dev)
@@ -23,7 +23,7 @@ if (await op.isAvailable()) {
   })
   console.log(selector, matchCount, element)
 } else {
-  // Prompt the user to install the openpicker extension.
+  // Prompt the user to install the OpenPicker extension.
 }
 ```
 

@@ -18,7 +18,7 @@ export function BrandMark({ className = "h-7 w-7" }: { className?: string }) {
   const fill = useId()
   return (
     <svg viewBox="0 0 128 128" className={`shrink-0 ${className}`} aria-hidden="true">
-      <title>openpicker</title>
+      <title>OpenPicker</title>
       <defs>
         <linearGradient id={fill} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0" stopColor="#334155" />
@@ -51,7 +51,7 @@ export function Wordmark({ className = "" }: { className?: string }) {
     <span
       className={`font-semibold text-slate-900 tracking-tight dark:text-slate-100 ${className}`}
     >
-      openpicker
+      OpenPicker
     </span>
   )
 }

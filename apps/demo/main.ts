@@ -6,7 +6,7 @@ import {
 } from "@openpicker/sdk"
 import { getSelectorConfig, mountRulesIsland } from "./rules-island"
 
-const op = createOpenpicker({ appName: "openpicker demo", pingTimeout: 700 })
+const op = createOpenpicker({ appName: "OpenPicker demo", pingTimeout: 700 })
 
 const byId = <T extends HTMLElement>(id: string) => document.getElementById(id) as T
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))

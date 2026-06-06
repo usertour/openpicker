@@ -1,4 +1,4 @@
-# openpicker Design
+# OpenPicker Design
 
 > An open-source CSS element picker. Ships a browser extension + npm SDK so that
 > any third-party web page can invoke an element picker through one open protocol
@@ -21,7 +21,7 @@ page" lock-in behavior. All code and protocol naming are written from scratch.
 
 ### 1.1 Design principle: openness by parameter
 
-openpicker is a platform, not one product's tool. Capabilities are exposed as **parameters and
+OpenPicker is a platform, not one product's tool. Capabilities are exposed as **parameters and
 extensible enums**, not hardcoded behavior, so integrators decide what fits their use case:
 
 - **Behavior is opt-in via parameters / string enums**, never baked in. Examples already in v1:
@@ -44,7 +44,7 @@ extensible enums**, not hardcoded behavior, so integrators decide what fits thei
 │  Integrator page (any origin)                 │
 │                                               │
 │   Integrator code                             │
-│     └── calls openpicker SDK (npm)            │
+│     └── calls OpenPicker SDK (npm)            │
 │           │  window.postMessage (with id)     │
 │           ▼                                    │
 │   content script  ◄── injected by extension    │
@@ -171,7 +171,7 @@ after the user confirms with OK.
 Layout (top → bottom):
 ```
 ┌────────────────────────────────────────┐
-│ ⏏  ⇄        openpicker        ?    ✕   │  header: dock/eject, swap side, help, close
+│ ⏏  ⇄        OpenPicker        ?    ✕   │  header: dock/eject, swap side, help, close
 ├────────────────────────────────────────┤
 │ [ div[data-hveid] > div:nth-of-type(5) ]⚙│  editable selector input + settings
 ├────────────────────────────────────────┤
@@ -236,12 +236,12 @@ map onto `@medv/finder` configuration, surfaced as UI.
 ```
 
 - The generated selector always targets **exactly one element** (finder's unique selector). A
-  "list / group" mode was considered but cut — openpicker's purpose is targeting a single element,
+  "list / group" mode was considered but cut — OpenPicker's purpose is targeting a single element,
   and the feature was borrowed from a reference UI without a real use case (see git history).
 - **Per-dimension rules** (id / class / attr / tag): each has an **enable** toggle plus an **allow**
   and an **ignore** regex, mapping onto finder's `idName` / `className` / `attr` / `tagName`
   predicates. For `attr`, allow/ignore match the attribute **name**. An empty **allow** falls back to
-  openpicker's stable-name default (skips hashed ids/classes; prefers test hooks + finder's curated
+  OpenPicker's stable-name default (skips hashed ids/classes; prefers test hooks + finder's curated
   attribute set). The settings are one resolved `SelectorSettings` object; legacy stored shapes
   (boolean toggles + a single ignore + an attr name-list) are migrated on load.
 - **Layering**: built-in defaults < the user's **global default** (options page) < the user's
@@ -431,7 +431,7 @@ dashboard.example.com" — for transparency.
 ## 5d. Source↔target tab mapping, reuse, and continuity (v2.x, designed)
 
 This is the heart of robust cross-tab picking. The architecture follows a proven, production cross-
-tab pattern (studied for ideas; **all code is openpicker's own — no third-party code is copied, and
+tab pattern (studied for ideas; **all code is OpenPicker's own — no third-party code is copied, and
 no third-party product name appears anywhere in the repo**). Vendor-specific concerns from that
 pattern — injecting a vendor SDK, CSP adaptation, debugger UI, hardcoded origin allowlists — are
 deliberately dropped; only the generic "open a tab, pick there, route the result back, survive
@@ -454,14 +454,14 @@ op:targetToSource:<targetTabId>  →  { sourceTabId, params, key?, pickId? }
 ### Target tab reuse (the "flow_id" substitution)
 When a pick requests a `url` and a target tab is already mapped to this source, decide reuse vs.
 open-new the same way the reference pattern does — except the business-identity dimension (its
-`flow_id`) is replaced by openpicker-native inputs, since openpicker has no business concepts:
+`flow_id`) is replaced by openpicker-native inputs, since OpenPicker has no business concepts:
 
 ```
 reference: different host → new tab; same host but different flow_id → new tab; same host, different pathname → new tab
-openpicker: different host → new tab; same host but different `key` → new tab; (optional) different pathname → new tab
+OpenPicker: different host → new tab; same host but different `key` → new tab; (optional) different pathname → new tab
 ```
 - `key` is an **optional, caller-supplied** opaque string (e.g. the integrator's own step id).
-  openpicker never interprets it — it only compares equality, exactly as the reference compares
+  OpenPicker never interprets it — it only compares equality, exactly as the reference compares
   flow_id. This keeps the reuse logic identical while staying business-agnostic and open (§1.1).
 - No `key` → fall back to host/URL comparison alone.
 - **On reuse, the target tab is only focused — never re-navigated.** Reuse is host-gated, so the
@@ -470,7 +470,7 @@ openpicker: different host → new tab; same host but different `key` → new ta
   where they went. So a reused pick runs on the tab's *current* page, not the requested `url`.
   (The `url` only opens the tab the first time and decides reuse-vs-new; it matches the reference.)
 - Why caller-supplied, not internal: "is this the same task?" is a business judgment only the
-  integrator knows. The reference could read flow_id because it *is* the business; openpicker is a
+  integrator knows. The reference could read flow_id because it *is* the business; OpenPicker is a
   tool, so the business identity must come in from the caller.
 
 **One target per source (decided: keep it single).** A source holds exactly one target mapping
@@ -496,7 +496,7 @@ pick re-arms **in navigate mode**, not select mode — the user may need to hop 
 and re-arming select mode would re-lock the page each time. The user returns to select mode
 explicitly via "Resume picking"; the flag is cleared then and when the pick ends.
 
-openpicker's twist over the reference: after re-arming on a new page/tab, the result still has to
+OpenPicker's twist over the reference: after re-arming on a new page/tab, the result still has to
 reach the original **source** tab. Delivery is **stateless** — there is no long-lived port and no
 in-memory registry of pending picks in the background. Instead:
 - The source sends a one-shot `crossTab:open` (with a `pickId`) and then waits for a `crossTab:deliver`
@@ -509,7 +509,7 @@ in-memory registry of pending picks in the background. Instead:
 Because every step reads the map fresh, a pick **survives the MV3 service worker being recycled
 mid-pick** (an earlier port + in-memory-resolver design lost the pick when the worker died, and
 needed the worker kept alive). This matches how the reference stays resilient. (The reference's
-injected SDK carried its own connection; openpicker has no resident SDK, so it routes through the map.)
+injected SDK carried its own connection; OpenPicker has no resident SDK, so it routes through the map.)
 
 ### Phasing
 1. **Phase 1:** background bidirectional map + reuse decision (host/URL + optional `key`) + refocus-

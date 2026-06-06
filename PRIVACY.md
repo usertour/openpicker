@@ -1,14 +1,14 @@
-# openpicker — Privacy Policy
+# OpenPicker — Privacy Policy
 
 _Last updated: 2026-06-03_
 
-openpicker is an open-source browser extension that lets you point at an element on a web page
+OpenPicker is an open-source browser extension that lets you point at an element on a web page
 and get a stable CSS selector for it. This policy explains what the extension does and does not do
 with your data.
 
 ## The short version
 
-**openpicker does not collect, transmit, or sell your data. There are no openpicker servers.**
+**OpenPicker does not collect, transmit, or sell your data. There are no OpenPicker servers.**
 Everything happens locally in your browser. We have no analytics, no tracking, and no ads.
 
 ## What is stored, and where
@@ -27,9 +27,9 @@ You can review or clear these at any time from the extension's options page.
 
 - The **selector and basic element details** produced by a pick are delivered to the web page that
   started the pick (or shown to you when you pick from the toolbar). This stays within your browser;
-  openpicker does not send it to us or any third party.
+  OpenPicker does not send it to us or any third party.
 - A **screenshot** is captured only when a pick explicitly requests one. It is returned to the
-  requesting page / shown in the picker, again only within your browser. openpicker does not upload
+  requesting page / shown in the picker, again only within your browser. OpenPicker does not upload
   it anywhere.
 
 ## Permissions

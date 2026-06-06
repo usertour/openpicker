@@ -15,7 +15,7 @@ import { createOpenpicker, OpenpickerError } from "@openpicker/sdk"
 const op = createOpenpicker({ appName: "My App" })
 
 if (!(await op.isAvailable())) {
-  // prompt the user to install the openpicker extension
+  // prompt the user to install the OpenPicker extension
 }
 
 try {

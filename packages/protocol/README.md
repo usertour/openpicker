@@ -1,6 +1,6 @@
 # @openpicker/protocol
 
-The open [openpicker](https://openpicker.dev) postMessage protocol: the wire types, constants, and
+The open [OpenPicker](https://openpicker.dev) postMessage protocol: the wire types, constants, and
 selector helpers that the browser extension and any client share. Website:
 [openpicker.dev](https://openpicker.dev) · Docs: [docs.openpicker.dev](https://docs.openpicker.dev)
 

@@ -5,7 +5,7 @@ const GITHUB = "https://github.com/usertour/openpicker"
 export default defineConfig({
   title: "openpicker",
   description:
-    "Documentation for openpicker — an open-source CSS element picker for the web (browser extension + SDK).",
+    "Documentation for OpenPicker — an open-source CSS element picker for the web (browser extension + SDK).",
   cleanUrls: true,
   lastUpdated: true,
   srcExclude: ["**/README.md"],

@@ -18,7 +18,7 @@ try {
         // this origin isn't allowed (see Authorization)
         break
       case "extension_not_installed":
-        // prompt the user to install openpicker
+        // prompt the user to install OpenPicker
         break
       default:
         // surface err.message

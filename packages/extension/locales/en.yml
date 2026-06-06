@@ -1,5 +1,5 @@
-# openpicker UI strings (source locale). Other locales mirror these keys.
-# Brand names (openpicker, Usertour) and example/regex values stay in English.
+# OpenPicker UI strings (source locale). Other locales mirror these keys.
+# Brand names (OpenPicker, Usertour) and example/regex values stay in English.
 
 # Store/extension description (the manifest name lives in wxt.config.ts, not here).
 extDescription: Open-source CSS element picker.
@@ -41,7 +41,7 @@ options:
   invalidOrigin: Enter a valid origin, e.g. https://example.com
   removeDecision: Remove this decision
   appearanceTitle: Appearance
-  appearanceDesc: Theme for openpicker's own UI.
+  appearanceDesc: Theme for OpenPicker's own UI.
 
   selectorRulesTitle: "Selector rules"
   selectorRulesDesc: "Control how selectors are built — globally or per site."
