@@ -54,6 +54,8 @@ options:
 picker:
   hoverHint: マウスを動かして要素をクリックすると選択できます。
   noMatchingTarget: "この要素は選択できません"
+  ruleMismatch: "このセレクターはルールに合致しません"
+  ruleEmpty: "ルールに合うセレクターがありません。別の要素を選ぶかルールを緩めてください"
   selectorLabel: セレクター
   hoverPlaceholder: 要素にカーソルを合わせてください…
   invalidSelector: 無効なセレクター

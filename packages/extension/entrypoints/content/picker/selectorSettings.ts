@@ -138,6 +138,25 @@ export function composeSelectorSettings(
 }
 
 /**
+ * Convert resolved settings into the sparse {@link SelectorConfig} the SDK uses —
+ * only fields that differ from the default are kept. Returns undefined when nothing
+ * is constrained (all anchors enabled, no allow/ignore), i.e. "no rules". Used to
+ * validate a generated/edited selector against the active rules.
+ */
+export function toSelectorConfig(settings: SelectorSettings): SelectorConfig | undefined {
+  const config: SelectorConfig = {}
+  for (const dim of SELECTOR_DIMENSIONS) {
+    const anchor = settings[dim]
+    const out: SelectorAnchorConfig = {}
+    if (!anchor.enabled) out.enabled = false
+    if (anchor.allow.trim()) out.allow = anchor.allow.trim()
+    if (anchor.ignore.trim()) out.ignore = anchor.ignore.trim()
+    if (Object.keys(out).length > 0) config[dim] = out
+  }
+  return Object.keys(config).length > 0 ? config : undefined
+}
+
+/**
  * Resolve the settings a pick starts with (read semantics B): the per-site override
  * if any, else the global default, else built-in — then layer the SDK `selector` on
  * top. See DESIGN.md §5.1f.

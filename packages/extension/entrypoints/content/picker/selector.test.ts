@@ -1,6 +1,14 @@
 // @vitest-environment jsdom
 import { describe, expect, it } from "vitest"
-import { AUTO_ATTRS, evalSelector, generateSelector, isStableClass, isStableId } from "./selector"
+import {
+  AUTO_ATTRS,
+  conformsToSettings,
+  evalSelector,
+  generateSelector,
+  hasSelectorRules,
+  isStableClass,
+  isStableId,
+} from "./selector"
 import { defaultSelectorSettings, type SelectorSettings } from "./selectorSettings"
 
 function q(root: ParentNode, selector: string): Element {
@@ -117,6 +125,55 @@ describe("generateSelector", () => {
     const selector = generateSelector(button, settings)
     expect(selector).not.toContain("#keepme")
     expect(document.querySelector(selector)).toBe(button)
+  })
+})
+
+describe("generateSelector — strict conformance", () => {
+  const onlyId: SelectorSettings = {
+    id: { enabled: true, allow: "", ignore: "" },
+    class: { enabled: false, allow: "", ignore: "" },
+    attr: { enabled: false, allow: "", ignore: "" },
+    tag: { enabled: false, allow: "", ignore: "" },
+  }
+
+  it("never returns a selector that violates the active rules", () => {
+    document.body.innerHTML = '<main><section><p class="x">deep</p></section></main>'
+    const p = q(document, ".x")
+    const selector = generateSelector(p, onlyId)
+    // The contract: either no selector, or one that conforms — never a violation.
+    if (selector) expect(conformsToSettings(selector, onlyId)).toBe(true)
+  })
+
+  it("recovers an id-anchored structural selector by stripping finder's tag prefixes", () => {
+    // Two id'd lists make a bare positional path ambiguous, so finder anchors on the
+    // id (`#a > li:nth-child(2)`); we then strip the leaked `li` tag.
+    document.body.innerHTML =
+      '<ul id="a"><li>x</li><li>y</li></ul><ul id="b"><li>x</li><li>y</li></ul>'
+    const target = document.querySelectorAll("#a li")[1] as Element
+    const selector = generateSelector(target, onlyId)
+    expect(selector).not.toBe("")
+    expect(selector).toContain("#a")
+    expect(selector).not.toMatch(/[a-zA-Z][\w-]*:nth-child/) // tag prefix stripped
+    expect(conformsToSettings(selector, onlyId)).toBe(true)
+    expect(document.querySelector(selector)).toBe(target)
+  })
+})
+
+describe("hasSelectorRules / conformsToSettings", () => {
+  it("reports no rules for the all-default settings", () => {
+    expect(hasSelectorRules(defaultSelectorSettings())).toBe(false)
+    // With no rules, everything conforms.
+    expect(conformsToSettings("div.any[x]#y", defaultSelectorSettings())).toBe(true)
+  })
+
+  it("reports rules once a dimension is constrained", () => {
+    const settings: SelectorSettings = {
+      ...defaultSelectorSettings(),
+      class: { enabled: false, allow: "", ignore: "" },
+    }
+    expect(hasSelectorRules(settings)).toBe(true)
+    expect(conformsToSettings("#id", settings)).toBe(true)
+    expect(conformsToSettings(".foo", settings)).toBe(false) // class disabled
   })
 })
 

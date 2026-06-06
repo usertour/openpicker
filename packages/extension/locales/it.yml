@@ -54,6 +54,8 @@ options:
 picker:
   hoverHint: Muovi il mouse e fai clic su un elemento per selezionarlo.
   noMatchingTarget: "Impossibile selezionare questo elemento"
+  ruleMismatch: "Questo selettore non rispetta le tue regole"
+  ruleEmpty: "Nessun selettore rispetta le tue regole: scegli un altro elemento o allenta le regole"
   selectorLabel: Selettore
   hoverPlaceholder: passa il cursore su un elemento…
   invalidSelector: Selettore non valido

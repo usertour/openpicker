@@ -54,6 +54,8 @@ options:
 picker:
   hoverHint: 移动鼠标并点击一个元素以选中它。
   noMatchingTarget: "无法选择此元素"
+  ruleMismatch: "此选择器不符合你的规则"
+  ruleEmpty: "没有符合规则的选择器 —— 换个元素或放宽规则"
   selectorLabel: 选择器
   hoverPlaceholder: 悬停在某个元素上…
   invalidSelector: 选择器无效

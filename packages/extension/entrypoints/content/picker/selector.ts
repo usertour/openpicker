@@ -1,5 +1,6 @@
 import { attr as defaultAttr, finder } from "@medv/finder"
-import type { SelectorAnchor, SelectorSettings } from "./selectorSettings"
+import { matchesSelectorConfig } from "@openpicker/protocol"
+import { type SelectorAnchor, type SelectorSettings, toSelectorConfig } from "./selectorSettings"
 
 /**
  * Selector generation, built on @medv/finder plus per-dimension rules
@@ -93,35 +94,97 @@ function anchorPredicate(
 
 const never = () => false
 
-/** Fallback when finder can't produce a unique selector: tag + stable classes. */
+/**
+ * Last-resort selector when finder fails — but only from anchors the rules allow:
+ * the tag (if enabled and permitted) and stable, permitted classes. Returns "" when
+ * neither is available, so we never fabricate a selector that breaks the rules.
+ */
 function fallbackSelector(el: Element, settings: SelectorSettings): string {
-  const tag = el.tagName.toLowerCase()
-  if (!settings.class.enabled) return tag
-  const classOk = anchorPredicate(settings.class, isStableClass)
-  const classes =
-    typeof el.className === "string"
-      ? el.className
-          .trim()
-          .split(/\s+/)
-          .filter((c) => c && classOk(c))
-      : []
-  if (classes.length === 0) return tag
-  return `${tag}.${classes.map((c) => CSS.escape(c)).join(".")}`
+  const tagName = el.tagName.toLowerCase()
+  const tag =
+    settings.tag.enabled && anchorPredicate(settings.tag, () => true)(tagName) ? tagName : ""
+  let classes: string[] = []
+  if (settings.class.enabled) {
+    const classOk = anchorPredicate(settings.class, isStableClass)
+    classes =
+      typeof el.className === "string"
+        ? el.className
+            .trim()
+            .split(/\s+/)
+            .filter((c) => c && classOk(c))
+        : []
+  }
+  if (!tag && classes.length === 0) return ""
+  return `${tag}${classes.map((c) => `.${CSS.escape(c)}`).join("")}`
 }
 
-/** Generate a unique CSS selector for an element, honoring the anchor settings. */
-export function generateSelector(el: Element, settings: SelectorSettings): string {
+/**
+ * finder's structural fallback embeds the tag in `tag:nth-child(n)` even when the tag
+ * anchor is disabled (it isn't gated by the predicate). Drop that tag prefix so the
+ * selector can conform; the caller re-verifies uniqueness before using the result.
+ */
+function stripNthChildTags(selector: string): string {
+  return selector.replace(/(^|[\s>+~(])[a-zA-Z][\w-]*(?=:nth-child\()/g, "$1")
+}
+
+/** Whether `selector` uniquely identifies `el` in the document. */
+function uniquelyMatches(selector: string, el: Element): boolean {
   try {
-    return finder(el, {
+    const list = document.querySelectorAll(selector)
+    return list.length === 1 && list[0] === el
+  } catch {
+    return false
+  }
+}
+
+/** Whether any explicit selector rules are configured (vs all-default). */
+export function hasSelectorRules(settings: SelectorSettings): boolean {
+  return toSelectorConfig(settings) !== undefined
+}
+
+/** Whether a selector only uses anchors the rules permit (true when there are no rules). */
+export function conformsToSettings(selector: string, settings: SelectorSettings): boolean {
+  const config = toSelectorConfig(settings)
+  return !config || matchesSelectorConfig(selector, config)
+}
+
+/**
+ * Generate a CSS selector for an element under the anchor settings. With rules active
+ * the contract is "a selector that conforms to the rules, or empty" — never a selector
+ * that quietly breaks them (finder is best-effort and can leak tag tokens). Recovers a
+ * conforming selector by stripping finder's `tag:nth-child` tags where possible.
+ */
+export function generateSelector(el: Element, settings: SelectorSettings): string {
+  let s = ""
+  try {
+    s = finder(el, {
       idName: settings.id.enabled ? anchorPredicate(settings.id, isStableId) : never,
       className: settings.class.enabled ? anchorPredicate(settings.class, isStableClass) : never,
       tagName: settings.tag.enabled ? anchorPredicate(settings.tag, () => true) : never,
       attr: settings.attr.enabled ? anchorPredicate(settings.attr, isDefaultAttr) : never,
     })
   } catch {
-    // finder throws if it cannot find a unique selector; fall back to a tag path.
-    return fallbackSelector(el, settings)
+    s = ""
   }
+
+  const config = toSelectorConfig(settings)
+  // No explicit rules: keep finder's selector, or a best-effort tag/class fallback.
+  if (!config) return s || fallbackSelector(el, settings)
+
+  // Rules active: return only a conforming selector, else "".
+  if (s && matchesSelectorConfig(s, config)) return s
+  if (s) {
+    const stripped = stripNthChildTags(s)
+    if (
+      stripped !== s &&
+      uniquelyMatches(stripped, el) &&
+      matchesSelectorConfig(stripped, config)
+    ) {
+      return stripped
+    }
+  }
+  const fb = fallbackSelector(el, settings)
+  return fb && matchesSelectorConfig(fb, config) ? fb : ""
 }
 
 /** How many elements the selector currently matches in the document. */
