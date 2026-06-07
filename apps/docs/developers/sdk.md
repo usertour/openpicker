@@ -33,6 +33,19 @@ try {
 }
 ```
 
+## How it works
+
+Your app calls `op.pick({ url })`; the extension opens the URL, the user points at any element on the
+real page, and the selector is routed back — no DevTools, on any web app.
+
+![Add visual picking to your product — a tiny SDK lets your users choose page elements without DevTools](/openpicker-website-01.webp)
+
+![Open any website and pick there](/openpicker-website-02.webp)
+
+![Anyone can point and click](/openpicker-website-03.webp)
+
+![Get the selector back in your app](/openpicker-website-04.webp)
+
 ## `createOpenpicker(options?)`
 
 Returns an `Openpicker` handle.
