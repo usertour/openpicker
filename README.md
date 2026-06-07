@@ -23,6 +23,10 @@
   <a href="https://discord.gg/cmvYZVpEKH">Discord</a>
 </p>
 
+<p align="center">
+  <img src="./.github/openpicker-website-01.webp" alt="OpenPicker — add visual element picking to your product with a tiny SDK" width="820" />
+</p>
+
 > An open-source CSS **element picker** for the web — a browser extension plus a tiny npm SDK,
 > connected by one open protocol. Any page can ask the user to point at an element (even on a
 > different tab/site) and get back a stable CSS selector.

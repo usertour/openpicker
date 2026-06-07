@@ -12,6 +12,19 @@ export default defineConfig({
   head: [
     ["link", { rel: "icon", href: "/openpicker.svg" }],
     ["meta", { name: "theme-color", content: "#0f172a" }],
+    ["meta", { property: "og:type", content: "website" }],
+    ["meta", { property: "og:title", content: "OpenPicker docs" }],
+    [
+      "meta",
+      {
+        property: "og:description",
+        content:
+          "Docs for OpenPicker — an open-source CSS element picker (browser extension + SDK).",
+      },
+    ],
+    ["meta", { property: "og:image", content: "https://docs.openpicker.dev/og.png" }],
+    ["meta", { name: "twitter:card", content: "summary_large_image" }],
+    ["meta", { name: "twitter:image", content: "https://docs.openpicker.dev/og.png" }],
   ],
   themeConfig: {
     logo: "/openpicker.svg",
