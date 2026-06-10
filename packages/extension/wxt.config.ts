@@ -24,7 +24,10 @@ export default defineConfig({
     // Locale to fall back to; per-locale UI strings live in locales/*.yml and are
     // generated into _locales by @wxt-dev/i18n. The language follows the browser.
     default_locale: "en",
-    permissions: ["storage", "activeTab", "tabs"],
+    // `scripting` is used once, on fresh install, to backfill the content script into
+    // already-open tabs (see entrypoints/background.ts) so the SDK can reach the
+    // extension with zero page reload. Host access is already granted below.
+    permissions: ["storage", "activeTab", "tabs", "scripting"],
     // captureVisibleTab needs host access (or an activeTab gesture). Cross-tab and
     // SDK-triggered picks have no per-tab gesture, so grant host access for the
     // screenshot capability to work on any page.

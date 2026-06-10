@@ -56,16 +56,26 @@ function setStatus(text: string, kind: keyof typeof STATUS_COLORS): void {
  * attaches its listener at document_idle, which can be after this page's first ping —
  * a single ping would be lost in that race, so poll a few times.
  */
+let detected = false
+let detecting = false
+
 async function detect(): Promise<void> {
-  setStatus("Checking for the extension…", "checking")
-  let ok = false
-  for (let attempt = 0; attempt < 4 && !ok; attempt++) {
-    ok = await op.isAvailable()
-    if (!ok) await sleep(200)
+  if (detecting) return // guard against overlapping runs (load + focus + visibility)
+  detecting = true
+  try {
+    setStatus("Checking for the extension…", "checking")
+    let ok = false
+    for (let attempt = 0; attempt < 4 && !ok; attempt++) {
+      ok = await op.isAvailable()
+      if (!ok) await sleep(200)
+    }
+    detected = ok
+    installEl.hidden = ok
+    demoEl.hidden = !ok
+    setStatus(ok ? "✓ Extension detected" : "✗ Extension not detected", ok ? "ok" : "warn")
+  } finally {
+    detecting = false
   }
-  installEl.hidden = ok
-  demoEl.hidden = !ok
-  setStatus(ok ? "✓ Extension detected" : "✗ Extension not detected", ok ? "ok" : "warn")
 }
 
 async function pick(): Promise<void> {
@@ -131,6 +141,18 @@ function showError(message: string): void {
 
 pickBtn.addEventListener("click", () => void pick())
 recheckBtn.addEventListener("click", () => void detect())
+
+// If the extension is installed while this page is already open, its content script is
+// backfilled into this tab with no reload — but the page only checks on load and on
+// "Recheck". Re-detect automatically when the user returns to this tab (the natural
+// moment right after installing), so it just works with no refresh and no click. Only
+// while still undetected, so refocusing after a successful pick won't re-flicker.
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState === "visible" && !detected) void detect()
+})
+window.addEventListener("focus", () => {
+  if (!detected) void detect()
+})
 copyBtn.addEventListener("click", async () => {
   await navigator.clipboard.writeText(selectorEl.textContent ?? "").catch(() => {})
   copyBtn.textContent = "Copied"

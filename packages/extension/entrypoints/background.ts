@@ -238,6 +238,41 @@ async function refocusSource(sourceTabId: number): Promise<void> {
   }
 }
 
+/**
+ * Right after a fresh install, the manifest's content script is NOT present in tabs
+ * that are already open — they would need a reload before the SDK could reach the
+ * extension (`isAvailable()` would be false). Inject it into every open http(s) tab
+ * once, so picking works with zero refresh — every integration benefits, not just the
+ * tab that happened to trigger the install.
+ *
+ * Only on first install: on update the old content script is already running in open
+ * tabs, so re-injecting would double it up. The content script also self-guards
+ * against a double injection (see content/index.tsx). Restricted pages (chrome://,
+ * the web store, …) are excluded by the http/https filter; any straggler that still
+ * rejects is skipped per-tab.
+ *
+ * The injected file name is WXT's fixed content-script output path.
+ */
+async function backfillContentScriptIntoOpenTabs(): Promise<void> {
+  let tabs: { id?: number }[]
+  try {
+    tabs = await browser.tabs.query({ url: ["http://*/*", "https://*/*"] })
+  } catch {
+    return
+  }
+  await Promise.all(
+    tabs.map(
+      (tab) =>
+        tab.id === undefined
+          ? Promise.resolve()
+          : browser.scripting
+              .executeScript({ target: { tabId: tab.id }, files: ["/content-scripts/content.js"] })
+              .then(() => {})
+              .catch(() => {}), // restricted/unsupported tab — skip it
+    ),
+  )
+}
+
 const consentKey = (origin: string) => `consent:${origin}`
 
 async function getConsent(origin: string): Promise<ConsentStatus> {
@@ -254,6 +289,13 @@ async function setConsent(origin: string, granted: boolean): Promise<void> {
 export default defineBackground(() => {
   // The toolbar icon opens the popup (entrypoints/popup); its "Pick" button sends
   // `startPick` to the active tab's content script — so there is no action.onClicked.
+
+  // On fresh install, backfill the content script into already-open tabs so the SDK
+  // can reach the extension without a page reload (see fn doc above).
+  browser.runtime.onInstalled.addListener((details) => {
+    if (details.reason !== "install") return
+    void backfillContentScriptIntoOpenTabs()
+  })
 
   // Keep the source↔target map clean: when a mapped tab closes, drop its pair.
   browser.tabs.onRemoved.addListener(async (tabId) => {
