@@ -30,6 +30,16 @@ export default defineContentScript({
   matches: ["<all_urls>"],
   cssInjectionMode: "ui",
   main() {
+    // Guard against a double injection in one frame: this content script is declared
+    // in the manifest (injected on navigation) AND, right after a fresh install,
+    // injected programmatically into already-open tabs (see background.ts). If both
+    // ever land in the same frame, wire everything up only once — otherwise we would
+    // register the message listeners twice. Content scripts share one isolated `window`
+    // per frame, so a flag on it is visible across injections.
+    const w = window as unknown as { __openpickerContentLoaded?: boolean }
+    if (w.__openpickerContentLoaded) return
+    w.__openpickerContentLoaded = true
+
     const manifest = browser.runtime.getManifest()
     const capabilities = [
       "ping",
