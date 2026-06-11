@@ -158,7 +158,28 @@ export default defineContentScript({
       }
     }
 
-    window.addEventListener("message", (event) => {
+    // After the extension is uninstalled (or reloaded), this injected script keeps
+    // running in already-open pages as an "orphan": its listeners stay alive but the
+    // extension context is invalidated (browser.runtime.id becomes undefined, and in
+    // some cases touching browser.runtime throws).
+    function extensionAlive(): boolean {
+      try {
+        return !!browser.runtime?.id
+      } catch {
+        return false
+      }
+    }
+
+    window.addEventListener("message", function onMessage(event) {
+      // Orphan guard: once the extension is gone, go silent and unhook. An unanswered
+      // ping times out in the SDK, so isAvailable() correctly reports false with no
+      // page refresh — the uninstall-side twin of the install-time backfill
+      // (background.ts). A re-install injects into a fresh isolated world and answers
+      // instead; unhooking here just stops this dead context from double-answering.
+      if (!extensionAlive()) {
+        window.removeEventListener("message", onMessage)
+        return
+      }
       // Only accept messages from this same window and origin (PROTOCOL.md §2).
       if (event.source !== window) return
       if (event.origin !== window.origin) return
