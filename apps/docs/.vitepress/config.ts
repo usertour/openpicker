@@ -9,6 +9,21 @@ export default defineConfig({
   cleanUrls: true,
   lastUpdated: true,
   srcExclude: ["**/README.md"],
+  // Emit a sitemap so Google indexes the canonical (clean) URLs directly instead of
+  // discovering URL variants and consolidating them. Submit it in Search Console.
+  sitemap: {
+    hostname: "https://docs.openpicker.dev",
+  },
+  // Self-referential canonical per page. With cleanUrls, duplicate variants Google may
+  // crawl (…/page.html → 307 → /page, the production *.workers.dev origin, etc.) all
+  // point back to the clean URL, so they consolidate here rather than competing.
+  transformPageData(pageData) {
+    const canonical = `https://docs.openpicker.dev/${pageData.relativePath}`
+      .replace(/index\.md$/, "")
+      .replace(/\.md$/, "")
+    pageData.frontmatter.head ??= []
+    pageData.frontmatter.head.push(["link", { rel: "canonical", href: canonical }])
+  },
   head: [
     ["link", { rel: "icon", href: "/openpicker.svg" }],
     ["meta", { name: "theme-color", content: "#0f172a" }],
